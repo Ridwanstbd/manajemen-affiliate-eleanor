@@ -13,9 +13,8 @@
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
             <h2 style="margin: 0; font-weight: 700; color: #0f172a;">Dompet Saya</h2>
             <div style="display: flex; gap: 10px;">
-                <a href="{{ route('home') }}" style="text-decoration: none; padding: 10px 18px; background: white; color: #64748b; border: 1px solid #e2e8f0; border-radius: 10px; font-weight: 500; font-size: 14px;">Kembali</a>
+                <a href="{{ route('dashboard') }}" style="text-decoration: none; padding: 10px 18px; background: white; color: #64748b; border: 1px solid #e2e8f0; border-radius: 10px; font-weight: 500; font-size: 14px;">Kembali</a>
                 <a href="{{ route('transactions.transfer') }}" style="text-decoration: none; padding: 10px 18px; background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; border-radius: 10px; font-weight: 500; font-size: 14px;">⇄ Transfer</a>
-                <a href="{{ route('transactions.create') }}" style="text-decoration: none; padding: 10px 18px; background: #2563eb; color: white; border-radius: 10px; font-weight: 500; font-size: 14px; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);">+ Transaksi Baru</a>
             </div>
         </div>
 
