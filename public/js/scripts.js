@@ -92,3 +92,15 @@ document.addEventListener("click", function (e) {
         }
     });
 });
+function toggleOffcanvas(id) {
+    const offcanvas = document.getElementById(id);
+    const backdrop = document.getElementById(id + "-backdrop");
+
+    if (offcanvas.classList.contains("show")) {
+        offcanvas.classList.remove("show");
+        backdrop.classList.remove("show");
+    } else {
+        offcanvas.classList.add("show");
+        backdrop.classList.add("show");
+    }
+}

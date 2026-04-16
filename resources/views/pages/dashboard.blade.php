@@ -31,8 +31,8 @@
                 <x-atoms.button variant="primary" onclick="openModal('createTransactionModal')">
                     <x-atoms.icon name="plus" style="width: 15px; height: 15px;" /> Create Transaction
                 </x-atoms.button>
-                <x-atoms.button variant="secondary">
-                    <x-atoms.icon name="download" style="width: 15px; height: 15px;" /> Export Report
+                <x-atoms.button variant="secondary" onclick="toggleOffcanvas('sidebarMenu')">
+                    <x-atoms.icon name="download" style="width: 15px; height: 15px;" /> Buka Menu
                 </x-atoms.button>
             </div>
         </div>
@@ -140,9 +140,17 @@
 
         </x-organisms.modal>
     </form>
+
+    <x-organisms.offcanvas id="sidebarMenu" title="Menu Keuangan" >
+    <ul class="list-group">
+        <li><a href="#">Dashboard</a></li>
+        <li><a href="#">Daftar Transaksi</a></li>
+        <li><a href="#">Pengaturan Akun</a></li>
+    </ul>
+</x-organisms.offcanvas>
 @endsection
 
-@section('scripts')
+@push('scripts')
 <script>
     function openModal(modalId) {
         document.getElementById(modalId).classList.add('active');
@@ -180,5 +188,83 @@
         
         categorySelect.focus();
     }
+    document.addEventListener('DOMContentLoaded', function() {
+        const isMobile = window.innerWidth <= 860;
+        let tourCompleted = false;
+
+        try {
+            tourCompleted = localStorage.getItem('shepherd-tour-completed');
+        } catch (error) {
+            console.warn('LocalStorage diblokir oleh browser (Tracking Prevention). Tur mungkin akan muncul lagi di sesi berikutnya.');
+            tourCompleted = false;
+        }
+        
+        if (isMobile && !tourCompleted) {
+            setTimeout(setupTour, 500);
+        }
+    });
+
+    function setupTour() {
+        const tour = new Shepherd.Tour({
+            useModalOverlay: true,
+            defaultStepOptions: {
+                cancelIcon: { enabled: true },
+                scrollTo: { behavior: 'smooth', block: 'center' }
+            }
+        });
+
+        const markAsComplete = () => {
+            try {
+                localStorage.setItem('shepherd-tour-completed', 'true');
+            } catch (error) {
+                console.warn('Gagal menyimpan status tur ke localStorage.');
+            }
+        };
+
+        tour.on('complete', markAsComplete);
+        tour.on('cancel', markAsComplete);
+
+        tour.addStep({
+            id: 'mobile-step-1',
+            title: 'Selamat Datang!',
+            text: 'Ini adalah tampilan ringkasan keuangan Anda di perangkat mobile.',
+            attachTo: {
+                element: '.hero-section',
+                on: 'bottom'
+            },
+            buttons: [
+                {
+                    text: 'Tutup',
+                    action: tour.cancel,
+                    classes: 'btn btn-secondary btn-sm'
+                },
+                {
+                    text: 'Lanjut',
+                    action: tour.next,
+                    classes: 'btn btn-primary btn-sm'
+                }
+            ]
+        });
+
+        tour.addStep({
+            id: 'mobile-step-2',
+            title: 'Menu Navigasi',
+            text: 'Klik tombol ini untuk membuka sidebar menu Anda.',
+            attachTo: {
+                element: '#menu-toggle', 
+                on: 'bottom'
+            },
+            buttons: [
+                {
+                    text: 'Selesai',
+                    action: tour.complete,
+                    classes: 'btn btn-success btn-sm'
+                }
+            ]
+        });
+
+        tour.start();
+    }
 </script>
-@endsection
+
+@endpush

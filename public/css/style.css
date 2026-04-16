@@ -495,18 +495,38 @@ body::before {
 .btn {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 7px;
-    padding: 10px 20px;
+    padding: 10px 20px; /* Default MD size */
     border-radius: var(--radius-xl);
     font-size: 13.5px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.25s var(--ease-smooth);
-    border: none;
+    border: 1px solid transparent; /* Untuk mencegah pergeseran layout saat ada border */
     font-family: inherit;
     white-space: nowrap;
+    text-decoration: none;
 }
 
+/* ─── BUTTON STATES ─── */
+.btn:active {
+    transform: translateY(1px) !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+}
+
+.btn:disabled,
+.btn.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* ─── BUTTON VARIANTS ─── */
+
+/* Primary Button */
 .btn-primary {
     background: linear-gradient(135deg, var(--primary-blue), #60a5fa);
     color: white;
@@ -516,8 +536,10 @@ body::before {
 .btn-primary:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 24px var(--primary-blue-glow);
+    filter: brightness(1.05);
 }
 
+/* Secondary Button */
 .btn-secondary {
     background: rgba(255, 255, 255, 0.6);
     color: var(--text-secondary);
@@ -530,6 +552,210 @@ body::before {
     color: var(--primary-blue);
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* Success Button (Menggunakan variabel --emerald) */
+.btn-success {
+    background: linear-gradient(135deg, var(--emerald), #34d399);
+    color: white;
+    box-shadow: 0 4px 16px var(--emerald-glow);
+}
+
+.btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px var(--emerald-glow);
+    filter: brightness(1.05);
+}
+
+/* Danger Button (Menggunakan variabel --rose) */
+.btn-danger {
+    background: linear-gradient(135deg, var(--rose), #fb7185);
+    color: white;
+    box-shadow: 0 4px 16px rgba(244, 63, 94, 0.25);
+}
+
+.btn-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(244, 63, 94, 0.35);
+    filter: brightness(1.05);
+}
+
+/* Outline Button */
+.btn-outline {
+    background: transparent;
+    color: var(--primary-blue);
+    border: 1px solid var(--primary-blue);
+}
+
+.btn-outline:hover {
+    background: var(--primary-blue-soft);
+    transform: translateY(-2px);
+}
+
+/* ─── BUTTON SIZES ─── */
+
+/* Small (sm) */
+.btn-sm {
+    padding: 6px 14px;
+    font-size: 12px;
+    border-radius: var(--radius-lg);
+    gap: 5px;
+}
+
+/* Medium (md) - Merupakan default dari .btn */
+.btn-md {
+    padding: 10px 20px;
+    font-size: 13.5px;
+    border-radius: var(--radius-xl);
+}
+
+/* Large (lg) */
+.btn-lg {
+    padding: 14px 28px;
+    font-size: 15px;
+    border-radius: var(--radius-2xl);
+    gap: 10px;
+}
+
+/* Extra Large (xl) */
+.btn-xl {
+    padding: 18px 36px;
+    font-size: 16px;
+    font-weight: 700;
+    border-radius: var(--radius-2xl);
+    gap: 12px;
+}
+
+/* ─── BUTTON WITH ICON ONLY ─── */
+.btn-icon {
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-icon.btn-sm {
+    width: 32px;
+    height: 32px;
+}
+
+.btn-icon.btn-lg {
+    width: 48px;
+    height: 48px;
+}
+
+.btn-icon.btn-xl {
+    width: 56px;
+    height: 56px;
+}
+
+/* ─── OFFCANVAS ─── */
+
+.offcanvas {
+    position: fixed;
+    bottom: 0;
+    z-index: 1045;
+    display: flex;
+    flex-direction: column;
+    max-width: 100%;
+    visibility: hidden;
+    transition:
+        transform 0.3s ease-in-out,
+        visibility 0.3s ease-in-out;
+    background: var(--glass-bg);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--glass-shadow);
+    padding: 24px;
+    margin: 20px;
+}
+
+/* Posisi Offcanvas Kiri */
+.offcanvas-start {
+    top: 0;
+    left: 0;
+    width: 40vw;
+    transform: translateX(-100%);
+}
+
+/* Posisi Offcanvas Kanan */
+.offcanvas-end {
+    top: 0;
+    right: 0;
+    width: 40vw;
+    transform: translateX(100%);
+}
+
+/* State saat Offcanvas Terbuka */
+.offcanvas.show {
+    visibility: visible;
+    transform: translateX(0);
+}
+
+/* Backdrop / Latar Belakang Gelap */
+.offcanvas-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+        opacity 0.3s var(--ease-smooth),
+        visibility 0.3s var(--ease-smooth);
+    padding: 20px;
+}
+
+.offcanvas-backdrop.show {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Elemen Header & Body */
+.offcanvas-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.offcanvas-title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.offcanvas-body {
+    flex-grow: 1;
+    padding: 1rem;
+    overflow-y: auto;
+}
+
+/* Tombol Close */
+.btn-close {
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    color: #6c757d;
+    transition: color 0.2s ease;
+}
+
+.btn-close:hover {
+    color: #dc3545;
 }
 
 /* ─── STAT CARDS ─── */
@@ -1290,6 +1516,11 @@ select.form-control {
     .chart-card,
     .transactions-panel {
         padding: 18px;
+    }
+
+    .offcanvas-start,
+    .offcanvas-end {
+        width: 85vw;
     }
 }
 

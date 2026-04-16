@@ -1,7 +1,7 @@
 <header class="header">
     <div class="header-left">
         <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
-            <x-atoms.icon name="menu" style="width: 18px; height: 18px; pointer-events: none;" />
+            <x-atoms.icon name="menu" id="menu-toggle" style="width: 28px; height: 28px; pointer-events: none;" />
         </button>
         
         <x-atoms.search-input placeholder="Search transactions, invoices..." />
@@ -9,7 +9,7 @@
 
     <div class="header-actions">
         <button class="header-btn">
-            <x-atoms.icon name="bell" style="width: 18px; height: 18px;" />
+            <x-atoms.icon name="bell" style="width: 28px; height: 28px;" />
             <span class="badge"></span>
         </button>
 
