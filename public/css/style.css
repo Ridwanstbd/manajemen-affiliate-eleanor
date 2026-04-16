@@ -658,6 +658,7 @@ body::before {
     bottom: 0;
     z-index: 1045;
     display: flex;
+    max-height: 100vh;
     flex-direction: column;
     max-width: 100%;
     visibility: hidden;
@@ -739,8 +740,12 @@ body::before {
 
 .offcanvas-body {
     flex-grow: 1;
-    padding: 1rem;
+    padding: 1.5rem;
     overflow-y: auto;
+    scrollbar-width: none;
+}
+.offcanvas-body::-webkit-scrollbar {
+    display: none;
 }
 
 /* Tombol Close */
@@ -1453,6 +1458,10 @@ select.form-control {
     .dashboard-grid {
         grid-template-columns: 1fr;
     }
+    .offcanvas-start,
+    .offcanvas-end {
+        width: 75vw;
+    }
 }
 
 /* 860px – mobile sidebar */
@@ -1489,6 +1498,28 @@ select.form-control {
 
     .company-dropdown {
         padding: 8px;
+    }
+
+    .nav-item {
+        padding: 14px 16px;
+        font-size: 15px;
+        gap: 14px;
+        margin-bottom: 4px;
+    }
+
+    .nav-icon {
+        width: 20px;
+        height: 20px;
+        min-width: 20px;
+    }
+
+    .nav-label {
+        margin-top: 10px;
+        font-size: 11.5px;
+    }
+    .offcanvas-start,
+    .offcanvas-end {
+        width: 75vw;
     }
 }
 
