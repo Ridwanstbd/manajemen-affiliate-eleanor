@@ -43,6 +43,14 @@ Route::middleware('auth')->group(function () {
         return back()->with('message', 'Link verifikasi telah dikirim ulang!');
     })->middleware(['throttle:6,1'])->name('verification.send');
 });
+Route::post('/push-subscribe', function (Request $request) {
+    $request->user()->updatePushSubscription(
+        $request->endpoint,
+        $request->keys['p256dh'],
+        $request->keys['auth']
+    );
+    return response()->json(['success' => true]);
+})->middleware('auth');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [MainController::class, 'index'])->name('dashboard');

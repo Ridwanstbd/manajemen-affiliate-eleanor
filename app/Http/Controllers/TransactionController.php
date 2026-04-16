@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreTransactionRequest;
 use App\Http\Requests\StoreTransferRequest;
+use App\Notifications\NewTransactionNotification;
 use App\Services\TransactionService;
 use App\Models\Account;
 
@@ -27,6 +28,9 @@ class TransactionController extends Controller
     public function store(StoreTransactionRequest $request)
     {
         $this->transactionService->createTransaction($request->validated());
+        $amount = $request->amount;
+        $type = $request->typeSelect;
+        $request->user()->notify(new NewTransactionNotification($amount, $type));
 
         return redirect()->route('transactions.index')->with('success', 'Transaksi berhasil dicatat!');
     }

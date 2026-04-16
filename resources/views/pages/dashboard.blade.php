@@ -188,19 +188,77 @@
         
         categorySelect.focus();
     }
+    const vapidPublicKey = '{{ env('VAPID_PUBLIC_KEY') }}';
+
+    function urlBase64ToUint8Array(base64String) {
+        const padding = '='.repeat((4 - base64String.length % 4) % 4);
+        const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
+        const rawData = window.atob(base64);
+        const outputArray = new Uint8Array(rawData.length);
+        for (let i = 0; i < rawData.length; ++i) {
+            outputArray[i] = rawData.charCodeAt(i);
+        }
+        return outputArray;
+    }
+
+    function subscribeUserToPush() {
+        navigator.serviceWorker.register('/sw.js')
+            .then((registration) => {
+                const subscribeOptions = {
+                    userVisibleOnly: true,
+                    applicationServerKey: urlBase64ToUint8Array(vapidPublicKey)
+                };
+                return registration.pushManager.subscribe(subscribeOptions);
+            })
+            .then((pushSubscription) => {
+                fetch('/push-subscribe', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify(pushSubscription)
+                });
+            })
+            .catch((error) => console.error('Error saat subscribe Push Notif:', error));
+    }
+
+    function askForNotificationPermission() {
+        if ('Notification' in window && navigator.serviceWorker) {
+            if (Notification.permission === 'default') {
+                Notification.requestPermission().then((permission) => {
+                    if (permission === 'granted') {
+                        subscribeUserToPush();
+                    }
+                });
+            } else if (Notification.permission === 'granted') {
+                subscribeUserToPush();
+            }
+        }
+    }
+
+
     document.addEventListener('DOMContentLoaded', function() {
+        if (typeof Shepherd === 'undefined') {
+            console.error('Shepherd library gagal dimuat.');
+            askForNotificationPermission(); 
+            return; 
+        }
+
         const isMobile = window.innerWidth <= 860;
         let tourCompleted = false;
 
         try {
             tourCompleted = localStorage.getItem('shepherd-tour-completed');
         } catch (error) {
-            console.warn('LocalStorage diblokir oleh browser (Tracking Prevention). Tur mungkin akan muncul lagi di sesi berikutnya.');
-            tourCompleted = false;
+            console.warn('LocalStorage diblokir. Tur mungkin berulang.');
+            tourCompleted = false; 
         }
         
         if (isMobile && !tourCompleted) {
             setTimeout(setupTour, 500);
+        } else {
+            askForNotificationPermission();
         }
     });
 
@@ -213,58 +271,40 @@
             }
         });
 
-        const markAsComplete = () => {
+        const finishTourAndAskNotif = () => {
             try {
                 localStorage.setItem('shepherd-tour-completed', 'true');
-            } catch (error) {
-                console.warn('Gagal menyimpan status tur ke localStorage.');
-            }
+            } catch (error) {}
+            
+            setTimeout(askForNotificationPermission, 300); 
         };
 
-        tour.on('complete', markAsComplete);
-        tour.on('cancel', markAsComplete);
+        tour.on('complete', finishTourAndAskNotif);
+        tour.on('cancel', finishTourAndAskNotif);
 
         tour.addStep({
             id: 'mobile-step-1',
             title: 'Selamat Datang!',
             text: 'Ini adalah tampilan ringkasan keuangan Anda di perangkat mobile.',
-            attachTo: {
-                element: '.hero-section',
-                on: 'bottom'
-            },
+            attachTo: { element: '.hero-section', on: 'bottom' },
             buttons: [
-                {
-                    text: 'Tutup',
-                    action: tour.cancel,
-                    classes: 'btn btn-secondary btn-sm'
-                },
-                {
-                    text: 'Lanjut',
-                    action: tour.next,
-                    classes: 'btn btn-primary btn-sm'
-                }
+                { text: 'Lewati', action: tour.cancel, classes: 'btn btn-secondary btn-sm' },
+                { text: 'Lanjut', action: tour.next, classes: 'btn btn-primary btn-sm' }
             ]
         });
 
         tour.addStep({
             id: 'mobile-step-2',
             title: 'Menu Navigasi',
-            text: 'Klik tombol ini untuk membuka sidebar menu Anda.',
-            attachTo: {
-                element: '#menu-toggle', 
-                on: 'bottom'
-            },
+            text: 'Klik tombol ini untuk membuka menu lainnya.',
+            attachTo: { element: '#menu-toggle', on: 'bottom' },
             buttons: [
-                {
-                    text: 'Selesai',
-                    action: tour.complete,
-                    classes: 'btn btn-success btn-sm'
-                }
+                { text: 'Selesai', action: tour.complete, classes: 'btn btn-success btn-sm' }
             ]
         });
 
         tour.start();
     }
-</script>
+    </script>
 
 @endpush
