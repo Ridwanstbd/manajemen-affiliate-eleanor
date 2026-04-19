@@ -7,11 +7,11 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 Route::get('/', function () {
     return redirect()->route('login');
 });
-use Illuminate\Support\Facades\Mail;
 
 Route::get('/test-email', function () {
     Mail::raw('Halo, ini test SMTP Hostinger dari Laravel 12!', function ($message) {
