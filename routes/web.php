@@ -11,6 +11,15 @@ use Illuminate\Http\Request;
 Route::get('/', function () {
     return redirect()->route('login');
 });
+use Illuminate\Support\Facades\Mail;
+
+Route::get('/test-email', function () {
+    Mail::raw('Halo, ini test SMTP Hostinger dari Laravel 12!', function ($message) {
+        $message->to('ridwansetiobudi77@gmail.com')
+                ->subject('Test SMTP Hostinger');
+    });
+    return 'Email terkirim!';
+});
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
