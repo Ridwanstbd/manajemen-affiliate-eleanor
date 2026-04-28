@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MainController;
-use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
@@ -71,8 +70,5 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('/users/{id}', [UserController::class, 'edit'])->name('users.edit');
         Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
         Route::put('/users/{user}/role', [UserController::class, 'updateRole'])->name('users.updateRole');
-        Route::get('transactions/transfer', [TransactionController::class, 'transfer'])->name('transactions.transfer');
-        Route::post('transactions/transfer', [TransactionController::class, 'storeTransfer'])->name('transactions.storeTransfer');
-        Route::resource('transactions', TransactionController::class)->except(['create']);
-    });
+});
 });
