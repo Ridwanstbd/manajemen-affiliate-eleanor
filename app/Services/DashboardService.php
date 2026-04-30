@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Models\Account;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -29,16 +28,26 @@ class DashboardService
         $cashPrevious = $this->getSummary('asset', $previousMonth, $previousYear, true);
 
         return [
-            'totalRevenue' => $revenueCurrent,
-            'revenueTrend' => $this->calculateTrend($revenueCurrent, $revenuePrevious),
-            'totalExpenses' => $expenseCurrent,
-            'expenseTrend' => $this->calculateTrend($expenseCurrent, $expensePrevious),
-            'netProfit' => $profitCurrent,
-            'profitTrend' => $this->calculateTrend($profitCurrent, $profitPrevious),
-            'cashOnHand' => $cashCurrent,
-            'cashTrend' => $this->calculateTrend($cashCurrent, $cashPrevious),
-            'pockets' => Account::where('type', 'asset')->get(),
-            'categories' => Account::where('type', '!=', 'asset')->get()
+            'totalRevenue' => 0,
+            'revenueTrend' => 0,
+            'totalExpenses' => 0,
+            'expenseTrend' => 0,
+            'netProfit' => 0,
+            'profitTrend' => 0,
+            'cashOnHand' => 0,
+            'cashTrend' => 0,
+            'pockets' => 0,
+            'categories' => 0
+            // 'totalRevenue' => $revenueCurrent,
+            // 'revenueTrend' => $this->calculateTrend($revenueCurrent, $revenuePrevious),
+            // 'totalExpenses' => $expenseCurrent,
+            // 'expenseTrend' => $this->calculateTrend($expenseCurrent, $expensePrevious),
+            // 'netProfit' => $profitCurrent,
+            // 'profitTrend' => $this->calculateTrend($profitCurrent, $profitPrevious),
+            // 'cashOnHand' => $cashCurrent,
+            // 'cashTrend' => $this->calculateTrend($cashCurrent, $cashPrevious),
+            // 'pockets' => Account::where('type', 'asset')->get(),
+            // 'categories' => Account::where('type', '!=', 'asset')->get()
         ];
     }
 

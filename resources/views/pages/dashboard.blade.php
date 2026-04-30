@@ -43,46 +43,51 @@
         <x-molecules.stat-card 
             color="emerald" 
             icon="revenue" 
-            trend="{{ $revenueTrend >= 0 ? 'up' : 'down' }}" 
-            trendValue="{{ $formatTrend($revenueTrend) }}" 
-            value="Rp {{ number_format($totalRevenue, 0, ',', '.') }}" 
+            trend="up" 
+            {{-- trendValue="{{ $formatTrend($revenueTrend) }}"  --}}
+            trendValue="100" 
+            value="Rp 10000" 
+            {{-- value="Rp {{ number_format($totalRevenue, 0, ',', '.') }}"  --}}
             label="Total Revenue" 
         />
         
         <x-molecules.stat-card 
             color="rose" 
             icon="expense-stat" 
-            trend="{{ $expenseTrend <= 0 ? 'up' : 'down' }}" 
-            trendValue="{{ $formatTrend($expenseTrend) }}" 
-            value="Rp {{ number_format($totalExpenses, 0, ',', '.') }}" 
+            trend="up" 
+            {{-- trend="{{ $expenseTrend <= 0 ? 'up' : 'down' }}"  --}}
+            trendValue="800" 
+            {{-- trendValue="{{ $formatTrend($expenseTrend) }}"  --}}
+            value="Rp 120000" 
+            {{-- value="Rp {{ number_format($totalExpenses, 0, ',', '.') }}"  --}}
             label="Total Expenses" 
         />
         
         <x-molecules.stat-card 
             color="blue" 
             icon="profit-stat" 
-            trend="{{ $profitTrend >= 0 ? 'up' : 'down' }}" 
-            trendValue="{{ $formatTrend($profitTrend) }}" 
-            value="Rp {{ number_format($netProfit, 0, ',', '.') }}" 
+            trend="up" 
+            trendValue="12" 
+            value="Rp 150000" 
             label="Net Profit" 
         />
         
         <x-molecules.stat-card 
             color="amber" 
             icon="wallet" 
-            trend="{{ $cashTrend >= 0 ? 'up' : 'down' }}" 
-            trendValue="{{ $formatTrend($cashTrend) }}" 
-            value="Rp {{ number_format($cashOnHand, 0, ',', '.') }}" 
+            trend="down" 
+            trendValue="30" 
+            value="Rp 1200000" 
             label="Cash on Hand" 
         />
         
     </div>
 
     <div class="dashboard-grid">
-        <x-organisms.chart-card title="Cash Flow Trend" :data="$chartData" />
+        {{-- <x-organisms.chart-card title="Cash Flow Trend" :data="$chartData" /> --}}
     </div>
 
-    <form action="{{ route('transactions.store') }}" method="POST">
+    {{-- <form action="{{ route('transactions.store') }}" method="POST">
         @csrf        
         <x-organisms.modal 
             id="createTransactionModal" 
@@ -139,7 +144,7 @@
             </x-slot>
 
         </x-organisms.modal>
-    </form>
+    </form> --}}
 
     <x-organisms.offcanvas id="sidebarMenu" title="Menu Keuangan" >
     <ul class="list-group">
