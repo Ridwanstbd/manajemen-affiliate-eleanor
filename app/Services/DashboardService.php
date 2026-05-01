@@ -9,35 +9,37 @@ class DashboardService
 {
     public function getDashboardStats()
     {
-        $currentMonth = Carbon::now()->month;
-        $currentYear = Carbon::now()->year;
+        // $currentMonth = Carbon::now()->month;
+        // $currentYear = Carbon::now()->year;
         
-        $previousMonth = Carbon::now()->subMonth()->month;
-        $previousYear = Carbon::now()->subMonth()->year;
+        // $previousMonth = Carbon::now()->subMonth()->month;
+        // $previousYear = Carbon::now()->subMonth()->year;
 
-        $revenueCurrent = $this->getSummary('revenue', $currentMonth, $currentYear);
-        $revenuePrevious = $this->getSummary('revenue', $previousMonth, $previousYear);
+        // $revenueCurrent = $this->getSummary('revenue', $currentMonth, $currentYear);
+        // $revenuePrevious = $this->getSummary('revenue', $previousMonth, $previousYear);
         
-        $expenseCurrent = $this->getSummary('expense', $currentMonth, $currentYear);
-        $expensePrevious = $this->getSummary('expense', $previousMonth, $previousYear);
+        // $expenseCurrent = $this->getSummary('expense', $currentMonth, $currentYear);
+        // $expensePrevious = $this->getSummary('expense', $previousMonth, $previousYear);
         
-        $profitCurrent = $revenueCurrent - $expenseCurrent;
-        $profitPrevious = $revenuePrevious - $expensePrevious;
+        // $profitCurrent = $revenueCurrent - $expenseCurrent;
+        // $profitPrevious = $revenuePrevious - $expensePrevious;
         
-        $cashCurrent = $this->getSummary('asset', $currentMonth, $currentYear, true);
-        $cashPrevious = $this->getSummary('asset', $previousMonth, $previousYear, true);
+        // $cashCurrent = $this->getSummary('asset', $currentMonth, $currentYear, true);
+        // $cashPrevious = $this->getSummary('asset', $previousMonth, $previousYear, true);
 
         return [
-            'totalRevenue' => 0,
-            'revenueTrend' => 0,
-            'totalExpenses' => 0,
-            'expenseTrend' => 0,
-            'netProfit' => 0,
-            'profitTrend' => 0,
-            'cashOnHand' => 0,
-            'cashTrend' => 0,
-            'pockets' => 0,
-            'categories' => 0
+            'totalRevenue' => 10000,
+            'revenueTrend' => 100,
+            'totalExpenses' => 120000,
+            'expenseTrend' => 800,
+            'netProfit' => 150000,
+            'profitTrend' => 12,
+            'cashOnHand' => 1200000,
+            'cashTrend' => 30,
+            // Gunakan array kosong [] untuk pockets & categories 
+            // agar tidak menyebabkan error pada perulangan foreach / javascript filter() di view
+            'pockets' => [],
+            'categories' => []
             // 'totalRevenue' => $revenueCurrent,
             // 'revenueTrend' => $this->calculateTrend($revenueCurrent, $revenuePrevious),
             // 'totalExpenses' => $expenseCurrent,

@@ -63,7 +63,7 @@ Route::post('/push-subscribe', function (Request $request) {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [MainController::class, 'index'])->name('dashboard');
     
-    Route::middleware(['role:admin'])->group(function () {
+    Route::middleware(['role:administrator'])->group(function () {
         Route::get('/users', [UserController::class, 'index'])->name('users.index');
         Route::get('/users/data', [UserController::class, 'data'])->name('users.data');
         Route::post('/users', [UserController::class, 'store'])->name('users.store');

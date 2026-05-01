@@ -17,7 +17,8 @@
     <nav class="nav-section">
         <div class="nav-label">Transactions</div>
         <div class="nav-list">
-            <x-molecules.nav-item icon="invoices" label="Invoices" href="{{ route('transactions.index') }}" :active="request()->routeIs('transactions.*')" />
+            {{-- <x-molecules.nav-item icon="invoices" label="Invoices" href="{{ route('transactions.index') }}" :active="request()->routeIs('transactions.*')" /> --}}
+            <x-molecules.nav-item icon="invoices" label="Invoices" />
             <x-molecules.nav-item icon="expenses" label="Expenses" />
             <x-molecules.nav-item icon="payments" label="Payments" />
             <x-molecules.nav-item icon="journal" label="Journal Entries" />
