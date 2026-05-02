@@ -22,10 +22,10 @@ Route::get('/test-email', function () {
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showUsername'])->name('login');
-    Route::get('/check-password',[AuthController::class,'showPassword']);
-    
-    Route::post('/login',[AuthController::class,'login'])->name('login.password');
-    Route::post('/login/verify', [AuthController::class, 'verifyUsername'])->name('login.verify-username');
+    Route::get('/check-password',[AuthController::class,'showPassword'])->name('login.password');
+
+    Route::post('/verify-password',[AuthController::class,'verifyPassword'])->name('login.verify-password');
+    Route::post('/verify-username', [AuthController::class, 'verifyUsername'])->name('login.verify-username');
     
     Route::get('/forgot-password', [AuthController::class, 'showForgotPassword'])->name('password.request');
     Route::post('/forgot-password', [AuthController::class, 'sendResetLink'])->name('password.email');

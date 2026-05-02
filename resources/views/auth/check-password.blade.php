@@ -6,7 +6,7 @@
         title="Anda terdaftar" 
         subtitle="Masukan Kata Sandi"
     >
-        <form action="{{ route('login.password') }}" method="POST">
+        <form action="{{ route('login.verify-password') }}" method="POST">
             @csrf
             <div class="form-group">
                 <x-atoms.label value="Password" />
