@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('phone_number', 14)->nullable();
             $table->enum('account_status', ['PENDING', 'ACTIVE', 'BANNED'])->default('PENDING');
             $table->boolean('is_claimed')->default(false);
-            $table->enum('role', ['ADMIN', 'AFFILIATOR'])->default('AFFILIATOR');
+            $table->enum('role', ['ADMINISTRATOR', 'AFFILIATOR'])->default('AFFILIATOR');
 
             $table->rememberToken();
             $table->timestamps();
