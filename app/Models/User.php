@@ -47,4 +47,10 @@ class User extends Authenticatable
             'is_claimed' => 'boolean',
         ];
     }
+    public function hasRole(string $role): bool
+    {
+        $checkRole = strtoupper($role);
+
+        return $this->role === $checkRole;
+    }
 }
