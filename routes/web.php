@@ -32,7 +32,16 @@ Route::middleware('guest')->group(function () {
     Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
 });
 
-Route::middleware('auth')->group(function () {
+Route::post('/push-subscribe', function (Request $request) {
+    $request->user()->updatePushSubscription(
+        $request->endpoint,
+        $request->keys['p256dh'],
+        $request->keys['auth']
+    );
+    return response()->json(['success' => true]);
+})->middleware('auth');
+
+Route::middleware(['auth'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     Route::get('/email/verify', function () {
@@ -48,25 +57,14 @@ Route::middleware('auth')->group(function () {
         $request->user()->sendEmailVerificationNotification();
         return back()->with('message', 'Link verifikasi telah dikirim ulang!');
     })->middleware(['throttle:6,1'])->name('verification.send');
-});
-Route::post('/push-subscribe', function (Request $request) {
-    $request->user()->updatePushSubscription(
-        $request->endpoint,
-        $request->keys['p256dh'],
-        $request->keys['auth']
-    );
-    return response()->json(['success' => true]);
-})->middleware('auth');
 
-Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', [MainController::class, 'index'])->name('dashboard');
-    
-    Route::middleware(['role:administrator'])->group(function () {
+    Route::middleware(['role:administrator'])->prefix('dashboard')->group(function () {
+        Route::get('/', [MainController::class, 'index'])->name('dashboard');
         Route::get('/users', [UserController::class, 'index'])->name('users.index');
         Route::get('/users/data', [UserController::class, 'data'])->name('users.data');
         Route::post('/users', [UserController::class, 'store'])->name('users.store');
         Route::put('/users/{id}', [UserController::class, 'edit'])->name('users.edit');
         Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
         Route::put('/users/{user}/role', [UserController::class, 'updateRole'])->name('users.updateRole');
-});
+    });
 });
