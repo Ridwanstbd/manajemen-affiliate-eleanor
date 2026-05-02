@@ -21,11 +21,9 @@ Route::get('/test-email', function () {
 });
 
 Route::middleware('guest')->group(function () {
-    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-    Route::post('/login', [AuthController::class, 'login']);
-    
-    Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
-    Route::post('/register', [AuthController::class, 'register']);
+    Route::get('/check-username', [AuthController::class, 'showUsername'])->name('login');
+    Route::post('/login',[AuthController::class,'login'])->name('login.password');
+    Route::post('/login/verify', [AuthController::class, 'verifyUsername'])->name('login.verify-username');
     
     Route::get('/forgot-password', [AuthController::class, 'showForgotPassword'])->name('password.request');
     Route::post('/forgot-password', [AuthController::class, 'sendResetLink'])->name('password.email');
@@ -60,7 +58,7 @@ Route::post('/push-subscribe', function (Request $request) {
     return response()->json(['success' => true]);
 })->middleware('auth');
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [MainController::class, 'index'])->name('dashboard');
     
     Route::middleware(['role:administrator'])->group(function () {

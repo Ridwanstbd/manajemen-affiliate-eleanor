@@ -6,6 +6,7 @@ use App\Http\Requests\ForgotPasswordRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\ResetPasswordRequest;
+use App\Http\Requests\UsernameRequest;
 use App\Services\AuthService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
@@ -24,32 +25,30 @@ class AuthController extends Controller
         return view('auth.register');
     }
 
-    public function register(RegisterRequest $request)
+    public function showUsername()
     {
-        $user = $this->authService->register($request->validated());
-        
-        $this->authService->login($request->only('email', 'password'));
-
-        return redirect()->route('verification.notice');
+        return view('auth.check-username');
     }
-
-    public function showLogin()
+    public function verifyUsername(UsernameRequest $request)
     {
-        return view('auth.login');
-    }
+        $result = $this->authService->checkUsernameStatus($request->validated());
 
+        switch ($result['action']) {
+            case 'redirect_to_request_access':
+                return redirect()->route('access.request')->with('info', $result['message']);
+                
+            case 'redirect_to_claim_form':
+                session(['claim_username' => $result['data']['username']]);
+                return redirect()->route('account.claim')->with('info', $result['message']);
+                
+            case 'redirect_to_password_input':
+                session(['login_username' => $result['data']['username']]);
+                return redirect()->route('login.password')->with('info', $result['message']);
+        }
+    }
     public function login(LoginRequest $request)
     {
-        $remember = $request->validated('remember') ?? false;
-
-        if ($this->authService->login($request->only('email', 'password'), $remember)) {
-            $request->session()->regenerate();
-            return redirect()->intended('dashboard');
-        }
-
-        return back()->withErrors([
-            'email' => 'Kredensial yang diberikan tidak cocok dengan data kami.',
-        ])->onlyInput('email');
+        
     }
 
     public function logout(Request $request)

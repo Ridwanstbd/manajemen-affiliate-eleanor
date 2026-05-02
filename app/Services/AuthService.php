@@ -22,9 +22,30 @@ class AuthService{
 
         return $user;
     }
-    public function login(array $credentials, bool $remember = false): bool
+    public function checkUsernameStatus(string $username): array
     {
-        return Auth::attempt($credentials, $remember);
+        $user = User::where('username',$username)->first();
+        if (is_null($user->password)|| !$user->isclaimed){
+            return [
+                'status' => 'unclaimed',
+                'message' => 'Akun ditemukan, namun belum diklaim. Silakan buat password.',
+                'action' => 'redirect_to_claim_form',
+                'data' => ['username' => $username]
+            ];
+        }
+        return [
+            'status' => 'ready_to_login',
+            'message' => 'Username valid. Silakan masukkan password.',
+            'action' => 'redirect_to_password_input', 
+            'data' => ['username' => $username]
+        ];
+    }
+    public function authenticate(string $username, string $password): bool
+    {
+        return Auth::attempt([
+            'username' => $username,
+            'password' => $password
+        ]);
     }
 
     public function logout(): void
