@@ -21,7 +21,7 @@ Route::get('/test-email', function () {
 });
 
 Route::middleware('guest')->group(function () {
-    Route::get('/check-username', [AuthController::class, 'showUsername'])->name('login');
+    Route::get('/login', [AuthController::class, 'showUsername'])->name('login');
     Route::post('/login',[AuthController::class,'login'])->name('login.password');
     Route::post('/login/verify', [AuthController::class, 'verifyUsername'])->name('login.verify-username');
     
