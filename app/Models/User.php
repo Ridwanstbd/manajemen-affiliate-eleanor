@@ -47,10 +47,19 @@ class User extends Authenticatable
             'is_claimed' => 'boolean',
         ];
     }
-    public function hasRole(string $role): bool
+    public function hasRole(string|array $roles): bool
     {
-        $checkRole = strtoupper($role);
+        if (is_string($roles)) {
+            $roles = [$roles];
+        }
+        foreach ($roles as $role) {
+            $checkRole = strtoupper($role);
 
-        return $this->role === $checkRole;
+            if ($this->role === $checkRole) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
