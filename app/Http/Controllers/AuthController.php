@@ -28,6 +28,10 @@ class AuthController extends Controller
     {
         return view('auth.check-username');
     }
+    public function showPassword()
+    {
+        return view('auth.check-password');
+    }
     public function verifyUsername(UsernameRequest $request)
     {
         $result = $this->authService->checkUsernameStatus($request->validated());
