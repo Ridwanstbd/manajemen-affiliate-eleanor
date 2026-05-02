@@ -34,7 +34,8 @@ class AuthController extends Controller
     }
     public function verifyUsername(UsernameRequest $request)
     {
-        $result = $this->authService->checkUsernameStatus($request->validated());
+        $validatedData = $request->validated();
+        $result = $this->authService->checkUsernameStatus($validatedData['username']);
 
         switch ($result['action']) {
             case 'redirect_to_request_access':

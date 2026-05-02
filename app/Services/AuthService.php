@@ -24,8 +24,8 @@ class AuthService{
     }
     public function checkUsernameStatus(string $username): array
     {
-        $user = User::where('username',$username)->first();
-        if (is_null($user->password)|| !$user->isclaimed){
+        $user = User::where('username', $username)->first();
+        if (is_null($user->password) || !$user->is_claimed){
             return [
                 'status' => 'unclaimed',
                 'message' => 'Akun ditemukan, namun belum diklaim. Silakan buat password.',
