@@ -19,7 +19,9 @@ class DatabaseSeeder extends Seeder
             'username' => 'testuser',
             'email' => 'test@example.com',
             'role' => 'ADMINISTRATOR',
-            'password' => bcrypt('password')
+            'password' => bcrypt('password'),
+            'account_status' => 'ACTIVE',
+            'is_claimed' => true,
         ]);
 
         $this->call([
