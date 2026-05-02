@@ -49,7 +49,7 @@ class AuthController extends Controller
                 return redirect()->route('login.password')->with('info', $result['message']);
         }
     }
-    public function login(LoginRequest $request)
+    public function verifyPassword(LoginRequest $request)
     {
         $username = session('login_username');
         if (!$username){
