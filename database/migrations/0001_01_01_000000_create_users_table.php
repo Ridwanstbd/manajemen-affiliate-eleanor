@@ -12,8 +12,8 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('username', 100);
-            $table->string('email')->nullable();
+            $table->string('username', 100)->unique();
+            $table->string('email')->nullable()->unique();
             $table->string('password')->nullable();
             $table->string('phone_number', 14)->nullable();
             $table->enum('account_status', ['PENDING', 'ACTIVE', 'BANNED'])->default('PENDING');

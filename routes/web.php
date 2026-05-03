@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MainController;
+use App\Http\Controllers\Affiliator\MainController as MainAffiliateController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
@@ -69,4 +70,8 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
         Route::put('/users/{user}/role', [UserController::class, 'updateRole'])->name('users.updateRole');
     });
+    Route::middleware(['role:affiliator'])->prefix('affiliator')->group(function () {
+        Route::get('/', [MainAffiliateController::class,'index']);
+    });
+
 });

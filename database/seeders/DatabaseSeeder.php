@@ -24,8 +24,16 @@ class DatabaseSeeder extends Seeder
             'is_claimed' => true,
         ]);
 
-        $this->call([
-
+        User::factory()->create([
+            'username' => 'testaffiliate',
+            'email' => 'testaffiliate@example.com',
+            'password' => bcrypt('password'),
+            'account_status' => 'ACTIVE',
+            'is_claimed' => true,
         ]);
+
+        // $this->call([
+
+        // ]);
     }
 }
