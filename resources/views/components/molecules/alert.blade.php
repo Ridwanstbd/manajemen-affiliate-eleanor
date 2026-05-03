@@ -23,7 +23,7 @@
     } 
     elseif ($errors->any()) {
         $alertType = 'error';
-        $alertMessage = $errors->first(); 
+        $alertMessage = implode('<br>', $errors->all()); 
         $alertTitle = 'Validasi Gagal!';
     }
 @endphp
@@ -32,7 +32,7 @@
 <div id="custom-alert-box" class="alert-box alert-{{ $alertType }}">
     <div class="alert-content">
         <h3 class="alert-title">{{ $alertTitle }}</h3>
-        <p class="alert-text">{{ $alertMessage }}</p>
+        <p class="alert-text">{!! $alertMessage !!}</p>
     </div>
     <button class="alert-button alert-btn-{{ $alertType }}" onclick="closeAlert()">Mengerti</button>
 </div>

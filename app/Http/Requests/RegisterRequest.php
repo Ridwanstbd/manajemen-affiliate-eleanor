@@ -50,10 +50,10 @@ class RegisterRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'username_tiktok.required'  => 'Username TikTok wajib diisi.',
-            'username_tiktok.max'       => 'Username TikTok maksimal 100 karakter.',
-            'username_tiktok.not_regex' => 'Username TikTok tidak boleh diawali dengan simbol @.',
-            'username_tiktok.regex'     => 'Username TikTok tidak boleh mengandung spasi.',
+            'tiktok_username.required'  => 'Username TikTok wajib diisi.',
+            'tiktok_username.max'       => 'Username TikTok maksimal 100 karakter.',
+            'tiktok_username.not_regex' => 'Username TikTok tidak boleh diawali dengan simbol @.',
+            'tiktok_username.regex'     => 'Username TikTok tidak boleh mengandung spasi.',
 
             'email.required'            => 'Alamat email wajib diisi.',
             'email.email'               => 'Format alamat email tidak valid.',

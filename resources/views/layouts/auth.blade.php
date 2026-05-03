@@ -57,5 +57,6 @@
     </div>
     @yield('scripts')
     <script src="{{ asset('js/scripts.js') }}"></script>
+    <x-molecules.alert />
 </body>
 </html>
