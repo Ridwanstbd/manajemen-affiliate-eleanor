@@ -31,6 +31,9 @@ Route::middleware('guest')->group(function () {
     Route::get('/register',[AuthController::class,'showRegister'])->name('access.request');
     Route::post('/register',[AuthController::class,'register'])->name('access.send-request');
     
+    Route::get('/claim', [AuthController::class,'showFormClaim'])->name('account.claim');
+    Route::post('/claim',[AuthController::class,'claim'])->name('account.send-claim');
+
     Route::get('/forgot-password', [AuthController::class, 'showForgotPassword'])->name('password.request');
     Route::post('/forgot-password', [AuthController::class, 'sendResetLink'])->name('password.email');
     

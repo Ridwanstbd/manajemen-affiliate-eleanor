@@ -22,7 +22,7 @@ class RegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'username_tiktok' => [
+            'tiktok_username' => [
                 'required',
                 'string',
                 'max:100',

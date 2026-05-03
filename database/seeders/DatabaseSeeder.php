@@ -32,6 +32,10 @@ class DatabaseSeeder extends Seeder
             'is_claimed' => true,
         ]);
 
+        User::create([
+            'username' => 'testaffiliate2',
+        ]);
+
         // $this->call([
 
         // ]);

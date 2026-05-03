@@ -9,7 +9,7 @@
         <form action="{{ route('login.verify-password') }}" method="POST">
             @csrf
             <div class="form-group">
-                <x-atoms.label value="Password" />
+                <x-atoms.label value="Kata Sandi" />
                 <x-atoms.input type="password" name="password" placeholder="••••••••" required />
             </div>
 

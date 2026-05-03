@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ClaimRequest;
 use App\Http\Requests\ForgotPasswordRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
@@ -34,17 +35,13 @@ class AuthController extends Controller
     {
         $validatedData = $request->validated();
         $this->authService->register($validatedData);
-        
-        return redirect('/login');
+
+        return redirect('/login')->with('success', 'Terima Kasih, Anda akan kami hubungi!');
     }
 
     public function showUsername()
     {
         return view('auth.check-username');
-    }
-    public function showPassword()
-    {
-        return view('auth.check-password');
     }
     public function verifyUsername(UsernameRequest $request)
     {
@@ -63,6 +60,10 @@ class AuthController extends Controller
                 session(['login_username' => $result['data']['username']]);
                 return redirect()->route('login.password')->with('info', $result['message']);
         }
+    }
+    public function showPassword()
+    {
+        return view('auth.check-password');
     }
     public function verifyPassword(LoginRequest $request)
     {
@@ -87,6 +88,15 @@ class AuthController extends Controller
         return back()->withErrors([
             'password' => 'Password yang Anda masukkan salah.',
         ]);
+    }
+    public function showFormClaim(Request $request)
+    {
+        $username = session('claim_username');
+        return view('auth.claim-account',compact('username'));
+    }
+    public function claim(ClaimRequest $request)
+    {
+        return;
     }
 
     public function logout(Request $request)
