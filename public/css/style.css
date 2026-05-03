@@ -116,15 +116,20 @@ body::before {
     flex-direction: column;
     padding: 24px 18px;
     z-index: 100;
-    overflow-y: auto;
-    overflow-x: hidden;
+    overflow: hidden;
     transition:
         transform 0.4s var(--ease-smooth),
         box-shadow 0.3s;
     scrollbar-width: none;
 }
+.sidebar-body {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: none;
+}
 
-.sidebar::-webkit-scrollbar {
+.sidebar-body::-webkit-scrollbar {
     display: none;
 }
 
@@ -142,15 +147,9 @@ body::before {
     width: 40px;
     height: 40px;
     min-width: 40px;
-    background: linear-gradient(135deg, var(--primary-blue), #60a5fa);
-    border-radius: var(--radius-lg);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
-    font-weight: 800;
-    font-size: 18px;
-    box-shadow: 0 8px 20px var(--primary-blue-glow);
 }
 
 .brand-text {

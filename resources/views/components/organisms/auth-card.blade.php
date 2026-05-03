@@ -9,8 +9,8 @@
             </div>
         @else
             <div class="auth-brand">
-                <div class="brand-icon">L</div>
-                <span class="brand-text">LedgerFlow</span>
+                <img src="{{ asset('img\logo.png') }}" class="brand-icon" alt="Logo">
+                <span class="brand-text">Affiliate</span>
             </div>
         @endif
         

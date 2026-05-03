@@ -13,7 +13,6 @@
         </button>
         @endif
         
-        <x-atoms.search-input placeholder="Search transactions, invoices..." />
     </div>
 
     <div class="header-actions">
@@ -24,9 +23,8 @@
 
         <x-molecules.dropdown>
             <x-slot:trigger>
-                <div class="company-dropdown">
-                    <span class="company-name">PT Maju Jaya</span>
-                    <x-atoms.icon name="chevron-down" class="company-arrow" style="width: 14px; height: 14px;" />
+                <div class="header-btn">
+                    <x-atoms.icon name="profile" style="width: 28px; height: 28px;"/>
                 </div>
             </x-slot:trigger>
 
@@ -46,7 +44,6 @@
             </form>
         </x-molecules.dropdown>
 
-        <x-atoms.avatar initials="JD" />
     </div>
     @endif
 </header>
