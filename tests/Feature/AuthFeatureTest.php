@@ -2,6 +2,10 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Auth\Notifications\ResetPassword as ResetPasswordNotification;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use App\Models\User;
@@ -112,5 +116,52 @@ class AuthFeatureTest extends TestCase
         
         
         $response->assertSessionHas('login_username', 'ridwan_valid');
+    }
+    public function test_user_can_request_password_reset_link()
+    {
+        Notification::fake();
+
+        $user = User::factory()->create([
+            'email' => 'ridwan_affiliate@example.com'
+        ]);
+
+        $response = $this->post('/forgot-password', [
+            'email' => 'ridwan_affiliate@example.com',
+        ]);
+
+        $response->assertStatus(302);
+        
+        $response->assertSessionHas('status'); 
+
+        Notification::assertSentTo(
+            [$user], ResetPasswordNotification::class
+        );
+    }    public function test_system_rejects_unregistered_email_for_password_reset()
+    {
+        $response = $this->post('/forgot-password', [
+            'email' => 'email_tidak_dikenal@example.com',
+        ]);
+
+        $response->assertStatus(302);
+        $response->assertSessionHasErrors('email');
+    }
+    public function test_user_can_reset_password_with_valid_token()
+    {
+        $user = User::factory()->create([
+            'email' => 'ridwan_affiliate@example.com',
+            'password' => bcrypt('password_lama_123'),
+        ]);
+
+        $token = Password::broker()->createToken($user);
+
+        $response = $this->post('/reset-password', [
+            'token' => $token,
+            'email' => 'ridwan_affiliate@example.com',
+            'password' => 'PasswordBaruEleanor123!',
+            'password_confirmation' => 'PasswordBaruEleanor123!',
+        ]);
+        $response->assertStatus(302); 
+        
+        $this->assertTrue(Hash::check('PasswordBaruEleanor123!', $user->fresh()->password));
     }
 }
