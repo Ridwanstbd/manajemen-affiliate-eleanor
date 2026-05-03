@@ -1596,7 +1596,7 @@ body.role-affiliator .search-global {
     display: none;
 }
 
-@media (min-width: 402px) {
+@media (min-width: 576px) {
     body.role-affiliator .stats-container {
         grid-template-columns: 1fr 1fr;
     }
