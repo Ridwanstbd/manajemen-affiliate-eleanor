@@ -122,21 +122,32 @@ class AuthFeatureTest extends TestCase
         Notification::fake();
 
         $user = User::factory()->create([
-            'email' => 'ridwan_affiliate@example.com'
-        ]);
-
-        $response = $this->post('/forgot-password', [
+            'username' => 'ridwan_lupa_sandi',
             'email' => 'ridwan_affiliate@example.com',
+            'role' => 'AFFILIATOR',
+            'is_claimed' => true,
         ]);
 
+        $this->assertDatabaseHas('users', [
+            'email' => 'ridwan_affiliate@example.com',
+            'username' => 'ridwan_lupa_sandi'
+        ]);
+
+        $response = $this->withSession(['login_username' => 'ridwan_lupa_sandi'])
+                         ->post('/forgot-password', [
+                             'email' => 'ridwan_affiliate@example.com',
+                             'username' => 'ridwan_lupa_sandi',
+                         ]);
+
+        $response->assertSessionHasNoErrors();
         $response->assertStatus(302);
-        
         $response->assertSessionHas('status'); 
 
         Notification::assertSentTo(
             [$user], ResetPasswordNotification::class
         );
-    }    public function test_system_rejects_unregistered_email_for_password_reset()
+    }
+        public function test_system_rejects_unregistered_email_for_password_reset()
     {
         $response = $this->post('/forgot-password', [
             'email' => 'email_tidak_dikenal@example.com',
@@ -148,20 +159,26 @@ class AuthFeatureTest extends TestCase
     public function test_user_can_reset_password_with_valid_token()
     {
         $user = User::factory()->create([
+            'username' => 'ridwan_reset_sandi',
             'email' => 'ridwan_affiliate@example.com',
             'password' => bcrypt('password_lama_123'),
+            'role' => 'AFFILIATOR',
+            'is_claimed' => true,
         ]);
 
         $token = Password::broker()->createToken($user);
 
-        $response = $this->post('/reset-password', [
-            'token' => $token,
-            'email' => 'ridwan_affiliate@example.com',
-            'password' => 'PasswordBaruEleanor123!',
-            'password_confirmation' => 'PasswordBaruEleanor123!',
-        ]);
+        $response = $this->withSession(['login_username' => 'ridwan_reset_sandi'])
+                         ->post('/reset-password', [
+                             'token' => $token,
+                             'email' => 'ridwan_affiliate@example.com',
+                             'username' => 'ridwan_reset_sandi',
+                             'password' => 'PasswordBaruEleanor123!',
+                             'password_confirmation' => 'PasswordBaruEleanor123!',
+                         ]);
+
+        $response->assertSessionHasNoErrors();
         $response->assertStatus(302); 
-        
         $this->assertTrue(Hash::check('PasswordBaruEleanor123!', $user->fresh()->password));
     }
 }
