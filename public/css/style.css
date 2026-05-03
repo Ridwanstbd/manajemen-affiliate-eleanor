@@ -511,8 +511,8 @@ body::before {
 
 /* ─── BUTTON STATES ─── */
 .btn:active {
-    transform: translateY(1px) !important;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+    transform: translateY(1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .btn:disabled,
@@ -520,8 +520,8 @@ body::before {
     opacity: 0.6;
     cursor: not-allowed;
     pointer-events: none;
-    transform: none !important;
-    box-shadow: none !important;
+    transform: none;
+    box-shadow: none;
 }
 
 /* ─── BUTTON VARIANTS ─── */
@@ -797,7 +797,7 @@ body::before {
 }
 
 .stat-card:hover {
-    transform: translateY(-12px) !important;
+    transform: translateY(-12px);
     box-shadow:
         var(--glass-shadow-lg),
         0 0 40px rgba(59, 130, 246, 0.1);
@@ -1271,7 +1271,7 @@ textarea.form-control {
     font-weight: 800;
     text-align: center;
     color: #0f172a;
-    border: 2px solid #e8e9bb !important;
+    border: 2px solid #e8e9bb;
 }
 
 input[type="date"].form-control {
@@ -1446,10 +1446,10 @@ select.form-control {
     .stat-card:nth-child(2),
     .stat-card:nth-child(3),
     .stat-card:nth-child(4) {
-        transform: none !important;
+        transform: none;
     }
     .stat-card:hover {
-        transform: translateY(-8px) !important;
+        transform: translateY(-8px);
     }
 }
 
@@ -1565,9 +1565,9 @@ select.form-control {
         min-width: 36px;
     }
 }
-.affiliate-main {
+.affiliator-main {
     width: 100%;
-    max-width: 576px;
+    max-width: 420px;
     margin: 0 auto;
 
     min-height: 100vh;
@@ -1687,15 +1687,15 @@ body.role-affiliator .search-global {
     }
 }
 .back-btn {
-    border: none !important;
-    background: transparent !important;
-    box-shadow: none !important;
-    color: var(--text-primary) !important;
+    border: none;
+    background: transparent;
+    box-shadow: none;
+    color: var(--text-primary);
 }
 
 .back-btn:hover {
-    background: rgba(0, 0, 0, 0.04) !important;
-    transform: translateX(-3px) !important;
+    background: rgba(0, 0, 0, 0.04);
+    transform: translateX(-3px);
 }
 
 .subpage-title {
