@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Afiliator;
+namespace App\Http\Controllers\Affiliator;
 
 use App\Http\Controllers\Controller;
 use App\Services\Affiliator\DashboardService;
+use Illuminate\Http\Request;
 
 class MainController extends Controller
 {
@@ -18,6 +19,6 @@ class MainController extends Controller
     {
         $dashboardData = $this->dashboardService->getDashboardStats();
 
-        return view('pages.affiliator.dashboard', $dashboardData);
+        return view('pages.dashboard', $dashboardData);
     }
 }
