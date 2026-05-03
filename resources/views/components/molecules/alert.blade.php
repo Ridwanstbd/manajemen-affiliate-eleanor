@@ -29,34 +29,30 @@
 @endphp
 
 @if($alertType)
-<div id="custom-alert-overlay" class="alert-overlay">
-    <div class="alert-box alert-{{ $alertType }}">
-        <div class="alert-content">
-            <h3 class="alert-title">{{ $alertTitle }}</h3>
-            <p class="alert-text">{{ $alertMessage }}</p>
-        </div>
-        <button class="alert-button alert-btn-{{ $alertType }}" onclick="closeAlert()">Mengerti</button>
+<div id="custom-alert-box" class="alert-box alert-{{ $alertType }}">
+    <div class="alert-content">
+        <h3 class="alert-title">{{ $alertTitle }}</h3>
+        <p class="alert-text">{{ $alertMessage }}</p>
     </div>
+    <button class="alert-button alert-btn-{{ $alertType }}" onclick="closeAlert()">Mengerti</button>
 </div>
 
 <script>
     function closeAlert() {
-        const overlay = document.getElementById('custom-alert-overlay');
-        const alertBox = overlay.querySelector('.alert-box');
+        const alertBox = document.getElementById('custom-alert-box');
         
-        if(overlay) {
-            alertBox.style.animation = 'popOutAlert 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards';
-            overlay.style.transition = 'opacity 0.3s ease';
-            overlay.style.opacity = '0';
+        if(alertBox) {
+            alertBox.style.animation = 'popOutAlertFixed 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards';
             
             setTimeout(() => {
-                overlay.style.display = 'none';
+                alertBox.style.display = 'none';
             }, 300);
         }
     }
+
     document.addEventListener('DOMContentLoaded', function() {
-        const overlay = document.getElementById('custom-alert-overlay');
-        if(overlay) {
+        const alertBox = document.getElementById('custom-alert-box');
+        if(alertBox) {
             setTimeout(() => {
                 closeAlert();
             }, 3000);

@@ -8,8 +8,8 @@
     --rose: #f43f5e;
     --rose-soft: rgba(244, 63, 94, 0.1);
     --bg-canvas: #eef2f7;
-    --glass-bg: rgba(255, 255, 255, 0.88);
-    --glass-border: rgba(255, 255, 255, 0.65);
+    --glass-bg: rgba(255, 255, 255, 0.33);
+    --glass-border: rgba(255, 255, 255, 0.25);
     --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.07);
     --glass-shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.12);
     --text-primary: #0f172a;
@@ -1711,47 +1711,39 @@ body.role-affiliator .search-global {
     }
 }
 
-.alert-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.6);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-    max-width: 576px;
-    margin: 0 auto;
-}
-
 .alert-box {
-    background: rgba(255, 255, 255, 0.15);
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+
+    background: var(--glass-bg);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: 1px solid var(--glass-border);
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+
     padding: 24px;
     border-radius: 16px;
     width: 85%;
     max-width: 320px;
     text-align: center;
-    animation: popInAlert 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    animation: popInAlertFixed 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)
+        forwards;
 }
-
 .alert-title {
     margin: 0 0 12px 0;
     font-size: 22px;
     font-weight: 700;
-    color: #ffffff;
+    color: var(--primary-blue);
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .alert-text {
     margin: 0 0 24px 0;
     font-size: 15px;
-    color: #f1f1f1;
+    color: #000000;
     line-height: 1.5;
 }
 
@@ -1786,23 +1778,24 @@ body.role-affiliator .search-global {
     color: #fff;
 }
 
-@keyframes popInAlert {
+@keyframes popInAlertFixed {
     0% {
-        transform: scale(0.8);
+        transform: translate(-50%, -50%) scale(0.8);
         opacity: 0;
     }
     100% {
-        transform: scale(1);
+        transform: translate(-50%, -50%) scale(1);
         opacity: 1;
     }
 }
-@keyframes popOutAlert {
+
+@keyframes popOutAlertFixed {
     0% {
-        transform: scale(1);
+        transform: translate(-50%, -50%) scale(1);
         opacity: 1;
     }
     100% {
-        transform: scale(0.8);
+        transform: translate(-50%, -50%) scale(0.8);
         opacity: 0;
     }
 }
