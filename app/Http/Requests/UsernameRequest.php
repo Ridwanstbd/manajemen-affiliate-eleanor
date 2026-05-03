@@ -24,4 +24,12 @@ class UsernameRequest extends FormRequest
             'username' => 'required|string|max:100'
         ];
     }
+    public function messages(): array
+    {
+        return [
+            'username.required' => 'Username wajib diisi untuk melanjutkan.',
+            'username.string'   => 'Format username tidak valid.',
+            'username.max'      => 'Username tidak boleh lebih dari 100 karakter.',
+        ];
+    }
 }

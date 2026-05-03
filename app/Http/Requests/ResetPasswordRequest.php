@@ -22,7 +22,23 @@ class ResetPasswordRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'token'    => 'required',
+            'email'    => 'required|email|max:100',
+            'password' => 'required|string|min:8|confirmed',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'token.required'     => 'Token pemulihan kata sandi tidak valid atau telah kedaluwarsa.',
+            'email.required'     => 'Alamat email wajib diisi.',
+            'email.email'        => 'Format alamat email tidak valid.',
+            'email.max'          => 'Alamat email maksimal 100 karakter.',
+            'password.required'  => 'Kata sandi baru wajib diisi.',
+            'password.string'    => 'Format kata sandi tidak valid.',
+            'password.min'       => 'Kata sandi baru minimal harus terdiri dari 8 karakter.',
+            'password.confirmed' => 'Konfirmasi kata sandi tidak cocok. Silakan ketik ulang.',
         ];
     }
 }

@@ -25,4 +25,11 @@ class LoginRequest extends FormRequest
             'password' => 'required|min:8'
         ];
     }
+    public function messages(): array
+    {
+        return [
+            'password.required' => 'Kata sandi wajib diisi.',
+            'password.string'   => 'Format kata sandi tidak valid.',
+        ];
+    }
 }
