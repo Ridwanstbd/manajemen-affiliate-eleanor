@@ -123,38 +123,34 @@ class AuthFeatureTest extends TestCase
 
         $user = User::factory()->create([
             'username' => 'ridwan_lupa_sandi',
-            'email' => 'ridwan_affiliate@example.com',
-            'role' => 'AFFILIATOR',
+            'email'    => 'ridwan_affiliate@example.com',
             'is_claimed' => true,
         ]);
 
-        $this->assertDatabaseHas('users', [
-            'email' => 'ridwan_affiliate@example.com',
-            'username' => 'ridwan_lupa_sandi'
-        ]);
-
         $response = $this->withSession(['login_username' => 'ridwan_lupa_sandi'])
-                         ->post('/forgot-password', [
-                             'email' => 'ridwan_affiliate@example.com',
-                             'username' => 'ridwan_lupa_sandi',
-                         ]);
+            ->post('/forgot-password', [
+                'email'    => 'ridwan_affiliate@example.com',
+                'username' => 'ridwan_lupa_sandi',
+            ]);
 
         $response->assertSessionHasNoErrors();
         $response->assertStatus(302);
-        $response->assertSessionHas('status'); 
+        $response->assertSessionHas('status');
 
         Notification::assertSentTo(
             [$user], ResetPasswordNotification::class
         );
     }
-        public function test_system_rejects_unregistered_email_for_password_reset()
+    public function test_system_rejects_unregistered_email_for_password_reset()
     {
-        $response = $this->post('/forgot-password', [
-            'email' => 'email_tidak_dikenal@example.com',
-        ]);
+        $response = $this->withSession(['login_username' => 'user_tidak_dikenal'])
+            ->post('/forgot-password', [
+                'email'    => 'email_tidak_dikenal@example.com',
+                'username' => 'user_tidak_dikenal', 
+            ]);
 
         $response->assertStatus(302);
-        $response->assertSessionHasErrors('email');
+        $response->assertSessionHasErrors('email'); 
     }
     public function test_user_can_reset_password_with_valid_token()
     {
