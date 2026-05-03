@@ -22,7 +22,7 @@ class AuthController extends Controller
         $this->authService = $authService;
     }
 
-    public function showRegister(Request $request)
+    public function showAccessRequestForm(Request $request)
     {
         $username = null;
 
@@ -31,7 +31,7 @@ class AuthController extends Controller
         }
         return view('auth.register', compact('username'));
     }
-    public function register(RegisterRequest $request)
+    public function submitAccessRequest(RegisterRequest $request)
     {
         $validatedData = $request->validated();
         $this->authService->register($validatedData);
@@ -50,6 +50,7 @@ class AuthController extends Controller
 
         switch ($result['action']) {
             case 'redirect_to_request_access':
+                session(['login_username' => $validatedData['username']]);
                 return redirect()->route('access.request')->with('info', $result['message']);
                 
             case 'redirect_to_claim_form':

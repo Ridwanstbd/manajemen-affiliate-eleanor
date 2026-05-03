@@ -63,4 +63,54 @@ class AuthFeatureTest extends TestCase
         
         $response->assertRedirect('/claim'); 
     }
+    public function test_verify_username_redirects_to_access_request_if_not_found()
+    {
+        $response = $this->post('/verify-username', [
+            'username' => 'user_tidak_dikenal',
+        ]);
+
+        $response->assertStatus(302);
+        
+        $response->assertSessionHas('login_username', 'user_tidak_dikenal');
+        
+        $response->assertRedirect('/request-access'); 
+    }
+
+    public function test_guest_can_submit_access_request_form()
+    {
+        $response = $this->post('/request-access', [
+            'tiktok_username' => 'ridwan_tiktok',
+            'phone_number' => '081234567890',
+            'email' => 'ridwan@example.com',
+        ]);
+
+        $response->assertStatus(302); 
+        $this->assertDatabaseHas('system_access_requests', [
+            'tiktok_username' => 'ridwan_tiktok',
+            'email' => 'ridwan@example.com',
+            'status' => 'PENDING',
+        ]);
+    }
+
+    public function test_user_cannot_login_with_incorrect_password()
+    {
+        $user = User::factory()->create([
+            'username' => 'ridwan_valid',
+            'password' => bcrypt('password_yang_benar'),
+            'is_claimed' => true,
+            'role' => 'AFFILIATOR' 
+        ]);
+
+        $response = $this->withSession(['login_username' => 'ridwan_valid'])
+                         ->post('/verify-password', [
+                             'password' => 'password_yang_salah',
+                         ]);
+        $response->assertStatus(302);
+        $this->assertGuest();
+        
+        $response->assertSessionHasErrors(); 
+        
+        
+        $response->assertSessionHas('login_username', 'ridwan_valid');
+    }
 }

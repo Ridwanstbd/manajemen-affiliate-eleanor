@@ -28,8 +28,8 @@ Route::middleware('guest')->group(function () {
     Route::get('/check-password',[AuthController::class,'showPassword'])->name('login.password');
     Route::post('/verify-password',[AuthController::class,'verifyPassword'])->name('login.verify-password');
     
-    Route::get('/register',[AuthController::class,'showRegister'])->name('access.request');
-    Route::post('/register',[AuthController::class,'register'])->name('access.send-request');
+    Route::get('/request-access',[AuthController::class,'showAccessRequestForm'])->name('access.request');
+    Route::post('/request-access',[AuthController::class,'submitAccessRequest'])->name('access.send-request');
     
     Route::get('/claim', [AuthController::class,'showFormClaim'])->name('account.claim');
     Route::post('/claim',[AuthController::class,'claim'])->name('account.send-claim');
