@@ -2,23 +2,20 @@
 
 namespace App\Services;
 
+use App\Models\SystemAccessRequest;
 use App\Models\User;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 
 class AuthService{
-    public function register(array $data): User
+    public function register(array $data): SystemAccessRequest
     {
-        $user = User::create([
-            'name' => $data['name'],
+        $user = SystemAccessRequest::create([
+            'username_tiktok' => $data['name'],
             'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-            'role' => 'user', 
+            'phone_number' => $data['phone_number'],
         ]);
-
-        event(new Registered($user));
 
         return $user;
     }

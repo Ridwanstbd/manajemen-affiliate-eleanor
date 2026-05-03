@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ForgotPasswordRequest;
 use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\ResetPasswordRequest;
 use App\Http\Requests\UsernameRequest;
+use App\Models\User;
 use App\Services\AuthService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
@@ -19,9 +21,21 @@ class AuthController extends Controller
         $this->authService = $authService;
     }
 
-    public function showRegister()
+    public function showRegister(Request $request)
     {
-        return view('auth.register');
+        $username = null;
+
+        if ($request->session()->has('login_username')) {
+            $username = $request->session()->get('login_username');
+        }
+        return view('auth.register', compact('username'));
+    }
+    public function register(RegisterRequest $request)
+    {
+        $validatedData = $request->validated();
+        $this->authService->register($validatedData);
+        
+        return redirect('/login');
     }
 
     public function showUsername()
@@ -84,13 +98,25 @@ class AuthController extends Controller
         return redirect('/login');
     }
 
-    public function showForgotPassword()
+    public function showForgotPassword(Request $request)
     {
-        return view('auth.forgot-password');
+        $email = null;
+
+        if ($request->session()->has('login_username')) {
+            $username = $request->session()->get('login_username');
+            
+            $user = User::where('username', $username)->first();
+            
+            if ($user) {
+                $email = $user->email;
+            }
+        }
+        return view('auth.forgot-password', compact('email'));
     }
 
     public function sendResetLink(ForgotPasswordRequest $request)
     {
+        session()->forget('login_username');
         $status = $this->authService->sendResetLink($request->validated());
 
         return $status === Password::RESET_LINK_SENT

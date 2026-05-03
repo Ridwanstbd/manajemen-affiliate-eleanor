@@ -1,15 +1,11 @@
 @extends('layouts.auth')
-@section('title', 'Reset Password - LedgerFlow')
+@section('title', 'Set Ulang Kata Sandi')
 
 @section('content')
     <x-organisms.auth-card 
-        title="Set new password" 
-        subtitle="Your new password must be different from previous used passwords."
-        :useIcon="true"
+        title="Halaman Aman" 
+        subtitle="Kata sandi baru Anda harus berbeda dari kata sandi yang pernah Anda gunakan sebelumnya."
     >
-        <x-slot name="iconSvg">
-            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-        </x-slot>
 
         <form action="{{ route('password.update') }}" method="POST">
             @csrf
@@ -17,28 +13,28 @@
             <input type="hidden" name="token" value="{{ request()->route('token') }}">
             
             <div class="form-group">
-                <x-atoms.label value="Email Address" />
+                <x-atoms.label value="Email" />
                 <x-atoms.input type="email" name="email" value="{{ old('email', request()->email) }}" required readonly />
             </div>
 
             <div class="form-group">
-                <x-atoms.label value="Password" />
+                <x-atoms.label value="Kata Sandi" />
                 <x-atoms.input type="password" name="password" placeholder="••••••••" required />
             </div>
 
             <div class="form-group">
-                <x-atoms.label value="Confirm Password" />
+                <x-atoms.label value="Konfirmasi Kata Sandi" />
                 <x-atoms.input type="password" name="password_confirmation" placeholder="••••••••" required />
             </div>
 
             <x-atoms.button variant="primary" type="submit" class="btn-block" style="margin-top: 8px;">
-                Reset Password
+                Set Ulang
             </x-atoms.button>
         </form>
 
         <x-slot name="footer">
             <a href="{{ route('login') }}" class="text-link" style="display: inline-flex; align-items: center; gap: 4px;">
-                ← Back to log in
+                ← Kembali ke log in
             </a>
         </x-slot>
     </x-organisms.auth-card>

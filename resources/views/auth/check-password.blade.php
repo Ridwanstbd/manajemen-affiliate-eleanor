@@ -1,5 +1,5 @@
 @extends('layouts.auth')
-@section('title', 'Cek Kata Sandi - Affiliate Eleanor')
+@section('title', 'Cek Kata Sandi ')
 
 @section('content')
     <x-organisms.auth-card 

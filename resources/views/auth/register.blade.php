@@ -1,35 +1,35 @@
 @extends('layouts.auth')
-@section('title', 'Sign Up - LedgerFlow')
+@section('title', 'Daftar')
 
 @section('content')
     <x-organisms.auth-card 
-        title="Create an account" 
-        subtitle="Start managing your finances today."
+        title="Daftar Affiliator" 
+        subtitle="Pendaftaran Mitra Eleanor"
     >
-        <form action="{{ route('register') }}" method="POST">
+        <form action="{{ route('access.send-request') }}" method="POST">
             @csrf
             <div class="form-group">
-                <x-atoms.label value="Full Name" />
-                <x-atoms.input type="text" name="name" placeholder="John Doe" required />
+                <x-atoms.label value="Username TikTok" />
+                <x-atoms.input type="text" name="username_tiktok" placeholder="mazzprifarm" required />
             </div>
             
             <div class="form-group">
-                <x-atoms.label value="Email Address" />
+                <x-atoms.label value="Email" />
                 <x-atoms.input type="email" name="email" placeholder="name@company.com" required />
             </div>
             
             <div class="form-group">
-                <x-atoms.label value="Password" />
-                <x-atoms.input type="password" name="password" placeholder="Create a password" required />
+                <x-atoms.label value="Nomor Telepon WA aktif" />
+                <x-atoms.input type="text" name="phone_number" placeholder="08123456789" required />
             </div>
 
             <x-atoms.button variant="primary" type="submit" class="btn-block" style="margin-top: 8px;">
-                Create Account
+                Daftar
             </x-atoms.button>
         </form>
 
         <x-slot name="footer">
-            Already have an account? <a href="{{ route('login') }}" class="text-link">Sign in</a>
+            Pastikan data benar-benar milik anda
         </x-slot>
     </x-organisms.auth-card>
 @endsection
