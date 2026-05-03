@@ -53,9 +53,11 @@
     document.addEventListener('DOMContentLoaded', function() {
         const alertBox = document.getElementById('custom-alert-box');
         if(alertBox) {
-            setTimeout(() => {
-                closeAlert();
-            }, 3000);
+            @if($alertType !== 'error')
+                setTimeout(() => {
+                    closeAlert();
+                }, 3000);
+            @endif
         }
     });
 </script>
