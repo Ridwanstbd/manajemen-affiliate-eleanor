@@ -1621,8 +1621,9 @@ body.role-affiliator .search-global {
     position: fixed;
     bottom: 20px;
     max-width: 560px;
-    left: 15px;
-    right: 15px;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
     height: 70px;
     background: var(--glass-bg);
     backdrop-filter: blur(24px) saturate(180%);
@@ -1703,5 +1704,9 @@ body.role-affiliator .search-global {
     }
     body.role-affiliator.is-subpage .main {
         padding-bottom: 20px;
+    }
+    .bottom-nav {
+        left: 15px;
+        right: 15px;
     }
 }
