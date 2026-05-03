@@ -53,11 +53,11 @@ class AuthController extends Controller
                 return redirect()->route('access.request')->with('info', $result['message']);
                 
             case 'redirect_to_claim_form':
-                session(['claim_username' => $result['data']['username']]);
+                session(['claim_username' => $validatedData['username']]);
                 return redirect()->route('account.claim')->with('info', $result['message']);
                 
             case 'redirect_to_password_input':
-                session(['login_username' => $result['data']['username']]);
+                session(['login_username' => $validatedData['username']]);
                 return redirect()->route('login.password')->with('info', $result['message']);
         }
     }

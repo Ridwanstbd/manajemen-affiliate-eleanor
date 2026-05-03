@@ -59,7 +59,7 @@ class AuthFeatureTest extends TestCase
 
         $response->assertStatus(302);
         
-        $response->assertSessionHas('login_username', 'affiliator_baru');
+        $response->assertSessionHas('claim_username', 'affiliator_baru');
         
         $response->assertRedirect('/claim'); 
     }
