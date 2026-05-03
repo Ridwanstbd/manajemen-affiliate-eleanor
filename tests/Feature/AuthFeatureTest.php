@@ -27,19 +27,40 @@ class AuthFeatureTest extends TestCase
 
     public function test_admin_can_login_and_redirect_to_dashboard()
     {
+        $this->withoutExceptionHandling();
+
         $admin = User::factory()->create([
             'username' => 'admin_ridwan',
             'password' => bcrypt('secret123'),
-            'role' => 'ADMIN',
+            'role' => 'ADMINISTRATOR',
+            'is_claimed' => true,
         ]);
 
         $response = $this->withSession(['login_username' => 'admin_ridwan'])
-                         ->post('/login', [
+                         ->post('/verify-password', [
                              'password' => 'secret123',
                          ]);
 
         $this->assertAuthenticatedAs($admin);
         $response->assertRedirect('/dashboard');
         $response->assertSessionMissing('login_username');
+    }
+
+    public function test_verify_username_redirects_to_claim_form_if_not_claimed()
+    {
+        $user = User::factory()->create([
+            'username' => 'affiliator_baru',
+            'is_claimed' => false, 
+        ]);
+
+        $response = $this->post('/verify-username', [
+            'username' => 'affiliator_baru',
+        ]);
+
+        $response->assertStatus(302);
+        
+        $response->assertSessionHas('login_username', 'affiliator_baru');
+        
+        $response->assertRedirect('/claim'); 
     }
 }
