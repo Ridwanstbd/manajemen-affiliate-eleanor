@@ -11,6 +11,7 @@ use App\Http\Requests\UsernameRequest;
 use App\Models\User;
 use App\Services\AuthService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 
 class AuthController extends Controller
@@ -145,8 +146,15 @@ class AuthController extends Controller
     public function sendResetLink(ForgotPasswordRequest $request)
     {
         session()->forget('login_username');
-        $status = $this->authService->sendResetLink($request->validated());
+        $user = User::where('username', session('login_username'))->first();
 
+        if (!$user) {
+            return back()->withErrors(['email' => 'Sesi username tidak valid atau tidak ditemukan.']);
+        }
+
+        $status = Password::broker()->sendResetLink([
+            'email' => $user->email
+        ]);
         return $status === Password::RESET_LINK_SENT
             ? back()->with('status', __($status))
             : back()->withErrors(['email' => __($status)]);
@@ -159,8 +167,16 @@ class AuthController extends Controller
 
     public function resetPassword(ResetPasswordRequest $request)
     {
-        $status = $this->authService->resetPassword($request->validated());
+        $status = Password::broker()->reset(
+        $request->only('email', 'password', 'password_confirmation', 'token'),
+        function ($user, $password) {
+                $user->forceFill([
+                    'password' => Hash::make($password)
+                ])->setRememberToken(\Illuminate\Support\Str::random(60));
 
+                $user->save();
+            }
+        );
         return $status === Password::PASSWORD_RESET
             ? redirect()->route('login')->with('status', __($status))
             : back()->withErrors(['email' => __($status)]);
