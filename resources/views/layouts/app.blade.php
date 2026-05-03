@@ -58,5 +58,6 @@
 	<script src="https://cdn.jsdelivr.net/npm/shepherd.js@11.0.1/dist/js/shepherd.min.js"></script>
     @stack('scripts')
     <script src="{{ asset('js/scripts.js') }}"></script>
+    <x-molecules.alert />
 </body>
 </html>
