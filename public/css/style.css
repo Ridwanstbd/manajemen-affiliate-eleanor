@@ -1628,10 +1628,11 @@ body.role-affiliator .search-global {
     box-shadow: var(--glass-shadow-lg);
     display: flex;
     align-items: center;
-    justify-content: space-around;
     padding: 0 10px;
     z-index: 1000;
     transition: transform 0.4s var(--ease-smooth);
+    justify-content: space-between;
+    flex-shrink: 0;
 }
 
 .nav-item-bottom {
@@ -1664,12 +1665,6 @@ body.role-affiliator .search-global {
 
 .nav-item-bottom.active .nav-icon {
     transform: translateY(-4px);
-}
-
-@media (min-width: 861px) {
-    .bottom-nav {
-        display: none;
-    }
 }
 
 @media (max-width: 860px) {
