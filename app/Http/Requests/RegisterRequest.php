@@ -22,7 +22,49 @@ class RegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'username_tiktok' => 'required'
+            'username_tiktok' => [
+                'required',
+                'string',
+                'max:100',
+                'not_regex:/^@/',   
+                'regex:/^\S*$/u',   
+            ],
+            'email' => [
+                'required',
+                'string',
+                'email',           
+                'max:100',      
+                'unique:system_access_requests,email', 
+            ],
+            'phone_number' => [
+                'required',
+                'string',
+                'regex:/^[0-9]+$/',
+                'min:9',
+                'max:14',    
+                'unique:system_access_requests,phone_number',
+            ],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'username_tiktok.required'  => 'Username TikTok wajib diisi.',
+            'username_tiktok.max'       => 'Username TikTok maksimal 100 karakter.',
+            'username_tiktok.not_regex' => 'Username TikTok tidak boleh diawali dengan simbol @.',
+            'username_tiktok.regex'     => 'Username TikTok tidak boleh mengandung spasi.',
+
+            'email.required'            => 'Alamat email wajib diisi.',
+            'email.email'               => 'Format alamat email tidak valid.',
+            'email.max'                 => 'Alamat email maksimal 100 karakter.',
+            'email.unique'              => 'Email ini sudah pernah digunakan untuk mendaftar.',
+
+            'phone_number.required'     => 'Nomor HP/WhatsApp wajib diisi.',
+            'phone_number.regex'        => 'Nomor HP hanya boleh berisi angka.',
+            'phone_number.min'          => 'Nomor HP minimal terdiri dari 9 angka.',
+            'phone_number.max'          => 'Nomor HP maksimal terdiri dari 14 angka.',
+            'phone_number.unique'       => 'Nomor HP ini sudah pernah digunakan untuk mendaftar.',
         ];
     }
 }
