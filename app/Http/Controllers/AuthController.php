@@ -96,7 +96,24 @@ class AuthController extends Controller
     }
     public function claim(ClaimRequest $request)
     {
-        return;
+        $validatedData = $request->validated();
+        $username = session('claim_username');
+        $password = $validatedData['password'];
+        $this->authService->claim($username, $validatedData);
+
+        $isAuthenticated = $this->authService->authenticate($username,$password);
+        if ($isAuthenticated)
+        {
+            session()->forget('claim_username');
+            $request->session()->regenerate();
+            $userRole = auth()->user()->role;
+
+            if ($userRole === 'ADMIN' || $userRole === 'ADMINISTRATOR') {
+                return redirect()->intended('/dashboard')->with('success', 'Selamat datang, Administrator!');
+            } elseif ($userRole === 'AFFILIATOR') {
+                return redirect()->intended('/affiliator')->with('success', 'Berhasil Klaim! Selamat datang di dashboard Affiliator.');
+            }
+        }
     }
 
     public function logout(Request $request)
