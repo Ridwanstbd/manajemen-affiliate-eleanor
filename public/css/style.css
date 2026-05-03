@@ -1565,6 +1565,15 @@ select.form-control {
         min-width: 36px;
     }
 }
+.affiliate-main {
+    width: 100%;
+    max-width: 576px;
+    margin: 0 auto;
+
+    min-height: 100vh;
+    background-color: var(--bg-canvas);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+}
 
 body.role-admin .table-responsive {
     width: 100%;
