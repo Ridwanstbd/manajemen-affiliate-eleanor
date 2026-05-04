@@ -32,7 +32,6 @@ class ImportRequest extends FormRequest
             'file_video_list'   => ['required', 'file', 'mimes:xlsx', "regex:$regexPattern"],
         ];
     }
-
     public function withValidator($validator)
     {
         $validator->after(function ($validator) {
@@ -44,12 +43,27 @@ class ImportRequest extends FormRequest
                 'file_video_list'   => 'Transaction_Analysis_Video_List_'
             ];
 
+            $extractedDates = [];
+
             foreach ($expectedPrefixes as $key => $prefix) {
                 if ($this->hasFile($key)) {
                     $filename = $this->file($key)->getClientOriginalName();
+                    
                     if (!str_starts_with($filename, $prefix)) {
                         $validator->errors()->add($key, "Nama file harus diawali dengan $prefix");
                     }
+
+                    if (preg_match('/_(\d{8}-\d{8})\.xlsx$/', $filename, $matches)) {
+                        $extractedDates[] = $matches[1]; 
+                    }
+                }
+            }
+
+            if (count($extractedDates) > 1) {
+                $uniqueDates = array_unique($extractedDates);
+                
+                if (count($uniqueDates) > 1) {
+                    $validator->errors()->add('file_mismatch', 'Gagal memproses! Rentang tanggal pada kelima file Excel tidak sinkron. Pastikan Anda mengunggah 5 file dari periode waktu yang sama persis.');
                 }
             }
         });
