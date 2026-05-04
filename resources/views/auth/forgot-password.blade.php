@@ -8,6 +8,7 @@
     >
         <form action="{{ route('password.email') }}" method="POST">
             @csrf
+            <input type="hidden" name="login_username" value="{{ session('login_username') }}">
             <div class="form-group">
                 <x-atoms.label value="Email Aktif" />
                 <x-atoms.input type="email" name="email" placeholder="name@company.com" value="{{ old('email', $email ?? '') }}" required />

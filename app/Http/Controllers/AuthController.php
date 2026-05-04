@@ -145,7 +145,7 @@ class AuthController extends Controller
 
     public function sendResetLink(ForgotPasswordRequest $request)
     {
-        $sessionUsername = session('login_username');
+        $sessionUsername = $request->input('login_username');
 
         if (!$sessionUsername || $sessionUsername !== $request->username) {
             return back()->withErrors(['default' => 'Sesi username tidak valid atau tidak ditemukan.']);
