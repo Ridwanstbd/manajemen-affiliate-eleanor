@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Services\AuthService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Password;
 
 class AuthController extends Controller
@@ -130,7 +131,7 @@ class AuthController extends Controller
     public function showForgotPassword(Request $request)
     {
         $email = null;
-
+        Log::info('Semua Session:', session()->all());
         if ($request->session()->has('login_username')) {
             $username = $request->session()->get('login_username');
             
