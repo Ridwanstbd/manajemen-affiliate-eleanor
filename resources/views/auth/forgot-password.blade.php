@@ -19,7 +19,7 @@
         </form>
 
         <x-slot name="footer">
-            <a href="{{ url()->previous() }}" class="text-link" style="display: inline-flex; align-items: center; gap: 4px;">
+            <a href="{{ route('login') }}" class="text-link" style="display: inline-flex; align-items: center; gap: 4px;">
                 ← Kembali 
             </a>
         </x-slot>
