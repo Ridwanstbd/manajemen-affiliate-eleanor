@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\ImportController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\Affiliator\MainController as MainAffiliateController;
@@ -69,6 +70,11 @@ Route::middleware(['auth'])->group(function () {
 
     Route::middleware(['role:administrator'])->prefix('dashboard')->group(function () {
         Route::get('/', [MainController::class, 'index'])->name('dashboard');
+
+        Route::get('/import-data/{userId}', [ImportController::class, 'getImportData']);
+        Route::post('/import-data', [ImportController::class, 'importData']);
+
+
         Route::get('/users', [UserController::class, 'index'])->name('users.index');
         Route::get('/users/data', [UserController::class, 'data'])->name('users.data');
         Route::post('/users', [UserController::class, 'store'])->name('users.store');
