@@ -4,63 +4,27 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ImportRequest;
-use App\Models\ImportHistory;
-
-use App\Imports\CoreMetricsImport;
-use App\Imports\CreatorListImport;
-use App\Imports\LiveListImport;
-use App\Imports\ProductListImport;
-use App\Imports\VideoListImport;
-
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
-use Maatwebsite\Excel\Facades\Excel;
+use App\Services\Admin\ImportService;
+use Illuminate\Http\JsonResponse;
 
 class ImportController extends Controller
 {
+    protected $importService;
+
+    public function __construct(ImportService $importService)
+    {
+        $this->importService = $importService;
+    }
+
     public function getImportData()
     {
         return view('pages.admin.import-xlsx');
     }
 
-    public function importData(ImportRequest $request)
+    public function importData(ImportRequest $request): JsonResponse
     {
-        
-        DB::beginTransaction();
-
         try {
-            $sampleFilename = $request->file('file_core_metrics')->getClientOriginalName();
-            preg_match('/_(\d{8})-(\d{8})\.xlsx$/', $sampleFilename, $matches);
-
-            if (!isset($matches[1]) || !isset($matches[2])) {
-                throw new \Exception('Gagal mengekstrak tanggal dari nama file. Format tidak dikenali.');
-            }
-
-            $startDate = Carbon::createFromFormat('Ymd', $matches[1])->format('Y-m-d');
-            $endDate   = Carbon::createFromFormat('Ymd', $matches[2])->format('Y-m-d');
-            $batch = ImportHistory::firstOrCreate(
-                [
-                    'start_date' => $startDate,
-                    'end_date'   => $endDate
-                ],
-                [
-                    'admin_id'    => auth()->id() ?? 1, 
-                    'import_date' => now(),
-                ]
-            );
-            $filesToImport = [
-                'file_core_metrics' => CoreMetricsImport::class,
-                'file_creator_list' => CreatorListImport::class,
-                'file_live_list'    => LiveListImport::class,
-                'file_product_list' => ProductListImport::class,
-                'file_video_list'   => VideoListImport::class,
-            ];
-            foreach ($filesToImport as $inputKey => $importClass) {
-                $file = $request->file($inputKey);
-                Excel::import(new $importClass($batch->id), $file);
-            }
-
-            DB::commit();
+            $this->importService->executeBulkImport($request->allFiles());
 
             return response()->json([
                 'status' => 'success',
@@ -68,7 +32,6 @@ class ImportController extends Controller
             ]);
 
         } catch (\Exception $e) {
-            DB::rollBack();
             return response()->json([
                 'status' => 'error',
                 'message' => 'Terjadi kesalahan saat import: ' . $e->getMessage()
