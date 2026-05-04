@@ -20,7 +20,7 @@ class ImportController extends Controller
 {
     public function getImportData()
     {
-        view('pages.admin.import-xlsx');
+        return view('pages.admin.import-xlsx');
     }
 
     public function importData(ImportRequest $request)
@@ -31,6 +31,10 @@ class ImportController extends Controller
         try {
             $sampleFilename = $request->file('file_core_metrics')->getClientOriginalName();
             preg_match('/_(\d{8})-(\d{8})\.xlsx$/', $sampleFilename, $matches);
+
+            if (!isset($matches[1]) || !isset($matches[2])) {
+                throw new \Exception('Gagal mengekstrak tanggal dari nama file. Format tidak dikenali.');
+            }
 
             $startDate = Carbon::createFromFormat('Ymd', $matches[1])->format('Y-m-d');
             $endDate   = Carbon::createFromFormat('Ymd', $matches[2])->format('Y-m-d');
