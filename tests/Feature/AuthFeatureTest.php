@@ -122,7 +122,6 @@ class AuthFeatureTest extends TestCase
         Notification::fake();
 
         $user = User::factory()->create([
-            'username' => 'ridwan_lupa_sandi',
             'email'    => 'ridwan_affiliate@example.com',
             'is_claimed' => true,
         ]);
@@ -130,7 +129,6 @@ class AuthFeatureTest extends TestCase
         $response = $this->withSession(['login_username' => 'ridwan_lupa_sandi'])
             ->post('/forgot-password', [
                 'email'    => 'ridwan_affiliate@example.com',
-                'username' => 'ridwan_lupa_sandi',
             ]);
 
         $response->assertSessionHasNoErrors();
