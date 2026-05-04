@@ -23,7 +23,6 @@ class ForgotPasswordRequest extends FormRequest
     {
         return [
             'email'    => 'required|email|max:100',
-            'username' => 'required|string|max:100',
         ];
     }
 
@@ -33,9 +32,6 @@ class ForgotPasswordRequest extends FormRequest
             'email.required'    => 'Alamat email wajib diisi.',
             'email.email'       => 'Pastikan format alamat email sudah benar (contoh: nama@domain.com).',
             'email.max'         => 'Alamat email maksimal 100 karakter.',
-            'username.required' => 'Username wajib disertakan untuk verifikasi.',
-            'username.string'   => 'Format username tidak valid.',
-            'username.max'      => 'Username tidak boleh lebih dari 100 karakter.',
         ];
     }
 }
