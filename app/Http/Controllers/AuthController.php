@@ -131,7 +131,6 @@ class AuthController extends Controller
     public function showForgotPassword(Request $request)
     {
         $email = null;
-        dump(session()->all());
         if ($request->session()->has('login_username')) {
             $username = $request->session()->get('login_username');
             
