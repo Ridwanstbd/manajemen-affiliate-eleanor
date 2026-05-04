@@ -34,11 +34,16 @@ class ImportController extends Controller
 
             $startDate = Carbon::createFromFormat('Ymd', $matches[1])->format('Y-m-d');
             $endDate   = Carbon::createFromFormat('Ymd', $matches[2])->format('Y-m-d');
-            $batch = ImportHistory::firstOrCreate([
-                'import_date' => now(),
-                'start_date' => $startDate,
-                'end_date'   => $endDate
-            ]);
+            $batch = ImportHistory::firstOrCreate(
+                [
+                    'start_date' => $startDate,
+                    'end_date'   => $endDate
+                ],
+                [
+                    'admin_id'    => auth()->id() ?? 1, 
+                    'import_date' => now(),
+                ]
+            );
             $filesToImport = [
                 'file_core_metrics' => CoreMetricsImport::class,
                 'file_creator_list' => CreatorListImport::class,

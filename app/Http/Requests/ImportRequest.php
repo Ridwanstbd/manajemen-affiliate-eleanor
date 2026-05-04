@@ -32,6 +32,17 @@ class ImportRequest extends FormRequest
             'file_video_list'   => ['required', 'file', 'mimes:xlsx', "regex:$regexPattern"],
         ];
     }
+
+    public function messages()
+    {
+        return [
+            'required' => 'File :attribute wajib diunggah.',
+            'file'     => ':attribute harus berupa file.',
+            'mimes'    => 'File :attribute harus berformat Excel (.xlsx).',
+            'regex'    => 'Format nama file :attribute tidak valid. Pastikan nama file berakhiran tanggal (contoh: _20260301-20260331.xlsx).',
+        ];
+    }
+
     public function withValidator($validator)
     {
         $validator->after(function ($validator) {
@@ -59,12 +70,11 @@ class ImportRequest extends FormRequest
                 }
             }
 
-            if (count($extractedDates) > 1) {
-                $uniqueDates = array_unique($extractedDates);
-                
-                if (count($uniqueDates) > 1) {
-                    $validator->errors()->add('file_mismatch', 'Gagal memproses! Rentang tanggal pada kelima file Excel tidak sinkron. Pastikan Anda mengunggah 5 file dari periode waktu yang sama persis.');
-                }
+            if (count($extractedDates) !== 5 || count(array_unique($extractedDates)) !== 1) {
+                $validator->errors()->add(
+                    'file_mismatch', 
+                    'Gagal memproses! Isikan harus berjumlah 5 file dengan rentang tanggal yang sama.'
+                );
             }
         });
     }
