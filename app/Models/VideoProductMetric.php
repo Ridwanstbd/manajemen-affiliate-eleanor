@@ -12,6 +12,7 @@ class VideoProductMetric extends Model
     protected $fillable = [
         'video_id',
         'product_id',
+        'import_history_id',
         'video_gmv',
         'orders',
         'aov',

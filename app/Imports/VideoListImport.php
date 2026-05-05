@@ -13,19 +13,29 @@ use PhpOffice\PhpSpreadsheet\Shared\Date;
 
 class VideoListImport implements ToModel, WithHeadingRow
 {
+    protected $importHistoryId;
+
+    public function __construct($importHistoryId)
+    {
+        $this->importHistoryId = $importHistoryId;
+    }
+
     public function model(array $row)
     {
         if (empty($row['video_id'])) {
             return null;
         }
+
         $user = User::firstOrCreate(
             ['username' => $row['creator_name']],
             ['role' => 'AFFILIATOR']
         );
+
         $product = Product::firstOrCreate(
             ['id' => $row['product_id']],
             ['name' => $row['product_name'] ?? null]
         );
+
         $video = Video::updateOrCreate(
             ['id' => $row['video_id']],
             [
@@ -35,10 +45,12 @@ class VideoListImport implements ToModel, WithHeadingRow
                 'link'      => $row['video_link'] ?? null,
             ]
         );
+
         VideoProductMetric::updateOrCreate(
             [
-                'video_id'   => $video->id,
-                'product_id' => $product->id,
+                'import_history_id' => $this->importHistoryId,
+                'video_id'          => $video->id,
+                'product_id'        => $product->id,
             ],
             [
                 'video_gmv'            => $this->cleanCurrency($row['gmv_dari_video_afiliasi'] ?? 0),
@@ -64,15 +76,13 @@ class VideoListImport implements ToModel, WithHeadingRow
     private function parseDate($value)
     {
         if (!$value) return null;
-
         try {
             if (is_numeric($value)) {
                 return Carbon::instance(Date::excelToDateTimeObject($value));
             }
-            
             return Carbon::parse($value);
         } catch (\Exception $e) {
-            return null; 
+            return null;
         }
     }
 }

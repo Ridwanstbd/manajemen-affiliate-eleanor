@@ -16,9 +16,9 @@ return new class extends Migration
             $table->string('name', 255);
             $table->string('category',100)->nullable();
             $table->string('image_path',255)->nullable();
-            $table->integer('stock',11)->default(0);
+            $table->integer('stock')->default(0);
             $table->text('product_detail')->nullable();
-            $table->integer('mandatory_video_count',11)->default(3);
+            $table->integer('mandatory_video_count')->default(3);
             $table->boolean('is_visible')->default(true);
             $table->timestamps();
         });

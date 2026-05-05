@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('live_stream_id')->constrained('live_streams')->onDelete('cascade');
             $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
+            $table->foreignId('import_history_id')->constrained()->cascadeOnDelete();
             
-            // Menambahkan kolom sesuai dengan perancangan
             $table->decimal('live_gmv', 15, 2)->default(0);
             $table->integer('items_sold')->default(0);
             $table->decimal('refunds', 15, 2)->default(0);

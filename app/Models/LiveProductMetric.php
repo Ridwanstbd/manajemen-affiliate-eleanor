@@ -10,6 +10,7 @@ class LiveProductMetric extends Model
     use HasFactory;
 
     protected $fillable = [
+        'import_history_id',
         'live_stream_id',
         'product_id',
         'live_gmv',

@@ -13,6 +13,13 @@ use PhpOffice\PhpSpreadsheet\Shared\Date;
 
 class LiveListImport implements ToModel, WithHeadingRow
 {
+    protected $importHistoryId;
+
+    public function __construct($importHistoryId)
+    {
+        $this->importHistoryId = $importHistoryId;
+    }
+
     public function model(array $row)
     {
         if (empty($row['live_id'])) {
@@ -38,10 +45,12 @@ class LiveListImport implements ToModel, WithHeadingRow
                 'end_time'   => $this->parseDate($row['live_end_time'] ?? null),
             ]
         );
+
         LiveProductMetric::updateOrCreate(
             [
-                'live_stream_id' => $liveStream->id,
-                'product_id'     => $product->id,
+                'import_history_id' => $this->importHistoryId,
+                'live_stream_id'    => $liveStream->id,
+                'product_id'        => $product->id,
             ],
             [
                 'live_gmv'             => $this->cleanCurrency($row['gmv_dari_live_kreator'] ?? 0),
@@ -56,22 +65,23 @@ class LiveListImport implements ToModel, WithHeadingRow
 
         return null;
     }
+
     private function cleanCurrency($value)
     {
         if (!$value) return 0;
         return (float) preg_replace('/[^0-9]/', '', (string)$value);
     }
+
     private function parseDate($value)
     {
         if (!$value) return null;
-
         try {
             if (is_numeric($value)) {
                 return Carbon::instance(Date::excelToDateTimeObject($value));
             }
             return Carbon::parse($value);
         } catch (\Exception $e) {
-            return null; 
+            return null;
         }
     }
 }

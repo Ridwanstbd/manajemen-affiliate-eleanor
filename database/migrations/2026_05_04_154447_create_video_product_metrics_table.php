@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('video_product_metrics', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('video_id');
-            $table->unsignedBigInteger('product_id');
-            $table->unsignedBigInteger('import_history_id');
+            $table->foreignId('video_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('product_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('import_history_id')->constrained()->cascadeOnDelete();
             $table->decimal('video_gmv', 15, 2)->default(0);
             $table->integer('orders')->default(0);
             $table->decimal('aov', 15, 2)->default(0);
@@ -25,10 +25,6 @@ return new class extends Migration
             $table->integer('items_returned')->default(0);
             $table->decimal('estimated_commission', 15, 2)->default(0);
             $table->timestamps();
-
-            $table->foreign('video_id')->references('id')->on('videos')->onDelete('cascade');
-            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
-            $table->foreign('import_history_id')->references('id')->on('import_histories')->onDelete('cascade');
         });
     }
 

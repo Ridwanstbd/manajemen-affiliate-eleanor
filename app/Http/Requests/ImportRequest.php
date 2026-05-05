@@ -22,14 +22,12 @@ class ImportRequest extends FormRequest
      */
     public function rules()
     {
-        $regexPattern = '/^.*_\d{8}-\d{8}\.xlsx$/';
-
         return [
-            'file_core_metrics' => ['required', 'file', 'mimes:xlsx', "regex:$regexPattern"],
-            'file_creator_list' => ['required', 'file', 'mimes:xlsx', "regex:$regexPattern"],
-            'file_live_list'    => ['required', 'file', 'mimes:xlsx', "regex:$regexPattern"],
-            'file_product_list' => ['required', 'file', 'mimes:xlsx', "regex:$regexPattern"],
-            'file_video_list'   => ['required', 'file', 'mimes:xlsx', "regex:$regexPattern"],
+            'file_core_metrics' => ['required', 'file', 'mimes:xlsx'],
+            'file_creator_list' => ['required', 'file', 'mimes:xlsx'],
+            'file_live_list'    => ['required', 'file', 'mimes:xlsx'],
+            'file_product_list' => ['required', 'file', 'mimes:xlsx'],
+            'file_video_list'   => ['required', 'file', 'mimes:xlsx'],
         ];
     }
 
@@ -39,7 +37,6 @@ class ImportRequest extends FormRequest
             'required' => 'File :attribute wajib diunggah.',
             'file'     => ':attribute harus berupa file.',
             'mimes'    => 'File :attribute harus berformat Excel (.xlsx).',
-            'regex'    => 'Format nama file :attribute tidak valid. Pastikan nama file berakhiran tanggal (contoh: _20260301-20260331.xlsx).',
         ];
     }
 
@@ -63,13 +60,13 @@ class ImportRequest extends FormRequest
                     if (!str_starts_with($filename, $prefix)) {
                         $validator->errors()->add($key, "Nama file harus diawali dengan $prefix");
                     }
-
                     if (preg_match('/_(\d{8}-\d{8})\.xlsx$/', $filename, $matches)) {
-                        $extractedDates[] = $matches[1]; 
+                        $extractedDates[] = $matches[1];
+                    } else {
+                        $validator->errors()->add($key, "Format nama file tidak valid. Pastikan nama file berakhiran tanggal (contoh: _20260301-20260331.xlsx).");
                     }
                 }
             }
-
             if (count($extractedDates) !== 5 || count(array_unique($extractedDates)) !== 1) {
                 $validator->errors()->add(
                     'file_mismatch', 

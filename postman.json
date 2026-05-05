@@ -1,0 +1,189 @@
+{
+    "info": {
+        "_postman_id": "b2c3d4e5-f6a7-8901-2345-6789abcdef01",
+        "name": "Affiliate App - Import & Auth (With CSRF)",
+        "description": "Collection terotomatisasi untuk handle CSRF Token Laravel.",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "1. Authentication",
+            "item": [
+                {
+                    "name": "0. Init CSRF & Session",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "let xsrfCookie = pm.cookies.get(\"XSRF-TOKEN\");",
+                                    "if (xsrfCookie) {",
+                                    "    // Decode URL encoded cookie",
+                                    "    let decodedCookie = decodeURIComponent(xsrfCookie);",
+                                    "    pm.collectionVariables.set(\"xsrf_token\", decodedCookie);",
+                                    "    console.log(\"CSRF Token tersimpan: \" + decodedCookie);",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/login",
+                            "host": ["{{base_url}}"],
+                            "path": ["login"]
+                        },
+                        "description": "Jalankan ini PERTAMA KALI. Ini akan memancing Laravel untuk memberikan Session ID dan XSRF-TOKEN cookie."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "1.1. Verify Username",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "X-XSRF-TOKEN",
+                                "value": "{{xsrf_token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "username",
+                                    "value": "{{admin_username}}",
+                                    "type": "text"
+                                }
+                            ]
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/verify-username",
+                            "host": ["{{base_url}}"],
+                            "path": ["verify-username"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "1.2. Verify Password",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "X-XSRF-TOKEN",
+                                "value": "{{xsrf_token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "password",
+                                    "value": "{{admin_password}}",
+                                    "type": "text"
+                                }
+                            ]
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/verify-password",
+                            "host": ["{{base_url}}"],
+                            "path": ["verify-password"]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "2. Data Import",
+            "item": [
+                {
+                    "name": "2.1. Upload 5 Excel Files",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "X-XSRF-TOKEN",
+                                "value": "{{xsrf_token}}"
+                            }
+                        ],
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "file_core_metrics",
+                                    "type": "file",
+                                    "src": []
+                                },
+                                {
+                                    "key": "file_creator_list",
+                                    "type": "file",
+                                    "src": []
+                                },
+                                {
+                                    "key": "file_live_list",
+                                    "type": "file",
+                                    "src": []
+                                },
+                                {
+                                    "key": "file_product_list",
+                                    "type": "file",
+                                    "src": []
+                                },
+                                {
+                                    "key": "file_video_list",
+                                    "type": "file",
+                                    "src": []
+                                }
+                            ]
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/dashboard/import-data",
+                            "host": ["{{base_url}}"],
+                            "path": ["dashboard", "import-data"]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        }
+    ],
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://localhost:8000",
+            "type": "string"
+        },
+        {
+            "key": "admin_username",
+            "value": "testuser",
+            "type": "string"
+        },
+        {
+            "key": "admin_password",
+            "value": "password",
+            "type": "string"
+        },
+        {
+            "key": "xsrf_token",
+            "value": "",
+            "type": "string"
+        }
+    ]
+}

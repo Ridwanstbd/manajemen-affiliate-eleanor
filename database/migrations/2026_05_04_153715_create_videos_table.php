@@ -12,14 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('videos', function (Blueprint $table) {
-            $table->bigInteger('id')->primary();
-            $table->unsignedBigInteger('user_id')->nullable();
-            $table->string('title')->nullable();
+            $table->id()->primary();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->text('title')->nullable();
             $table->dateTime('post_date')->nullable();
             $table->text('link')->nullable();
             $table->timestamps();
-
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

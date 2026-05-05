@@ -42,15 +42,6 @@ Route::middleware('guest')->group(function () {
     Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
 });
 
-Route::post('/push-subscribe', function (Request $request) {
-    $request->user()->updatePushSubscription(
-        $request->endpoint,
-        $request->keys['p256dh'],
-        $request->keys['auth']
-    );
-    return response()->json(['success' => true]);
-})->middleware('auth');
-
 Route::middleware(['auth'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
@@ -71,7 +62,7 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['role:administrator'])->prefix('dashboard')->group(function () {
         Route::get('/', [MainController::class, 'index'])->name('dashboard');
 
-        Route::get('/import-data/{userId}', [ImportController::class, 'getImportData']);
+        Route::get('/import-data', [ImportController::class, 'getImportData']);
         Route::post('/import-data', [ImportController::class, 'importData']);
 
 
