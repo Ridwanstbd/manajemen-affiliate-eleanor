@@ -62,8 +62,9 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['role:administrator'])->prefix('dashboard')->group(function () {
         Route::get('/', [MainController::class, 'index'])->name('dashboard');
 
-        Route::get('/import-data', [ImportController::class, 'getImportData']);
-        Route::post('/import-data', [ImportController::class, 'importData']);
+        Route::get('/import-data', [ImportController::class, 'getImportData'])->name('admin-dashboard.import');
+        Route::get('/import-data/data', [ImportController::class, 'data'])->name('admin-dashboard.import-data');
+        Route::post('/import-data', [ImportController::class, 'importData'])->name('admin-dashboard.store');
 
 
         Route::get('/users', [UserController::class, 'index'])->name('users.index');

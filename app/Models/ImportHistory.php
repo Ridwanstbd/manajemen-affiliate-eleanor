@@ -12,4 +12,10 @@ class ImportHistory extends Model
         'start_date',
         'end_date',
     ];
+
+    public function admin()
+    {
+        return $this->belongsTo(User::class, 'admin_id');
+    }
+
 }

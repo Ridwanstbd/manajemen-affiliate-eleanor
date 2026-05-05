@@ -9,7 +9,7 @@
             <div class="nav-label">Intelegensi Bisnis</div>
             <div class="nav-list">
                 <x-molecules.nav-item icon="dashboard" label="Dasbor Administrator" href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')" />
-                <x-molecules.nav-item icon="download" label="Import Data Analitik" />
+                <x-molecules.nav-item icon="download" label="Import Data Analitik" href="{{ route('admin-dashboard.import') }}" :active="request()->routeIs('admin-dashboard.import')" />
                 <x-molecules.nav-item icon="reports" label="Pusat Analisa" />
             </div>
         </nav>

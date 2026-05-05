@@ -41,13 +41,11 @@ class ImportFeatureTest extends TestCase
         $files = $this->getValidFakeFiles();
 
         $response = $this->actingAs($this->adminUser)
-                         ->postJson('/dashboard/import-data', $files);
-
-        $response->assertStatus(200)
-                 ->assertJson([
-                     'status' => 'success',
-                     'message' => '5 File Excel berhasil diimport dengan rentang data diekstrak dari nama file.'
-                 ]);
+                         ->from('/dashboard/import-data')
+                         ->post('/dashboard/import-data', $files);
+        $response->assertStatus(302)
+                 ->assertRedirect('/dashboard/import-data')
+                 ->assertSessionHas('success', '5 File Excel berhasil diimport dengan rentang data diekstrak dari nama file.');
 
         Excel::assertImported('Transaction_Analysis_Core_Metrics_20260301-20260331.xlsx', function (\App\Imports\CoreMetricsImport $import) {
             return true;
