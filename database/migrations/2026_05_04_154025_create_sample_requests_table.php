@@ -13,14 +13,13 @@ return new class extends Migration
     {
         Schema::create('sample_requests', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
-            $table->enum('status', ['pending', 'approved', 'rejected', 'shipped', 'received', 'completed'])->default('pending');
-            $table->text('shipping_address');
-            $table->string('tracking_number')->nullable();
-            $table->string('courier')->nullable();
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->enum('status', ['PENDING', 'APPROVED', 'SHIPPED', 'REJECTED'])->default('PENDING');
+            $table->string('address', 255);
+            $table->string('tracking_number', 100)->nullable();
+            $table->string('courier', 100)->nullable();
+            $table->decimal('shipping_cost', 15, 2)->nullable();
             $table->timestamps();
-
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

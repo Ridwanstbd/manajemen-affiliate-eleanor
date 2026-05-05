@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('challenges', function (Blueprint $table) {
             $table->id();
+            $table->string('title', 255);
+            $table->text('rules');
+            $table->integer('target');
+            $table->string('prize', 255);
+            $table->decimal('commission_bonus', 10, 2);
+            $table->string('banner_image_path', 255)->nullable();
             $table->timestamps();
         });
     }

@@ -13,23 +13,21 @@ return new class extends Migration
     {
         Schema::create('creator_metrics', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('import_history_id');
-            $table->decimal('gmv', 15, 2)->default(0);
-            $table->decimal('refunds', 15, 2)->default(0);
-            $table->integer('attributed_orders')->default(0);
-            $table->integer('items_sold')->default(0);
-            $table->integer('items_returned')->default(0);
-            $table->decimal('aov', 15, 2)->default(0);
-            $table->decimal('avg_daily_items_sold', 15, 2)->default(0);
-            $table->integer('video_count')->default(0);
-            $table->integer('live_count')->default(0);
-            $table->decimal('estimated_commission', 15, 2)->default(0);
-            $table->integer('samples_sent')->default(0);
+            $table->foreignId('import_history_id')->constrained('import_histories')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->decimal('affiliate_gmv', 15, 2); // Sebelumnya gmv
+            $table->decimal('refunds', 15, 2);
+            $table->integer('attributed_orders');
+            $table->integer('items_sold');
+            $table->integer('items_returned');
+            $table->decimal('aov', 15, 2);
+            $table->decimal('avg_daily_items_sold', 10, 2); // Sebelumnya 15,2, diperbaiki 10,2
+            $table->integer('video_count');
+            $table->integer('live_count');
+            $table->decimal('estimated_commission', 15, 2);
+            $table->integer('samples_sent');
             $table->timestamps();
 
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('import_history_id')->references('id')->on('import_histories')->onDelete('cascade');
         });
     }
 

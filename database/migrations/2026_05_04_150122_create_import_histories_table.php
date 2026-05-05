@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('import_histories', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('admin_id');
+            $table->foreignId('admin_id')->constrained('users')->onDelete('cascade');
             $table->dateTime('import_date');
             $table->date('start_date');
             $table->date('end_date');

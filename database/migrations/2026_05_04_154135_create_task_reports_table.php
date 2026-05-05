@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('task_reports', function (Blueprint $table) {
             $table->id();
+            $table->string('tiktok_video_link', 1000);
+            $table->enum('task_status', ['PROCESSING', 'COMPLETED'])->default('PROCESSING');
             $table->timestamps();
         });
     }

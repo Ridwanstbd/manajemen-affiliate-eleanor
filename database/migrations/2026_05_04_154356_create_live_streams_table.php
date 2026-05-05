@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('live_streams', function (Blueprint $table) {
             $table->id();
+            $table->string('title',255);
+            $table->dateTime('start_time');
+            $table->dateTime('end_time');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
     }

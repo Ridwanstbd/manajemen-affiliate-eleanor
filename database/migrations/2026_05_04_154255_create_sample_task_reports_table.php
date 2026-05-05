@@ -12,8 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('sample_task_reports', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+            $table->foreignId('sample_request_id')->constrained('sample_requests')->onDelete('cascade');
+            $table->foreignId('task_report_id')->constrained('task_reports')->onDelete('cascade');
+            $table->primary(['sample_request_id', 'task_report_id']);
         });
     }
 

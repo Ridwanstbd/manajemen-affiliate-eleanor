@@ -17,6 +17,7 @@ return new class extends Migration
             $table->text('violation_reason');
             $table->dateTime('blacklist_date');
             $table->timestamps();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

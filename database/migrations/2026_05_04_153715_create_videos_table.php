@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('videos', function (Blueprint $table) {
             $table->bigInteger('id')->primary();
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('user_id')->nullable();
             $table->string('title')->nullable();
             $table->dateTime('post_date')->nullable();
             $table->text('link')->nullable();
