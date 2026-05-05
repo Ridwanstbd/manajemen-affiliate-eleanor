@@ -13,7 +13,13 @@ return new class extends Migration
     {
         Schema::create('sample_request_details', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('sample_request_id');
+            $table->unsignedBigInteger('product_id');
+            $table->integer('quantity')->default(1);
             $table->timestamps();
+
+            $table->foreign('sample_request_id')->references('id')->on('sample_requests')->onDelete('cascade');
+            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
         });
     }
 

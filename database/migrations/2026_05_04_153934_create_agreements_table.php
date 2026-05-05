@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('agreements', function (Blueprint $table) {
             $table->id();
+            $table->text('content');
+            $table->boolean('is_active');
             $table->timestamps();
         });
     }

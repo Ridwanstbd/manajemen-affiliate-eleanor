@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('blacklists', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('user_id');
+            $table->text('violation_reason');
+            $table->dateTime('blacklist_date');
             $table->timestamps();
         });
     }
