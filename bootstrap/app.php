@@ -15,11 +15,11 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => CheckRole::class,
         ]);
-        $middleware->validateCsrfTokens(except: [
-            'verify-username',
-            'verify-password',
-            'dashboard/import-data'
-        ]);
+        // $middleware->validateCsrfTokens(except: [
+        //     'verify-username',
+        //     'verify-password',
+        //     'dashboard/import-data'
+        // ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

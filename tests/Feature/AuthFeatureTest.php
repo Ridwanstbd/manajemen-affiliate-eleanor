@@ -120,20 +120,22 @@ class AuthFeatureTest extends TestCase
     public function test_user_can_request_password_reset_link()
     {
         Notification::fake();
-
+        
         $user = User::factory()->create([
-            'email'    => 'ridwan_affiliate@example.com',
+            'username'   => 'ridwan_lupa_sandi',
+            'email'      => 'ridwan_affiliate@example.com',
             'is_claimed' => true,
         ]);
 
-        $response = $this->withSession(['login_username' => 'ridwan_lupa_sandi'])
-            ->post('/forgot-password', [
-                'email'    => 'ridwan_affiliate@example.com',
-            ]);
+        $response = $this->post('/forgot-password', [
+            'login_username' => 'ridwan_lupa_sandi',
+            'email'          => 'ridwan_affiliate@example.com',
+        ]);
 
         $response->assertSessionHasNoErrors();
         $response->assertStatus(302);
-        $response->assertSessionHas('status');
+        
+        $response->assertSessionHas('warning');
 
         Notification::assertSentTo(
             [$user], ResetPasswordNotification::class
