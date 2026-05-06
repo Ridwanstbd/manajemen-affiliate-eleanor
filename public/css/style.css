@@ -2064,3 +2064,48 @@ table.dataTable tbody tr:hover {
     opacity: 0.5;
     cursor: not-allowed;
 }
+
+.task-action-item {
+    display: flex;
+    align-items: center;
+    padding: 14px 16px;
+    border: 1px solid #000000;
+    text-decoration: none;
+    background-color: #ffffff;
+    margin-bottom: 12px;
+    transition:
+        background-color 0.2s ease,
+        transform 0.1s ease;
+}
+.task-action-item:hover {
+    background-color: #f8fafc;
+    transform: translateY(-1px);
+}
+.task-action-avatar {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background-color: #eeeeee;
+    border: 1.5px solid #000000;
+    margin-right: 16px;
+    flex-shrink: 0;
+}
+.task-action-content {
+    flex-grow: 1;
+}
+.task-action-title {
+    font-weight: 700;
+    font-size: 16px;
+    color: #000000;
+    margin: 0 0 4px 0;
+}
+.task-action-subtitle {
+    font-size: 14px;
+    color: #6b7280;
+    margin: 0;
+}
+.task-action-chevron {
+    font-size: 20px;
+    color: #000000;
+    font-weight: 500;
+}

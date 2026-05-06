@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Services\DashboardService;
+use App\Services\Admin\DashboardService;
 
 class MainController extends Controller
 {
@@ -18,6 +18,6 @@ class MainController extends Controller
     {
         $dashboardData = $this->dashboardService->getDashboardStats();
 
-        return view('pages.dashboard', $dashboardData);
+        return view('pages.admin.dashboard', $dashboardData);
     }
 }

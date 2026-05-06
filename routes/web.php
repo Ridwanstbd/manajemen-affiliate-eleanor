@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Admin\ImportController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\MainController;
+use App\Http\Controllers\Admin\MainController as MainAdminController;
 use App\Http\Controllers\Affiliator\MainController as MainAffiliateController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -60,7 +60,7 @@ Route::middleware(['auth'])->group(function () {
     })->middleware(['throttle:6,1'])->name('verification.send');
 
     Route::middleware(['role:administrator'])->prefix('dashboard')->group(function () {
-        Route::get('/', [MainController::class, 'index'])->name('dashboard');
+        Route::get('/', [MainAdminController::class, 'index'])->name('dashboard');
 
         Route::get('/import-data', [ImportController::class, 'getImportData'])->name('admin-dashboard.import');
         Route::get('/import-data/data', [ImportController::class, 'data'])->name('admin-dashboard.import-data');
