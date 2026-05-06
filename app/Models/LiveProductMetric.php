@@ -21,6 +21,19 @@ class LiveProductMetric extends Model
         'aov',
         'estimated_commission'
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'live_gmv' => 'decimal:2',
+            'refunds' => 'decimal:2',
+            'aov' => 'decimal:2',
+            'estimated_commission' => 'decimal:2',
+            'items_sold' => 'integer',
+            'items_returned' => 'integer',
+            'orders' => 'integer',
+        ];
+    }
     public function liveStream()
     {
         return $this->belongsTo(LiveStream::class);
@@ -29,4 +42,6 @@ class LiveProductMetric extends Model
     {
         return $this->belongsTo(Product::class);
     }
+
+    public function importHistory() { return $this->belongsTo(ImportHistory::class); }
 }

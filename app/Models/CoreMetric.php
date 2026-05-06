@@ -25,6 +25,24 @@ class CoreMetric extends Model
         'samples_sent',
         'estimated_commission'
     ];
+    protected function casts(): array
+    {
+        return [
+            'affiliate_gmv' => 'decimal:2',
+            'refunds' => 'decimal:2',
+            'aov' => 'decimal:2',
+            'estimated_commission' => 'decimal:2',
+            'items_sold' => 'integer',
+            'items_returned' => 'integer',
+            'avg_daily_buyers' => 'integer',
+            'video_count' => 'integer',
+            'live_count' => 'integer',
+            'avg_daily_sales_creators' => 'integer',
+            'avg_daily_posting_creators' => 'integer',
+            'avg_daily_items_sold' => 'integer',
+            'samples_sent' => 'integer',
+        ];
+    }
 
     public function importHistory()
     {

@@ -14,6 +14,12 @@ class Blacklist extends Model
         'violation_reason',
         'blacklist_date',
     ];
+    protected function casts(): array
+    {
+        return [
+            'blacklist_date' => 'datetime',
+        ];
+    }
 
     public function user()
     {

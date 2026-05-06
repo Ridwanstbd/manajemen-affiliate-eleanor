@@ -1934,3 +1934,133 @@ body.role-affiliator .search-global {
     border-top: 1px solid rgba(0, 0, 0, 0.05);
     padding-top: 20px;
 }
+
+/* ─── GLASSMORPHISM DATATABLES WRAPPER ─── */
+.glass-datatable-wrapper {
+    background: var(--glass-bg);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--glass-shadow);
+    padding: 24px;
+    transition: all 0.4s var(--ease-smooth);
+}
+
+/* ─── TABLE STYLING ─── */
+table.dataTable {
+    border-collapse: collapse !important;
+    width: 100% !important;
+    border: none !important;
+    margin-top: 16px !important;
+    margin-bottom: 16px !important;
+}
+
+table.dataTable thead th {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
+    color: var(--text-tertiary);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    padding: 14px 16px;
+    border-top: none !important;
+}
+
+table.dataTable tbody td {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.04) !important;
+    color: var(--text-secondary);
+    font-size: 13.5px;
+    font-weight: 500;
+    padding: 14px 16px;
+    vertical-align: middle;
+    background: transparent !important;
+}
+
+table.dataTable.no-footer {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Hover Effect pada Baris */
+table.dataTable tbody tr {
+    background-color: transparent !important;
+    transition: background-color 0.25s var(--ease-smooth);
+}
+table.dataTable tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* ─── CONTROLS (SEARCH & LENGTH) ─── */
+.dataTables_wrapper .dataTables_filter input,
+.dataTables_wrapper .dataTables_length select {
+    background: rgba(241, 245, 249, 0.5);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: var(--radius-xl);
+    padding: 8px 14px;
+    color: var(--text-primary);
+    font-size: 13.5px;
+    outline: none;
+    transition: all 0.25s var(--ease-smooth);
+}
+
+.dataTables_wrapper .dataTables_filter input:focus,
+.dataTables_wrapper .dataTables_length select:focus {
+    background: white;
+    border-color: rgba(59, 130, 246, 0.3);
+    box-shadow: 0 0 0 4px var(--primary-blue-soft);
+}
+
+.dataTables_wrapper .dataTables_length label,
+.dataTables_wrapper .dataTables_filter label {
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* ─── INFO & PAGINATION ─── */
+.dataTables_wrapper .dataTables_info {
+    color: var(--text-tertiary) !important;
+    font-size: 12.5px;
+    padding-top: 12px !important;
+}
+
+.dataTables_wrapper .dataTables_paginate {
+    padding-top: 12px !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    background: rgba(255, 255, 255, 0.6) !important;
+    border: 1px solid rgba(0, 0, 0, 0.06) !important;
+    border-radius: var(--radius-lg) !important;
+    color: var(--text-secondary) !important;
+    padding: 6px 14px !important;
+    margin-left: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.25s var(--ease-smooth);
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover:not(.disabled) {
+    background: white !important;
+    color: var(--primary-blue) !important;
+    border-color: rgba(59, 130, 246, 0.2) !important;
+    box-shadow: 0 4px 12px var(--primary-blue-glow) !important;
+    transform: translateY(-2px);
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current,
+.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+    background: linear-gradient(
+        135deg,
+        var(--primary-blue),
+        #60a5fa
+    ) !important;
+    color: white !important;
+    border: 1px solid transparent !important;
+    box-shadow: 0 4px 16px var(--primary-blue-glow) !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

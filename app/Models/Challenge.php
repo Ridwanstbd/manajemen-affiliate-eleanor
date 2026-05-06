@@ -17,4 +17,11 @@ class Challenge extends Model
         'commission_bonus',
         'banner_image_path'
     ];
+    protected function casts(): array
+    {
+        return [
+            'commission_bonus' => 'decimal:2',
+            'target' => 'integer',
+        ];
+    }
 }

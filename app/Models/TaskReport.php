@@ -10,12 +10,16 @@ class TaskReport extends Model
     use HasFactory;
 
     protected $fillable = [
-        'tiktok_video_link',
-        'task_status'
+        'tiktok_video_link', 'task_status'
     ];
 
     public function sampleRequests()
     {
         return $this->belongsToMany(SampleRequest::class, 'sample_task_reports', 'task_report_id', 'sample_request_id');
+    }
+
+    public function products()
+    {
+        return $this->belongsToMany(Product::class, 'product_task_reports', 'task_report_id', 'product_id');
     }
 }

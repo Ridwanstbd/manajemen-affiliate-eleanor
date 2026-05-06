@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'Dashboard Administrator')
+
 @section('content')
     @php
         $chartData = [
@@ -7,309 +9,128 @@
             ['label' => 'Feb', 'income' => 75, 'expense' => 45],
             ['label' => 'Mar', 'income' => 65, 'expense' => 50],
             ['label' => 'Apr', 'income' => 85, 'expense' => 55],
-            ['label' => 'May', 'income' => 70, 'expense' => 48],
+            ['label' => 'Mei', 'income' => 70, 'expense' => 48],
             ['label' => 'Jun', 'income' => 90, 'expense' => 62],
         ];
-
-        // Helper untuk memformat tampilan trend di view
-        $formatTrend = function($value) {
-            $formatted = number_format(abs($value), 1) . '%';
-            return $value >= 0 ? '+' . $formatted : '-' . $formatted;
-        };
     @endphp
 
-    <section class="hero-section">
-        <div class="hero-glow"></div>
-        <div class="hero-content">
-            <x-atoms.typography variant="hero-title">
-                Financial Overview – March 2026
-            </x-atoms.typography>
-            <x-atoms.typography variant="hero-subtitle">
-                Real-time performance of your business accounts
-            </x-atoms.typography>
-            <div class="hero-actions">
-                <x-atoms.button variant="primary" onclick="openModal('createTransactionModal')">
-                    <x-atoms.icon name="plus" style="width: 15px; height: 15px;" /> Create Transaction
-                </x-atoms.button>
-                <x-atoms.button variant="secondary" onclick="toggleOffcanvas('sidebarMenu')">
-                    <x-atoms.icon name="download" style="width: 15px; height: 15px;" /> Buka Menu
-                </x-atoms.button>
-            </div>
-        </div>
-    </section>
-
     <div class="stats-container">
-        
         <x-molecules.stat-card 
             color="emerald" 
             icon="revenue" 
             trend="up" 
-            {{-- trendValue="{{ $formatTrend($revenueTrend) }}"  --}}
-            trendValue="100" 
-            value="Rp 10000" 
-            {{-- value="Rp {{ number_format($totalRevenue, 0, ',', '.') }}"  --}}
-            label="Total Revenue" 
+            trendValue="12.5%" 
+            value="Rp 24.500.000" 
+            label="Total Pendapatan" 
         />
         
         <x-molecules.stat-card 
             color="rose" 
-            icon="expense-stat" 
-            trend="up" 
-            {{-- trend="{{ $expenseTrend <= 0 ? 'up' : 'down' }}"  --}}
-            trendValue="800" 
-            {{-- trendValue="{{ $formatTrend($expenseTrend) }}"  --}}
-            value="Rp 120000" 
-            {{-- value="Rp {{ number_format($totalExpenses, 0, ',', '.') }}"  --}}
-            label="Total Expenses" 
+            icon="expenses" 
+            trend="down" 
+            trendValue="4.2%" 
+            value="Rp 8.200.000" 
+            label="Total Pengeluaran" 
         />
         
         <x-molecules.stat-card 
             color="blue" 
-            icon="profit-stat" 
+            icon="profit-loss" 
             trend="up" 
-            trendValue="12" 
-            value="Rp 150000" 
-            label="Net Profit" 
+            trendValue="18.1%" 
+            value="Rp 16.300.000" 
+            label="Keuntungan Bersih" 
         />
         
         <x-molecules.stat-card 
             color="amber" 
-            icon="wallet" 
-            trend="down" 
-            trendValue="30" 
-            value="Rp 1200000" 
-            label="Cash on Hand" 
+            icon="balance-sheet" 
+            trend="up" 
+            trendValue="5.0%" 
+            value="Rp 120.000.000" 
+            label="Saldo Kas" 
         />
+    </div>
+
+    <div class="dashboard-grid" style="margin-top: 20px;">
+        
+        <x-organisms.chart-card 
+            title="Tren Arus Kas" 
+            :data="$chartData" 
+        />
+
+        <x-molecules.card title="Aktivitas Terbaru" description="Transaksi masuk dan keluar hari ini">
+            <div class="timeline">
+                <x-molecules.timeline-item 
+                    type="received" 
+                    icon="arrow-down-left" 
+                    title="Pembayaran Klien" 
+                    amount="+ Rp 5.000.000" 
+                    amountType="positive" 
+                    status="paid" 
+                    time="Hari ini, 09:30" 
+                />
+                <x-molecules.timeline-item 
+                    type="expense" 
+                    icon="expenses" 
+                    title="Pembelian Aset" 
+                    amount="- Rp 1.200.000" 
+                    amountType="negative" 
+                    status="paid" 
+                    time="Kemarin, 14:15" 
+                />
+                <x-molecules.timeline-item 
+                    type="refund" 
+                    icon="refresh" 
+                    title="Pengembalian Dana" 
+                    amount="+ Rp 300.000" 
+                    amountType="positive" 
+                    status="pending" 
+                    time="12 Mei, 10:00" 
+                />
+            </div>
+        </x-molecules.card>
         
     </div>
 
-    <div class="dashboard-grid">
-        {{-- <x-organisms.chart-card title="Cash Flow Trend" :data="$chartData" /> --}}
+    <div class="dashboard-grid" style="grid-template-columns: 1fr 1fr; margin-top: 20px;">
+        
+        <x-molecules.card title="5 Kreator Teratas">
+            <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 16px;">
+                <x-atoms.button variant="primary" type="button" size="md">
+                    <x-atoms.icon name="plus" style="width: 18px; height: 18px;" />
+                    Buat Transaksi
+                </x-atoms.button>
+                
+                <x-atoms.button variant="secondary" type="button" size="md">
+                    <x-atoms.icon name="download" style="width: 18px; height: 18px;" />
+                    Unduh Laporan
+                </x-atoms.button>
+            </div>
+        </x-molecules.card>
+
+        <x-molecules.card title="Tugas Tertunda" description="Dokumen yang memerlukan persetujuan">
+            <div class="timeline">
+                <x-molecules.timeline-item 
+                    type="refund" 
+                    icon="invoices" 
+                    title="Review Invoice #INV-2026" 
+                    amount="Rp 4.500.000" 
+                    amountType="" 
+                    status="pending" 
+                    time="Tenggat: Besok" 
+                />
+                <x-molecules.timeline-item 
+                    type="expense" 
+                    icon="commision" 
+                    title="Pencairan Komisi Afiliator" 
+                    amount="Rp 1.500.000" 
+                    amountType="" 
+                    status="overdue" 
+                    time="Tenggat: Terlewat" 
+                />
+            </div>
+        </x-molecules.card>
+
     </div>
-
-    {{-- <form action="{{ route('transactions.store') }}" method="POST">
-        @csrf        
-        <x-organisms.modal 
-            id="createTransactionModal" 
-            title="Create New Transaction" 
-            description="Fill out the details below to record a new transaction."
-        >
-            
-            <div class="form-group">
-                <x-atoms.label for="tanggal" value="Date" />
-                <x-atoms.input id="tanggal" name="date" type="date" required />
-            </div>
-
-            <div class="form-group">
-                <x-atoms.label for="pocket_id" value="Select Pocket" />
-                <x-atoms.select id="pocket_id" name="pocket_id" required>
-                    <option value="" disabled selected>Select Source/Destination of Funds</option>
-                    @foreach($pockets as $pocket)
-                        <option value="{{ $pocket->id }}">{{ $pocket->name }}</option>
-                    @endforeach
-                </x-atoms.select>
-            </div>
-
-            <div class="form-group">
-                <x-atoms.label for="typeSelect" value="Transaction Type" />
-                <x-atoms.select id="typeSelect" required onchange="updateCategory()">
-                    <option value="" disabled selected>Select Group</option>
-                    <option value="revenue" style="color: #10b981;">🟢 Income (Money In)</option>
-                    <option value="expense" style="color: #ef4444;">🔴 Expenses (Money Out)</option>
-                    <option value="liability">🏦 Obligations (Debts)</option>
-                    <option value="equity">💎 Equity (Capital)</option>
-                </x-atoms.select>
-            </div>
-
-            <div class="form-group">
-                <x-atoms.label for="categorySelect" value="Account Category" />
-                <x-atoms.select name="account_id" id="categorySelect" required>
-                    <option value="" disabled selected>Select Type First</option>
-                </x-atoms.select>
-            </div>
-
-            <div class="form-group">
-                <x-atoms.label for="amount" value="Amount (Rp)" />
-                <x-atoms.input type="number" id="amount" name="amount" min="1" required placeholder="0" class="input-amount" />
-            </div>                
-            
-            <x-slot name="footer">
-                <x-atoms.button variant="secondary" type="button" onclick="closeModal('createTransactionModal')">
-                    Cancel
-                </x-atoms.button>
-                <x-atoms.button variant="primary" type="submit">
-                    <x-atoms.icon name="check" style="width: 15px; height: 15px; margin-right: 6px;" />
-                    Save
-                </x-atoms.button>
-            </x-slot>
-
-        </x-organisms.modal>
-    </form> --}}
-
-    <x-organisms.offcanvas id="sidebarMenu" title="Menu Keuangan" >
-    <ul class="list-group">
-        <li><a href="#">Dashboard</a></li>
-        <li><a href="#">Daftar Transaksi</a></li>
-        <li><a href="#">Pengaturan Akun</a></li>
-    </ul>
-</x-organisms.offcanvas>
 @endsection
-
-@push('scripts')
-<script>
-    function openModal(modalId) {
-        document.getElementById(modalId).classList.add('active');
-        document.body.style.overflow = 'hidden';
-    }
-
-    function closeModal(modalId) {
-        document.getElementById(modalId).classList.remove('active');
-        document.body.style.overflow = '';
-    }
-
-    window.addEventListener('click', function(event) {
-        if (event.target.classList.contains('modal-overlay')) {
-            event.target.classList.remove('active');
-            document.body.style.overflow = '';
-        }
-    });
-
-    const categories = @json($categories ?? []);
-
-    function updateCategory() {
-        const selectedType = document.getElementById('typeSelect').value;
-        const categorySelect = document.getElementById('categorySelect');
-        
-        categorySelect.innerHTML = '<option value="" disabled selected>Select Category</option>';
-        
-        const filteredAccounts = categories.filter(account => account.type === selectedType);
-        
-        filteredAccounts.forEach(account => {
-            let opt = document.createElement('option');
-            opt.value = account.id;
-            opt.innerHTML = account.name;
-            categorySelect.appendChild(opt);
-        });
-        
-        categorySelect.focus();
-    }
-    const vapidPublicKey = '{{ env('VAPID_PUBLIC_KEY') }}';
-
-    function urlBase64ToUint8Array(base64String) {
-        const padding = '='.repeat((4 - base64String.length % 4) % 4);
-        const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
-        const rawData = window.atob(base64);
-        const outputArray = new Uint8Array(rawData.length);
-        for (let i = 0; i < rawData.length; ++i) {
-            outputArray[i] = rawData.charCodeAt(i);
-        }
-        return outputArray;
-    }
-
-    function subscribeUserToPush() {
-        navigator.serviceWorker.register('/sw.js')
-            .then((registration) => {
-                const subscribeOptions = {
-                    userVisibleOnly: true,
-                    applicationServerKey: urlBase64ToUint8Array(vapidPublicKey)
-                };
-                return registration.pushManager.subscribe(subscribeOptions);
-            })
-            .then((pushSubscription) => {
-                fetch('/push-subscribe', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify(pushSubscription)
-                });
-            })
-            .catch((error) => console.error('Error saat subscribe Push Notif:', error));
-    }
-
-    function askForNotificationPermission() {
-        if ('Notification' in window && navigator.serviceWorker) {
-            if (Notification.permission === 'default') {
-                Notification.requestPermission().then((permission) => {
-                    if (permission === 'granted') {
-                        subscribeUserToPush();
-                    }
-                });
-            } else if (Notification.permission === 'granted') {
-                subscribeUserToPush();
-            }
-        }
-    }
-
-
-    document.addEventListener('DOMContentLoaded', function() {
-        if (typeof Shepherd === 'undefined') {
-            console.error('Shepherd library gagal dimuat.');
-            askForNotificationPermission(); 
-            return; 
-        }
-
-        const isMobile = window.innerWidth <= 860;
-        let tourCompleted = false;
-
-        try {
-            tourCompleted = localStorage.getItem('shepherd-tour-completed');
-        } catch (error) {
-            console.warn('LocalStorage diblokir. Tur mungkin berulang.');
-            tourCompleted = false; 
-        }
-        
-        if (isMobile && !tourCompleted) {
-            setTimeout(setupTour, 500);
-        } else {
-            askForNotificationPermission();
-        }
-    });
-
-    function setupTour() {
-        const tour = new Shepherd.Tour({
-            useModalOverlay: true,
-            defaultStepOptions: {
-                cancelIcon: { enabled: true },
-                scrollTo: { behavior: 'smooth', block: 'center' }
-            }
-        });
-
-        const finishTourAndAskNotif = () => {
-            try {
-                localStorage.setItem('shepherd-tour-completed', 'true');
-            } catch (error) {}
-            
-            setTimeout(askForNotificationPermission, 300); 
-        };
-
-        tour.on('complete', finishTourAndAskNotif);
-        tour.on('cancel', finishTourAndAskNotif);
-
-        tour.addStep({
-            id: 'mobile-step-1',
-            title: 'Selamat Datang!',
-            text: 'Ini adalah tampilan ringkasan keuangan Anda di perangkat mobile.',
-            attachTo: { element: '.hero-section', on: 'bottom' },
-            buttons: [
-                { text: 'Lewati', action: tour.cancel, classes: 'btn btn-secondary btn-sm' },
-                { text: 'Lanjut', action: tour.next, classes: 'btn btn-primary btn-sm' }
-            ]
-        });
-
-        tour.addStep({
-            id: 'mobile-step-2',
-            title: 'Menu Navigasi',
-            text: 'Klik tombol ini untuk membuka menu lainnya.',
-            attachTo: { element: '#menu-toggle', on: 'bottom' },
-            buttons: [
-                { text: 'Selesai', action: tour.complete, classes: 'btn btn-success btn-sm' }
-            ]
-        });
-
-        tour.start();
-    }
-    </script>
-
-@endpush

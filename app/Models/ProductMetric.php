@@ -26,6 +26,24 @@ class ProductMetric extends Model
         'estimated_commission',
         'samples_sent'
     ];
+    protected function casts(): array
+    {
+        return [
+            'affiliate_gmv' => 'decimal:2',
+            'refunds' => 'decimal:2',
+            'estimated_commission' => 'decimal:2',
+            'items_sold' => 'integer',
+            'items_returned' => 'integer',
+            'attributed_orders' => 'integer',
+            'avg_daily_buyers' => 'integer',
+            'avg_daily_sales_creators' => 'integer',
+            'avg_daily_sales_videos' => 'integer',
+            'avg_daily_sales_lives' => 'integer',
+            'video_count' => 'integer',
+            'live_count' => 'integer',
+            'samples_sent' => 'integer',
+        ];
+    }
 
     public function importHistory()
     {

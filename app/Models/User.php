@@ -11,25 +11,14 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
     protected $fillable = [
-        'username', 
-        'email', 
-        'password', 
-        'phone_number', 
-        'account_status',
-        'is_claimed',
-        'role',
+        'username', 'email', 'password', 'phone_number',
+        'account_status', 'is_claimed', 'role',
     ];
 
     protected $hidden = [
-        'password',
-        'remember_token',
+        'password', 'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
@@ -37,19 +26,24 @@ class User extends Authenticatable
             'is_claimed' => 'boolean',
         ];
     }
+
     public function hasRole(string|array $roles): bool
     {
         if (is_string($roles)) {
             $roles = [$roles];
         }
         foreach ($roles as $role) {
-            $checkRole = strtoupper($role);
-
-            if ($this->role === $checkRole) {
+            if ($this->role === strtoupper($role)) {
                 return true;
             }
         }
-
         return false;
     }
+
+    public function importHistories() { return $this->hasMany(ImportHistory::class, 'admin_id'); }
+    public function creatorMetrics() { return $this->hasMany(CreatorMetric::class); }
+    public function videos() { return $this->hasMany(Video::class); }
+    public function blacklists() { return $this->hasMany(Blacklist::class); }
+    public function sampleRequests() { return $this->hasMany(SampleRequest::class); }
+    public function liveStreams() { return $this->hasMany(LiveStream::class); }
 }

@@ -13,9 +13,17 @@ class Video extends Model
         'post_date',
         'link'
         ];
+
+    protected function casts(): array
+    {
+        return [
+            'post_date' => 'datetime',
+        ];
+    }
     public $incrementing = false;
 
     public function productMetrics() {
         return $this->hasMany(VideoProductMetric::class);
     }
+    public function user() { return $this->belongsTo(User::class); }
 }

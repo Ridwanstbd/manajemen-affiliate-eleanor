@@ -4,8 +4,8 @@
     'columns'=>[]
 ])
 
-<div class="table-responsive">
-    <table id="{{ $id }}" class="table table-stripe table-hover table-bordered w-100 display responsive nowrap">
+<div class="glass-datatable-wrapper table-responsive">
+    <table id="{{ $id }}" class="w-100 display responsive nowrap">
         <thead>
             <tr>
                 @foreach ($columns as $col)
@@ -16,6 +16,7 @@
         <tbody></tbody>
     </table>
 </div>
+
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -40,8 +41,11 @@
                 zeroRecords: "Data tidak ditemukan",
                 emptyTable: "Tidak ada data yang tersedia pada tabel ini",
                 paginate: {
-                    previous: "<",
-                    next: ">"}
+                    first: `<x-atoms.icon name="chevron-first" style="width: 18px; height: 18px; vertical-align: -4px;" />`,
+                    last: `<x-atoms.icon name="chevron-last" style="width: 18px; height: 18px; vertical-align: -4px;" />`,
+                    previous: `<x-atoms.icon name="chevron-left" style="width: 18px; height: 18px; vertical-align: -4px;" />`,
+                    next: `<x-atoms.icon name="chevron-right" style="width: 18px; height: 18px; vertical-align: -4px;" />`
+                }
             },
         });
     });
