@@ -19,7 +19,7 @@ return new class extends Migration
             $table->enum('account_status', ['PENDING', 'ACTIVE', 'BANNED'])->default('PENDING');
             $table->boolean('is_claimed')->default(false);
             $table->enum('role', ['ADMINISTRATOR', 'AFFILIATOR'])->default('AFFILIATOR');
-
+            $table->boolean('is_kol')->default(false);
             $table->rememberToken();
             $table->timestamps();
         });

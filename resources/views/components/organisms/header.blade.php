@@ -31,11 +31,7 @@
             <x-atoms.dropdown-item href="{{ route('dashboard') }}">
                 Dashboard
             </x-atoms.dropdown-item>
-            
-            <x-atoms.dropdown-item href="#">
-                Pengaturan
-            </x-atoms.dropdown-item>
-            
+                        
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <x-atoms.dropdown-item href="#" onclick="event.preventDefault(); this.closest('form').submit();">

@@ -4,7 +4,7 @@
     'columns'=>[]
 ])
 
-<div class="glass-datatable-wrapper table-responsive">
+<div class="glass-datatable-wrapper">
     <table id="{{ $id }}" class="w-100 display responsive nowrap">
         <thead>
             <tr>

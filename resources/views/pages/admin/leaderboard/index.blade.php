@@ -14,9 +14,9 @@
 
         <div class="tab-content" style="animation: fadeInUp 0.4s ease;">
             @if($currentTab === 'monthly')
-                @include('pages.admin.data-center.leaderboard.monthly')
+                @include('pages.admin.leaderboard.monthly')
             @elseif($currentTab === 'challenge')
-                @include('pages.admin.data-center.leaderboard.challenge')
+                @include('pages.admin.leaderboard.challenge')
             @endif
         </div>
     </div>

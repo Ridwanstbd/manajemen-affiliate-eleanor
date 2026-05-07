@@ -69,7 +69,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/import-data', [ImportController::class, 'importData'])->name('admin-dashboard.store');
 
         Route::get('/analytics', [AnalyticsController::class, 'index'])->name('admin-dashboard.analytics');
-
+        Route::get('/analytics/detail-roi-data', [AnalyticsController::class, 'detailRoiData'])->name('admin-dashboard.analytics.detail-roi-data');
         Route::get('/leaderboard',[LeaderboardController::class,'index'])->name('admin-dashboard.leaderboard');
 
         Route::get('/users', [UserController::class, 'index'])->name('users.index');
