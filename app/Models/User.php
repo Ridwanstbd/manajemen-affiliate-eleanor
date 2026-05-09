@@ -47,4 +47,6 @@ class User extends Authenticatable
     public function blacklists() { return $this->hasMany(Blacklist::class); }
     public function sampleRequests() { return $this->hasMany(SampleRequest::class); }
     public function liveStreams() { return $this->hasMany(LiveStream::class); }
+    public function kolContracts() { return $this->hasMany(KOLContract::class); }
+    public function activeContract() { return $this->hasOne(KOLContract::class)->where('status', 'ACTIVE')->latest(); }
 }

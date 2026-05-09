@@ -33,8 +33,7 @@ class CreatorListImport implements ToModel, WithHeadingRow
                 'user_id'           => $user->id,
             ],
             [
-                // Jika sudah ada, update kolom-kolom ini. Jika belum, buat baru.
-                'affiliate_gmv'        => $this->cleanCurrency($row['gmv_dari_afiliasi'] ?? 0),
+                'affiliate_gmv'        => $this->cleanCurrency($row['gmv_dari_afiliasi'] ?? $row['gmv_dari_kreator'] ?? 0),
                 'refunds'              => $this->cleanCurrency($row['pengembalian_dana'] ?? 0),
                 'aov'                  => $this->cleanCurrency($row['aov'] ?? 0),
                 'estimated_commission' => $this->cleanCurrency($row['perkiraan_komisi'] ?? 0),

@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('tracking_number', 100)->nullable();
             $table->string('courier', 100)->nullable();
             $table->decimal('shipping_cost', 15, 2)->nullable();
+            $table->timestamp('delivered_at')->nullable();
             $table->timestamps();
         });
     }

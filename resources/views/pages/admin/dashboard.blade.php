@@ -107,12 +107,11 @@
             <div style="margin-top: 16px;">
                 @forelse($pendingTasksList as $task)
                     <a href="{{ $task->route }}" class="task-action-item">
-                        <div class="task-action-avatar"></div>
                         <div class="task-action-content">
                             <h4 class="task-action-title">{{ $task->title }}</h4>
                             <p class="task-action-subtitle">{{ $task->name }} &bull; {{ $task->time }}</p>
                         </div>
-                        <div class="task-action-chevron">&gt;</div>
+                        <x-atoms.icon name="chevron-right" class="nav-icon" />
                     </a>
                 @empty
                     <div style="text-align: center; padding: 24px 0; color: var(--text-tertiary);">

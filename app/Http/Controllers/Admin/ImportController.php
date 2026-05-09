@@ -55,4 +55,21 @@ class ImportController extends Controller
             return redirect()->back()->with('error','Terjadi kesalahan saat import: ' . $e->getMessage());
         }
     }
+    public function importProductUpdate(Request $request)
+    {
+        $request->validate([
+            'files' => 'required|array',
+            'files.*' => 'required|mimes:xlsx,xls,csv' 
+        ]);
+
+        try {
+            $files = $request->file('files');
+            
+            $this->importService->executeProductUpdateImport($files);
+
+            return redirect()->back()->with('success', count($files) . ' File produk berhasil diimport dan data diperbarui.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat update produk: ' . $e->getMessage());
+        }
+    }
 }

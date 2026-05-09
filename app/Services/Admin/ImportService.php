@@ -2,6 +2,7 @@
 
 namespace App\Services\Admin;
 
+use App\Imports\ProductUpdateImport;
 use App\Models\ImportHistory;
 use App\Imports\CoreMetricsImport;
 use App\Imports\CreatorListImport;
@@ -56,5 +57,12 @@ class ImportService
 
             return $batch;
         });
+    }
+
+    public function executeProductUpdateImport($files)
+    {
+        foreach ($files as $file) {
+            Excel::import(new ProductUpdateImport, $file);
+        }
     }
 }

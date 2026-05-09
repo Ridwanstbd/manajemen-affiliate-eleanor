@@ -67,7 +67,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/import-data', [ImportController::class, 'getImportData'])->name('admin-dashboard.import');
         Route::get('/import-data/data', [ImportController::class, 'data'])->name('admin-dashboard.import-data');
         Route::post('/import-data', [ImportController::class, 'importData'])->name('admin-dashboard.store');
-
+        Route::post('/import-product-update', [ImportController::class, 'importProductUpdate'])->name('admin-dashboard.import-product-update');
+        
+        Route::post('/import-data', [ImportController::class, 'importData'])->name('request.access');
         Route::get('/analytics', [AnalyticsController::class, 'index'])->name('admin-dashboard.analytics');
         Route::get('/analytics/detail-roi-data', [AnalyticsController::class, 'detailRoiData'])->name('admin-dashboard.analytics.detail-roi-data');
         Route::get('/leaderboard',[LeaderboardController::class,'index'])->name('admin-dashboard.leaderboard');
