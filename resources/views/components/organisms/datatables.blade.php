@@ -5,11 +5,13 @@
 ])
 
 <div class="glass-datatable-wrapper">
-    <table id="{{ $id }}" class="w-100 display responsive nowrap">
+    <table id="{{ $id }}" class="w-100 display ">
         <thead>
             <tr>
                 @foreach ($columns as $col)
-                <th>{{ $col['title'] ?? ucfirst($col['data'])}}</th>
+                <th @isset($col['width']) style="width: {{ $col['width'] }}; min-width: {{ $col['width'] }}; white-space: normal;" @endisset>
+                    {{ $col['title'] ?? ucfirst($col['data'])}}
+                </th>
                 @endforeach
             </tr>
         </thead>
@@ -27,7 +29,9 @@
         $('#{{ $id }}').DataTable({
             processing: true,  
             serverSide: true,  
-            responsive: true,  
+            responsive: false,
+            scrollX: true,  
+            autoWidth: false, 
             ajax: '{!! $url !!}',
             columns: @json($columns), 
             language: {

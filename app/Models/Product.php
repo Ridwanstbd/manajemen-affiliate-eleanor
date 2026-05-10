@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Product extends Model
 {
     use HasFactory;
-
     public $incrementing = false;
+    protected $keyType = 'string';
     protected $fillable = [
         'id', 'name', 'category', 'sku_id', 'variation_value',
         'product_detail', 'brand', 'price', 'stock', 'seller_sku',
@@ -23,6 +23,7 @@ class Product extends Model
     protected function casts(): array
     {
         return [
+            'id' => 'string',
             'is_visible' => 'boolean',
             'is_cod_supported' => 'boolean',
             'stock' => 'integer',

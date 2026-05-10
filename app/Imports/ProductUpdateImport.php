@@ -6,8 +6,9 @@ use App\Models\Product;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
-
-class ProductUpdateImport implements ToCollection, WithHeadingRow
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Maatwebsite\Excel\Concerns\WithChunkReading;
+class ProductUpdateImport implements ToCollection, WithHeadingRow, ShouldQueue, WithChunkReading
 {
     public function headingRow(): int
     {
@@ -17,7 +18,7 @@ class ProductUpdateImport implements ToCollection, WithHeadingRow
     public function collection(Collection $rows)
     {
         foreach ($rows as $row) {
-            if (empty($row['product_id']) || $row['product_id'] == 'V3' || $row['product_id'] == 'ID Produk') {
+            if (empty($row['product_id']) || !is_numeric($row['product_id'])) {
                 continue;
             }
 
@@ -35,26 +36,30 @@ class ProductUpdateImport implements ToCollection, WithHeadingRow
             }
 
             Product::updateOrCreate(
-                ['id' => $row['id_produk']],
+                ['id' => $row['product_id']],
                 [
-                    'name' => $row['nama_produk'],
-                    'category' => $row['kategori'] ?? null,
-                    'sku_id' => $row['id_sku'] ?? null,
-                    'variation_value' => $row['nilai_variasi'] ?? null,
-                    'product_detail' => $row['deskripsi_produk'] ?? null,
-                    'brand' => $row['merek'] ?? null,
-                    'price' => isset($row['harga_ritel_(mata_uang_lokal)']) ? (float) $row['harga_ritel'] : 0, 
-                    'seller_sku' => $row['sku_penjual'] ?? null,
+                    'name' => $row['product_name'],
+                    'category' => $row['category'] ?? null,
+                    'sku_id' => $row['sku_id'] ?? null,
+                    'variation_value' => $row['variation_value'] ?? null,
+                    'product_detail' => $row['product_description'] ?? null,
+                    'brand' => $row['brand'] ?? null,
+                    'price' => isset($row['price']) ? (float) $row['price'] : 0,
+                    'seller_sku' => $row['seller_sku'] ?? null,
                     
-                    'parcel_weight' => isset($row['berat_paket(g)']) ? (float) $row['berat_paket(g)'] : null,
-                    'parcel_length' => isset($row['panjang_paket(cm)']) ? (float) $row['panjang_paket(cm)'] : null,
-                    'parcel_width'  => isset($row['lebar_paket(cm)']) ? (float) $row['lebar_paket(cm)'] : null,
-                    'parcel_height' => isset($row['tinggi_paket(cm)']) ? (float) $row['tinggi_paket(cm)'] : null,
-                    
-                    'image_path' => $row['gambar_utama'] ?? null,
-                    'additional_images' => $additionalImages, 
+                    'parcel_weight' => isset($row['parcel_weight']) ? (float) $row['parcel_weight'] : null,
+                    'parcel_length' => isset($row['parcel_length']) ? (float) $row['parcel_length'] : null,
+                    'parcel_width'  => isset($row['parcel_width']) ? (float) $row['parcel_width'] : null,
+                    'parcel_height' => isset($row['parcel_height']) ? (float) $row['parcel_height'] : null,
+                    'image_path' => $row['main_image'] ?? null,
+                    'additional_images' => $additionalImages,
                 ]
             );
         }
+    }
+
+    public function chunkSize(): int
+    {
+        return 500;
     }
 }

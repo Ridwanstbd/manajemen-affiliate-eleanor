@@ -4,6 +4,7 @@
 @section('content')
     @php
         $currentTab = request('tab', 'analytics');
+        $isKol = request()->boolean('is_kol', false); 
     @endphp
 
     <div class="data-center-wrapper">
@@ -13,6 +14,13 @@
             <x-molecules.glass-tab-item :active="$currentTab === 'detail'" href="?tab=detail">Detail ROI</x-molecules.glass-tab-item>
 
             <x-slot name="actions">
+                <x-molecules.toggle 
+                    id="kol-contract" 
+                    name="KolContract" 
+                    label="Kontrak KOL"
+                    :checked="$isKol"
+                    onchange="toggleKolFilter(this.checked)" 
+                />
                 <x-molecules.dropdown>
                     <x-slot:trigger>
                         <x-atoms.button variant="secondary" style="background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--text-primary); font-weight: 500;">
@@ -43,3 +51,13 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+<script>
+    function toggleKolFilter(isChecked) {
+        const url = new URL(window.location.href);
+        url.searchParams.set('is_kol', isChecked ? '1' : '0');
+        window.location.href = url.toString();
+    }
+</script>
+@endpush

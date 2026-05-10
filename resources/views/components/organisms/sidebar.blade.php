@@ -26,7 +26,7 @@
         <nav class="nav-section">
             <div class="nav-label">Operasional & Inventaris</div>
             <div class="nav-list">
-                <x-molecules.nav-item icon="vendors" label="Kelola Sampel Produk" />
+                <x-molecules.nav-item icon="vendors" label="Kelola Sampel Produk" href="{{ route('admin-dashboard.product-index') }}" :active="request()->routeIs('admin-dashboard.product-index')" />
                 <x-molecules.nav-item icon="invoices" label="Persetujuan & Pengiriman" />
             </div>
         </nav>

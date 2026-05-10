@@ -18,6 +18,10 @@
         margin-bottom: 24px;
         padding-bottom: 8px;
     }
+    .glass-tabs-actions {
+        display: flex;
+        gap: 20px;
+    }
     .glass-tabs {
         display: flex;
         gap: 24px;

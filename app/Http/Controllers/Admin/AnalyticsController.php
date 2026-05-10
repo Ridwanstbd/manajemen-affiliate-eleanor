@@ -21,6 +21,7 @@ class AnalyticsController extends Controller
     public function index(Request $request)
     {
         $tab = $request->query('tab', 'analytics');
+        $isKol = $request->boolean('is_kol', false);
         
         $availableMonths = ImportHistory::selectRaw('DISTINCT DATE_FORMAT(start_date, "%Y-%m") as month_val')
             ->orderBy('month_val', 'desc')
@@ -46,7 +47,8 @@ class AnalyticsController extends Controller
         $viewData = array_merge([
             'currentTab' => $tab,
             'availableMonths' => $availableMonths,
-            'selectedMonthLabel' => $selectedLabel
+            'selectedMonthLabel' => $selectedLabel,
+            'isKol' => $isKol
         ], $data);
 
         return view('pages.admin.data-center.index', $viewData);

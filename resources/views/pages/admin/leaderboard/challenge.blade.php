@@ -1,10 +1,24 @@
-<x-molecules.card  title="Papan Peringkat Tantangan">
+<x-molecules.card title="Papan Peringkat: {{ $challenge->title ?? 'Tantangan' }}">
     
     <x-slot name="headerAction">
-        <x-atoms.button variant="secondary" style="background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--text-primary); font-weight: 500; font-size: 13px; padding: 6px 12px;">
-            <x-atoms.icon name="reports" style="width: 16px; height: 16px; margin-right: 6px; display: inline-block; vertical-align: middle;" />
-            Filter Tantangan
-        </x-atoms.button>
+        <div style="display: flex; gap: 16px; align-items: center;">
+            <x-molecules.dropdown>
+                <x-slot:trigger>
+                    <x-atoms.button variant="secondary" style="background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--text-primary); font-weight: 500;">
+                        <x-atoms.icon name="reports" style="width: 16px; height: 16px; margin-right: 6px; display: inline-block; vertical-align: middle;" />
+                        {{ $challenge->title ?? 'Pilih Tantangan' }}
+                    </x-atoms.button>
+                </x-slot:trigger>
+
+                @forelse($availableChallenges as $c)
+                    <x-atoms.dropdown-item href="?tab={{ $currentTab }}&selected_challenge={{ $c['value'] }}">
+                        {{ $c['label'] }}
+                    </x-atoms.dropdown-item>
+                @empty
+                    <x-atoms.dropdown-item>Belum ada tantangan</x-atoms.dropdown-item>
+                @endforelse
+            </x-molecules.dropdown>
+        </div>
     </x-slot>
 
     @php
@@ -12,16 +26,10 @@
             ['label' => 'PERINGKAT'], ['label' => 'USERNAME TIKTOK'], ['label' => 'TOTAL PESANAN'], 
             ['label' => 'VIDEO/LIVE'], ['label' => 'GMV AFILIASI', 'align' => 'right']
         ];
-        $challengeLeaders = [
-            ['#1', '@sarah.beauty', '1,245', '12 / 4', 'Rp 45.2M'],
-            ['#2', '@mike.skincare', '980', '8 / 2', 'Rp 38.1M'],
-            ['#3', '@emily.glow', '850', '15 / 0', 'Rp 32.9M'],
-            ['#4', '@alex.review', '710', '5 / 5', 'Rp 28.4M'],
-        ];
     @endphp
 
     <x-organisms.glass-table :headers="$headers">
-        @foreach($challengeLeaders as $row)
+        @forelse($leadersData as $row)
         <tr>
             <td><x-atoms.badge status="{{ $loop->first ? 'paid' : 'pending' }}">{{ $row[0] }}</x-atoms.badge></td>
             <td style="font-weight: 600; color: var(--text-primary);">{{ $row[1] }}</td>
@@ -29,7 +37,11 @@
             <td>{{ $row[3] }}</td>
             <td style="text-align: right; font-weight: 700; color: var(--text-primary);">{{ $row[4] }}</td>
         </tr>
-        @endforeach
+        @empty
+        <tr>
+            <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 24px;">Tidak ada data untuk tantangan ini.</td>
+        </tr>
+        @endforelse
     </x-organisms.glass-table>
 
     <div style="margin-top: 16px;">

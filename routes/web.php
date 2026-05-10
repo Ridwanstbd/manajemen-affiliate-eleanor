@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AnalyticsController;
 use App\Http\Controllers\Admin\ImportController;
 use App\Http\Controllers\Admin\LeaderboardController;
+use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Admin\MainController as MainAdminController;
 use App\Http\Controllers\Affiliator\MainController as MainAffiliateController;
@@ -67,9 +68,15 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/import-data', [ImportController::class, 'getImportData'])->name('admin-dashboard.import');
         Route::get('/import-data/data', [ImportController::class, 'data'])->name('admin-dashboard.import-data');
         Route::post('/import-data', [ImportController::class, 'importData'])->name('admin-dashboard.store');
-        Route::post('/import-product-update', [ImportController::class, 'importProductUpdate'])->name('admin-dashboard.import-product-update');
         
-        Route::post('/import-data', [ImportController::class, 'importData'])->name('request.access');
+        Route::get('/product',[ProductController::class, 'index'])->name('admin-dashboard.product-index');
+        Route::get('/product/data',[ProductController::class, 'data'])->name('admin-dashboard.product-data');
+        Route::post('/import-product-update', [ProductController::class, 'importData'])->name('admin-dashboard.import-product-update');
+        Route::put('/products/{id}', [ProductController::class, 'update'])->name('admin-dashboard.product-update');
+        Route::post('/products/mass-update', [ProductController::class, 'massUpdate'])->name('admin-dashboard.product-mass-update');
+        
+        Route::post('/import-data', [ImportController::class, 'importData'])->name('request.access'); /// ! 
+
         Route::get('/analytics', [AnalyticsController::class, 'index'])->name('admin-dashboard.analytics');
         Route::get('/analytics/detail-roi-data', [AnalyticsController::class, 'detailRoiData'])->name('admin-dashboard.analytics.detail-roi-data');
         Route::get('/leaderboard',[LeaderboardController::class,'index'])->name('admin-dashboard.leaderboard');
