@@ -1,7 +1,7 @@
 @props([
     'id', 
     'title' => null, 
-    'position' => 'end' // Pilihan: 'start' (kiri) atau 'end' (kanan)
+    'position' => 'end' 
 ])
 
 <x-atoms.offcanvas-overlay target="{{ $id }}" />

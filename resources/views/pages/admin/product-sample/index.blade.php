@@ -19,7 +19,7 @@
             @php
                 $tableColumns = [
                     ['data' => 'name', 'name' => 'name', 'title' => 'Nama Produk', 'width' => '320px'],
-                    ['data' => 'price', 'name' => 'price', 'title' => 'Harga Retail'],
+                    ['data' => 'price_formmated', 'name' => 'price', 'title' => 'Harga Retail'],
                     ['data' => 'stock', 'name' => 'stock', 'title' => 'Stok'],
                     ['data' => 'seller_sku', 'name' => 'seller_sku', 'title' => 'SKU Produk'],
                     ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false],
