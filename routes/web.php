@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AgreementController;
 use App\Http\Controllers\Admin\AnalyticsController;
 use App\Http\Controllers\Admin\ImportController;
 use App\Http\Controllers\Admin\LeaderboardController;
@@ -62,37 +63,44 @@ Route::middleware(['auth'])->group(function () {
         return back()->with('message', 'Link verifikasi telah dikirim ulang!');
     })->middleware(['throttle:6,1'])->name('verification.send');
 
-    Route::middleware(['role:administrator'])->prefix('dashboard')->group(function () {
+    Route::middleware(['role:administrator'])->prefix('dashboard')->name('admin-dashboard.')->group(function () {
         Route::get('/', [MainAdminController::class, 'index'])->name('dashboard');
 
-        Route::get('/import-data', [ImportController::class, 'getImportData'])->name('admin-dashboard.import');
-        Route::get('/import-data/data', [ImportController::class, 'data'])->name('admin-dashboard.import-data');
-        Route::post('/import-data', [ImportController::class, 'importData'])->name('admin-dashboard.store');
+        Route::get('/import-data', [ImportController::class, 'getImportData'])->name('import');
+        Route::get('/import-data/data', [ImportController::class, 'data'])->name('import-data');
+        Route::post('/import-data', [ImportController::class, 'importData'])->name('store');
         
-        Route::get('/product',[ProductController::class, 'index'])->name('admin-dashboard.product-index');
-        Route::get('/product/data',[ProductController::class, 'data'])->name('admin-dashboard.product-data');
-        Route::post('/import-product-update', [ProductController::class, 'importData'])->name('admin-dashboard.import-product-update');
-        Route::put('/products/{id}', [ProductController::class, 'update'])->name('admin-dashboard.product-update');
-        Route::post('/products/mass-update', [ProductController::class, 'massUpdate'])->name('admin-dashboard.product-mass-update');
+        Route::get('/product',[ProductController::class, 'index'])->name('product-index');
+        Route::get('/product/data',[ProductController::class, 'data'])->name('product-data');
+        Route::post('/import-product-update', [ProductController::class, 'importData'])->name('import-product-update');
+        Route::put('/products/{id}', [ProductController::class, 'update'])->name('product-update');
+        Route::post('/products/mass-update', [ProductController::class, 'massUpdate'])->name('product-mass-update');
         
         Route::post('/import-data', [ImportController::class, 'importData'])->name('request.access'); /// ! 
 
-        Route::get('/analytics', [AnalyticsController::class, 'index'])->name('admin-dashboard.analytics');
-        Route::get('/analytics/detail-roi-data', [AnalyticsController::class, 'detailRoiData'])->name('admin-dashboard.analytics.detail-roi-data');
-        Route::get('/leaderboard',[LeaderboardController::class,'index'])->name('admin-dashboard.leaderboard');
+        Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics');
+        Route::get('/analytics/detail-roi-data', [AnalyticsController::class, 'detailRoiData'])->name('analytics.detail-roi-data');
+        Route::get('/leaderboard',[LeaderboardController::class,'index'])->name('leaderboard');
 
-        Route::get('/users', [UserController::class, 'index'])->name('admin-dashboard.users.index');
-        Route::get('/users/data/active', [UserController::class, 'activeData'])->name('admin-dashboard.users.active-data');
-        Route::get('/users/data/request-access', [UserController::class, 'requestAccessData'])->name('admin-dashboard.users.request-access-data');
-        Route::get('/users/data/blacklist', [UserController::class, 'blacklistData'])->name('admin-dashboard.users.blacklist-data');
-        Route::get('/users/data/kol-contract', [UserController::class, 'kolContractData'])->name('admin-dashboard.users.kol-contract-data');
-        Route::post('/users/approve-access', [UserController::class, 'approveAccess'])->name('admin-dashboard.users.approve-access');
-        Route::post('/users/reject-access', [UserController::class, 'rejectAccess'])->name('admin-dashboard.users.reject-access');
-        Route::post('/users/store-blacklist', [UserController::class, 'storeBlacklist'])->name('admin-dashboard.users.store-blacklist');
-        Route::post('/users/restore-blacklist', [UserController::class, 'restoreBlacklist'])->name('admin-dashboard.users.restore-blacklist');
-        Route::post('/users/extend-kol-contract', [UserController::class, 'extendKOLContract'])->name('admin-dashboard.users.extend-kol-contract');
-        Route::post('/users/store-kol-contract', [UserController::class, 'storeKOLContract'])->name('admin-dashboard.users.store-kol-contract');
+        Route::get('/users', [UserController::class, 'index'])->name('users.index');
+        Route::get('/users/data/active', [UserController::class, 'activeData'])->name('users.active-data');
+        Route::get('/users/data/request-access', [UserController::class, 'requestAccessData'])->name('users.request-access-data');
+        Route::get('/users/data/blacklist', [UserController::class, 'blacklistData'])->name('users.blacklist-data');
+        Route::get('/users/data/kol-contract', [UserController::class, 'kolContractData'])->name('users.kol-contract-data');
+        Route::post('/users/approve-access', [UserController::class, 'approveAccess'])->name('users.approve-access');
+        Route::post('/users/reject-access', [UserController::class, 'rejectAccess'])->name('users.reject-access');
+        Route::post('/users/store-blacklist', [UserController::class, 'storeBlacklist'])->name('users.store-blacklist');
+        Route::post('/users/restore-blacklist', [UserController::class, 'restoreBlacklist'])->name('users.restore-blacklist');
+        Route::post('/users/extend-kol-contract', [UserController::class, 'extendKOLContract'])->name('users.extend-kol-contract');
+        Route::post('/users/store-kol-contract', [UserController::class, 'storeKOLContract'])->name('users.store-kol-contract');
     
+        Route::prefix('agreements')->name('agreements.')->group(function () {
+            Route::get('/', [AgreementController::class, 'index'])->name('index');
+            Route::get('/data', [AgreementController::class, 'getData'])->name('data'); 
+            Route::post('/', [AgreementController::class, 'store'])->name('store');
+            Route::put('/{agreement}', [AgreementController::class, 'update'])->name('update');
+            Route::delete('/{agreement}', [AgreementController::class, 'destroy'])->name('destroy');
+        });
         });
     Route::middleware(['role:affiliator'])->prefix('affiliator')->group(function () {
         Route::get('/', [MainAffiliateController::class,'index']);

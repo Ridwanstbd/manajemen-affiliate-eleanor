@@ -8,7 +8,7 @@
         <nav class="nav-section">
             <div class="nav-label">Intelegensi Bisnis</div>
             <div class="nav-list">
-                <x-molecules.nav-item icon="dashboard" label="Dasbor Administrator" href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')" />
+                <x-molecules.nav-item icon="dashboard" label="Dasbor Administrator" href="{{ route('admin-dashboard.dashboard') }}" :active="request()->routeIs('admin-dashboard.dashboard')" />
                 <x-molecules.nav-item icon="download" label="Import Data Analitik" href="{{ route('admin-dashboard.import') }}" :active="request()->routeIs('admin-dashboard.import')" />
                 <x-molecules.nav-item icon="reports" label="Pusat Analisa" href="{{ route('admin-dashboard.analytics') }}" :active="request()->routeIs('admin-dashboard.analytics')" />
             </div>
@@ -19,7 +19,7 @@
             <div class="nav-list">
                 <x-molecules.nav-item icon="customers" label="Kelola Affiliator" href="{{ route('admin-dashboard.users.index') }}" :active="request()->routeIs('admin-dashboard.users.index')"/>
                 <x-molecules.nav-item icon="eye" label="Monitoring Tugas" />
-                <x-molecules.nav-item icon="check" label="Kelola Persetujuan" />
+                <x-molecules.nav-item icon="check" label="Kelola Persetujuan" href="{{ route('admin-dashboard.agreements.index') }}" :active="request()->routeIs('admin-dashboard.agreements.index')"/>
             </div>
         </nav>
     

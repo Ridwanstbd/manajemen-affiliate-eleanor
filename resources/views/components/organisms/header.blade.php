@@ -28,7 +28,7 @@
                 </div>
             </x-slot:trigger>
 
-            <x-atoms.dropdown-item href="{{ route('dashboard') }}">
+            <x-atoms.dropdown-item href="{{ route('admin-dashboard.dashboard') }}">
                 Dashboard
             </x-atoms.dropdown-item>
                         

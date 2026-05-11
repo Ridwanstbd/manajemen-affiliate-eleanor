@@ -26,7 +26,6 @@
         <x-atoms.typography variant="card-title" as="h4" style="margin-bottom: 16px;">Informasi Kontrak</x-atoms.typography>
         <div id="det-contracts-wrapper" style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px;"></div>
 
-        <x-atoms.button variant="primary" style="width: 100%;" onclick="openExtendForm()">Perpanjang Kontrak</x-atoms.button>
     </div>
 </x-organisms.offcanvas>
 
@@ -158,7 +157,7 @@
                                 <div>${productTags}</div>
                             </div>
 
-                            ${c.status === 'ACTIVE' ? `
+                            ${(c.status === 'ACTIVE' || c.status === 'EXPIRED') ? `
                             <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--glass-border);">
                                 <button type="button" class="btn btn-primary btn-sm" style="width: 100%;"
                                     onclick="openExtendForm('${c.id}', '${c.fee}', '${c.req_video}')">

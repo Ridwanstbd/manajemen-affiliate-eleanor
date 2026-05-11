@@ -83,7 +83,7 @@ class AuthController extends Controller
             $userRole = auth()->user()->role;
 
             if ($userRole === 'ADMIN' || $userRole === 'ADMINISTRATOR') {
-                return redirect()->intended('/dashboard')->with('success', 'Selamat datang, Administrator!');
+                return redirect()->route('admin-dashboard.dashboard')->with('success', 'Selamat datang, Administrator!');
             } elseif ($userRole === 'AFFILIATOR') {
                 return redirect()->intended('/affiliator')->with('success', 'Berhasil login! Selamat datang di dashboard Affiliator.');
             }
@@ -112,7 +112,7 @@ class AuthController extends Controller
             $userRole = auth()->user()->role;
 
             if ($userRole === 'ADMIN' || $userRole === 'ADMINISTRATOR') {
-                return redirect()->intended('/dashboard')->with('success', 'Selamat datang, Administrator!');
+                return redirect()->route('admin-dashboard.dashboard')->with('success', 'Selamat datang, Administrator!');
             } elseif ($userRole === 'AFFILIATOR') {
                 return redirect()->intended('/affiliator')->with('success', 'Berhasil Klaim! Selamat datang di dashboard Affiliator.');
             }
