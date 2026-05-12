@@ -18,7 +18,7 @@
             <div class="nav-label">Manajemen Kemitraan</div>
             <div class="nav-list">
                 <x-molecules.nav-item icon="customers" label="Kelola Affiliator" href="{{ route('admin-dashboard.users.index') }}" :active="request()->routeIs('admin-dashboard.users.index')"/>
-                <x-molecules.nav-item icon="eye" label="Monitoring Tugas" />
+                <x-molecules.nav-item icon="eye" label="Monitoring Tugas" href="{{ route('admin-dashboard.task-monitoring.index') }}" :active="request()->routeIs('admin-dashboard.task-monitoring.index')" />
                 <x-molecules.nav-item icon="check" label="Kelola Persetujuan" href="{{ route('admin-dashboard.agreements.index') }}" :active="request()->routeIs('admin-dashboard.agreements.index')"/>
             </div>
         </nav>

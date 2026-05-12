@@ -49,4 +49,6 @@ class User extends Authenticatable
     public function liveStreams() { return $this->hasMany(LiveStream::class); }
     public function kolContracts() { return $this->hasMany(KOLContract::class); }
     public function activeContract() { return $this->hasOne(KOLContract::class)->where('status', 'ACTIVE')->latest(); }
+
+    public function taskReports() { return $this->hasMany(TaskReport::class); }
 }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\ImportController;
 use App\Http\Controllers\Admin\LeaderboardController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\RequestSampleController;
+use App\Http\Controllers\Admin\TaskMonitoringController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Admin\MainController as MainAdminController;
@@ -109,6 +110,12 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/sync-status', [RequestSampleController::class, 'syncStatus'])->name('sync-status');
             Route::get('/track/{id}', [RequestSampleController::class, 'track'])->name('track');
             Route::post('/reject', [RequestSampleController::class, 'reject'])->name('reject');
+        });
+
+        Route::prefix('task-monitoring')->name('task-monitoring.')->group(function (){
+            Route::get('/',[TaskMonitoringController::class, 'index'])->name('index');
+            Route::get('/data', [TaskMonitoringController::class,'data'])->name('data');
+
         });
     });
     Route::middleware(['role:affiliator'])->prefix('affiliator')->group(function () {
