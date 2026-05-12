@@ -33,7 +33,7 @@
         <nav class="nav-section">
             <div class="nav-label">Program Strategis</div>
             <div class="nav-list">
-                <x-molecules.nav-item icon="trend-up" label="Kelola Tantangan" />
+                <x-molecules.nav-item icon="trend-up" label="Kelola Tantangan" href="{{ route('admin-dashboard.challenge.index') }}" :active="request()->routeIs('admin-dashboard.challenge.index')" />
             </div>
         </nav>
     </div>

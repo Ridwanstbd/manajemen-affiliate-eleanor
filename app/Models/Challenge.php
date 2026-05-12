@@ -12,16 +12,23 @@ class Challenge extends Model
     protected $fillable = [
         'title',
         'rules',
-        'target',
-        'prize',
+        'start_date',
+        'end_date', 
         'commission_bonus',
-        'banner_image_path'
+        'banner_image_path',
+        'is_active'  
     ];
+
     protected function casts(): array
     {
         return [
+            'start_date' => 'datetime',
+            'end_date' => 'datetime',
             'commission_bonus' => 'decimal:2',
-            'target' => 'integer',
+            'is_active' => 'boolean',
         ];
     }
+
+    public function rewards() { return $this->hasMany(ChallengeReward::class); }
+    public function winners() { return $this->hasMany(ChallengeWinner::class); }
 }

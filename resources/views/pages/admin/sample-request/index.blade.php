@@ -6,9 +6,9 @@
     <x-slot:headerAction>
         <form action="{{ route('admin-dashboard.request-samples.sync-status') }}" method="POST">
             @csrf
-            <x-atoms.button type="submit" variant="outline" size="sm" onclick="this.innerHTML='Menyinkronkan...'; this.disabled=true; this.form.submit();">
-                <x-atoms.icon name="refresh" style="width: 16px; height: 16px;" /> Sinkronkan Status
-            </x-atoms.button>
+                <x-atoms.button type="submit" variant="primary" onclick="this.innerHTML='Menyinkronkan...'; this.disabled=true; this.form.submit();">
+                    <x-atoms.icon name="refresh" style="width: 16px; height: 16px;" /> Sinkronkan Status
+                </x-atoms.button>
         </form>
     </x-slot:headerAction>
     <div class="tab-content">

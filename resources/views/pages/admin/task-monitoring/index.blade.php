@@ -3,6 +3,12 @@
 
 @section('content')
 <x-molecules.card title="Pemantauan Tugas" description="Pengawasan progres unggahan konten video berdasarkan sampel yang diterima.">
+    <x-slot name="headerAction">
+        <x-atoms.button variant="primary" onclick="openSettingModal()">
+            <x-atoms.icon name="gear" style="width: 18px; height: 18px;" />
+            Pengaturan
+        </x-atoms.button>
+    </x-slot>
     <div class="tab-content">
         <x-organisms.datatables id="taskMonitorTable" url="{{ route('admin-dashboard.task-monitoring.data') }}"
         :columns="[

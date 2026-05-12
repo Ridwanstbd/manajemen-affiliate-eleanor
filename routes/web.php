@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AgreementController;
 use App\Http\Controllers\Admin\AnalyticsController;
+use App\Http\Controllers\Admin\ChallengeController;
 use App\Http\Controllers\Admin\ImportController;
 use App\Http\Controllers\Admin\LeaderboardController;
 use App\Http\Controllers\Admin\ProductController;
@@ -115,7 +116,11 @@ Route::middleware(['auth'])->group(function () {
         Route::prefix('task-monitoring')->name('task-monitoring.')->group(function (){
             Route::get('/',[TaskMonitoringController::class, 'index'])->name('index');
             Route::get('/data', [TaskMonitoringController::class,'data'])->name('data');
+        });
 
+        Route::prefix('challenge')->name('challenge.')->group(function (){
+            Route::get('/',[ChallengeController::class, 'index'])->name('index');
+            Route::get('/data',[ChallengeController::class, 'data'])->name('data');
         });
     });
     Route::middleware(['role:affiliator'])->prefix('affiliator')->group(function () {
