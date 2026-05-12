@@ -110,7 +110,7 @@ class DashboardService
                 'name'  => $req->tiktok_username ?? $req->email,
                 'time'  => $req->created_at->diffForHumans(),
                 'created_at' => $req->created_at,
-                'route' => route('request.access')
+                'route' => route('admin-dashboard.users.index')
             ]);
         }
 

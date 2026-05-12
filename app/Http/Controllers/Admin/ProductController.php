@@ -27,7 +27,7 @@ class ProductController extends Controller
             $query = Product::select(['id','name','price','stock','seller_sku', 'mandatory_video_count']);
 
             return DataTables::of($query)
-                ->addColumn('price_formatted', function($row) {
+                ->addColumn('price_formated', function($row) {
                     return 'Rp ' . number_format($row['price'], 0, ',', '.');
                 })
                 ->addColumn('action', function($row) {

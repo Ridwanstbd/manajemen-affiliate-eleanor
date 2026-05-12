@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\AnalyticsController;
 use App\Http\Controllers\Admin\ImportController;
 use App\Http\Controllers\Admin\LeaderboardController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\RequestSampleController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Admin\MainController as MainAdminController;
@@ -76,7 +77,6 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/products/{id}', [ProductController::class, 'update'])->name('product-update');
         Route::post('/products/mass-update', [ProductController::class, 'massUpdate'])->name('product-mass-update');
         
-        Route::post('/import-data', [ImportController::class, 'importData'])->name('request.access'); /// ! 
 
         Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics');
         Route::get('/analytics/detail-roi-data', [AnalyticsController::class, 'detailRoiData'])->name('analytics.detail-roi-data');
@@ -101,7 +101,15 @@ Route::middleware(['auth'])->group(function () {
             Route::put('/{agreement}', [AgreementController::class, 'update'])->name('update');
             Route::delete('/{agreement}', [AgreementController::class, 'destroy'])->name('destroy');
         });
+
+        Route::prefix('request-samples')->name('request-samples.')->group(function() {
+            Route::get('/', [RequestSampleController::class,'index'])->name('index');
+            Route::get('/data',[RequestSampleController::class,'data'])->name('data');
+            Route::post('/update-resi', [RequestSampleController::class, 'updateResi'])->name('update-resi');
+            Route::post('/sync-status', [RequestSampleController::class, 'syncStatus'])->name('sync-status');
+            Route::get('/track/{id}', [RequestSampleController::class, 'track'])->name('track');
         });
+    });
     Route::middleware(['role:affiliator'])->prefix('affiliator')->group(function () {
         Route::get('/', [MainAffiliateController::class,'index']);
     });
