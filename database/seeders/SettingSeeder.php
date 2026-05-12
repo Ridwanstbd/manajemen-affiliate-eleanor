@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Setting;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class SettingSeeder extends Seeder
@@ -15,7 +14,7 @@ class SettingSeeder extends Seeder
     {
         Setting::updateOrCreate(
             ['key' => 'task_deadline_days'],
-            ['value' => '14']
+            ['value' => '7']
         );
     }
 }

@@ -84,7 +84,7 @@ class RequestSampleController extends Controller
 
     public function syncStatus()
     {
-        $sampleRequests = SampleRequest::where('status', 'APPROVED')
+        $sampleRequests = SampleRequest::whereIn('status', ['APPROVED', 'SHIPPED'])
             ->whereNotNull('tracking_number')
             ->whereNotNull('courier')
             ->get();

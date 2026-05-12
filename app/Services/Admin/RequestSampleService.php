@@ -5,6 +5,7 @@ namespace App\Services\Admin;
 use App\Models\SampleRequest;
 use App\Models\Setting;
 use App\Models\TaskReport;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 
 class RequestSampleService
@@ -46,8 +47,11 @@ class RequestSampleService
                 $isDelivered = true;
             }
 
-            if ($isDelivered && $sampleRequest->status !== 'SHIPPED') {
-                $sampleRequest->update(['status' => 'SHIPPED']);
+            if ($isDelivered) {
+                if ($sampleRequest->status !== 'SHIPPED') {
+                    $sampleRequest->update(['status' => 'SHIPPED']);
+                }
+                
                 $this->generateTaskForSample($sampleRequest);
             }
 
@@ -60,27 +64,38 @@ class RequestSampleService
 
     protected function generateTaskForSample(SampleRequest $sampleRequest)
     {
-        if ($sampleRequest->taskReports()->exists()) {
+        $hasTasks = DB::table('sample_task_reports')
+            ->where('sample_request_id', $sampleRequest->id)
+            ->exists();
+            
+        if ($hasTasks) {
             return;
         }
 
         $setting = Setting::where('key', 'task_deadline_days')->first();
         $deadlineDays = $setting ? (int) $setting->value : 7;
-        
         $dueDate = now()->addDays($deadlineDays);
 
-        $taskReport = TaskReport::create([
-            'task_status' => 'PENDING',
-            'due_date' => $dueDate,
-        ]);
+        $sampleRequest->load('details.product');
 
-        $taskReport->sampleRequests()->attach($sampleRequest->id);
+        foreach ($sampleRequest->details as $detail) {
+            $product = $detail->product;
+            
+            if ($product) {
+                $mandatoryCount = $product->mandatory_video_count > 0 ? $product->mandatory_video_count : 1;
 
-        $sampleRequest->load('details');
-        $productIds = $sampleRequest->details->pluck('product_id')->toArray();
-        
-        if (!empty($productIds)) {
-            $taskReport->products()->attach($productIds);
+                for ($i = 0; $i < $mandatoryCount; $i++) {
+                    $taskReport = TaskReport::create([
+                        'user_id' => $sampleRequest->user_id,
+                        'task_status' => 'PROCESSING',
+                        'due_date' => $dueDate,
+                    ]);
+
+                    $taskReport->sampleRequests()->attach($sampleRequest->id);
+
+                    $taskReport->products()->attach($product->id);
+                }
+            }
         }
     }
     public function rejectRequest(int $id, string $reason)
