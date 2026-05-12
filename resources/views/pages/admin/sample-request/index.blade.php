@@ -100,11 +100,18 @@
                     </div>
                 </div>
             </div>
+
+            <div id="section-rejected-info" style="display: none; padding-bottom: 24px;">
+                <x-atoms.typography variant="card-title" as="h4" style="margin-bottom: 12px; font-size: 14px; color: var(--rose);">Alasan Penolakan</x-atoms.typography>
+                <div class="rejection-info-box">
+                    <div id="lbl-reject-reason" style="font-size: 13.5px; color: var(--text-primary); line-height: 1.5; font-style: italic;"></div>
+                </div>
+            </div>
             
             <div id="footer-actions-form" style="display: flex; gap: 12px; border-top: 1px solid var(--glass-border, #cbd5e1); padding-top: 24px;">
                 <div style="flex: 1;">
-                    <x-atoms.button type="button" variant="outline" style="width: 100%; border-color: var(--text-secondary); color: var(--text-primary); background: transparent;" onclick="toggleOffcanvas('detailRequestsampleOffcanvas')">
-                        Tolak / Batal
+                    <x-atoms.button type="button" variant="outline" style="width: 100%; border-color: var(--text-secondary); color: var(--text-primary); background: transparent;" onclick="openRejectForm()">
+                        Tolak 
                     </x-atoms.button>
                 </div>
                 <div style="flex: 1;">
@@ -124,11 +131,65 @@
     </div>
 </x-organisms.offcanvas>
 
+<x-organisms.offcanvas id="rejectRequestsampleOffcanvas" title="Tolak Pengajuan">
+    <div style="padding: 24px; padding-top: 0;">
+        <form action="{{ route('admin-dashboard.request-samples.reject') }}" method="POST">
+            @csrf
+            <input type="hidden" name="sample_request_id" id="rej-request-id">
+
+            <div style="border-bottom: 1px dashed var(--glass-border, #cbd5e1); padding-bottom: 24px; margin-bottom: 24px;">
+                <x-atoms.typography variant="card-title" as="h4" style="margin-bottom: 12px; font-size: 14px; color: var(--text-secondary);">Informasi Affiliator</x-atoms.typography>
+                <div id="rej-username" style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px;"></div>
+                <div id="rej-contact" style="font-size: 13px; color: var(--text-secondary); margin-bottom: 4px;"></div>
+                <div id="rej-address" style="font-size: 13px; color: var(--text-secondary);"></div>
+            </div>
+
+            <div style="border-bottom: 1px dashed var(--glass-border, #cbd5e1); padding-bottom: 24px; margin-bottom: 24px;">
+                <x-atoms.typography variant="card-title" as="h4" style="margin-bottom: 16px; font-size: 14px; color: var(--text-secondary);">
+                    Rincian Paket yang Dibatalkan (<span id="rej-total-products">0</span> Produk)
+                </x-atoms.typography>
+                <div id="rej-product-list" style="display: flex; flex-direction: column; gap: 8px;"></div>
+            </div>
+
+            <div style="padding-bottom: 24px;">
+                <x-atoms.typography variant="card-title" as="h4" style="margin-bottom: 4px; font-size: 14px;">Form Penolakan Pengajuan</x-atoms.typography>
+                <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 16px;">Anda akan menolak pengajuan ini. Berikan alasan penolakan agar affiliator mengetahui penyebabnya.</p>
+                
+                <div style="margin-bottom: 16px;">
+                    <x-atoms.label value="Alasan Penolakan (Wajib Diisi)" style="font-size: 12px; margin-bottom: 4px; display: block;" />
+                    <textarea name="reject_reason" id="rej-reason" class="form-control" rows="4" placeholder="Tuliskan alasan penolakan di sini..." required style="height: auto;"></textarea>
+                </div>
+
+                <div>
+                    <span style="font-size: 12px; color: var(--text-secondary); display: block; margin-bottom: 8px;">Gunakan template cepat:</span>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                        <button type="button" onclick="setRejectReason('Performa belum memenuhi')" style="background: #fffbeb; color: #b45309; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.2s;">Performa belum memenuhi</button>
+                        <button type="button" onclick="setRejectReason('Kategori tidak relevan')" style="background: #fffbeb; color: #b45309; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.2s;">Kategori tidak relevan</button>
+                        <button type="button" onclick="setRejectReason('Alamat tidak terjangkau')" style="background: #fffbeb; color: #b45309; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.2s;">Alamat tidak terjangkau</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="display: flex; gap: 12px; border-top: 1px solid var(--glass-border, #cbd5e1); padding-top: 24px;">
+                <div style="flex: 1;">
+                    <x-atoms.button type="button" variant="outline" style="width: 100%; border-color: #cbd5e1; color: var(--text-primary); background: transparent;" onclick="backToDetail()">
+                        Kembali
+                    </x-atoms.button>
+                </div>
+                <div style="flex: 1;">
+                    <x-atoms.button type="submit" variant="primary" style="width: 100%; background-color: #57534e; border-color: #57534e; color: white;">
+                        Konfirmasi Tolak Pengajuan
+                    </x-atoms.button>
+                </div>
+            </div>
+        </form>
+    </div>
+</x-organisms.offcanvas>
 @endsection
 
 @push('scripts')
 <script>
-
+    let currentRequestData = null;
     function openOffcanvas(offcanvasId) {
         const offcanvas = document.getElementById(offcanvasId);
         const backdrop = document.getElementById(offcanvasId + '-backdrop');
@@ -182,6 +243,38 @@
         'first': 'First Logistics',
         'ide': 'ID Express'
     };
+
+    function setRejectReason(text) {
+        document.getElementById('rej-reason').value = text;
+    }
+
+    function openRejectForm() {
+        if (!currentRequestData) return;
+        
+        $('#rej-request-id').val(currentRequestData.id);
+        
+        const username = currentRequestData.user?.username || 'Tidak Diketahui';
+        $('#rej-username').text(username.startsWith('@') ? username : '@' + username);
+        $('#rej-contact').text(`${currentRequestData.user?.name || username} (${currentRequestData.user?.phone_number || '-'})`);
+        $('#rej-address').text(`Alamat: ${currentRequestData.address || '-'}`);
+        
+        $('#rej-product-list').html($('#off-product-list').html());
+        $('#rej-total-products').text($('#off-total-products').text());
+        $('#rej-reason').val(''); 
+        
+        toggleOffcanvas('detailRequestsampleOffcanvas');
+        setTimeout(() => {
+            openOffcanvas('rejectRequestsampleOffcanvas');
+        }, 350);
+    }
+
+    function backToDetail() {
+        toggleOffcanvas('rejectRequestsampleOffcanvas');
+        setTimeout(() => {
+            openOffcanvas('detailRequestsampleOffcanvas');
+        }, 350);
+    }
+    
     document.addEventListener('DOMContentLoaded', function() {
         $('#requestSampleTable').on('click', '.btn-detail', function(e) {
             e.preventDefault();
@@ -190,6 +283,7 @@
             if(!rowDataStr) return;
             const d = JSON.parse(atob(rowDataStr));
 
+            currentRequestData = d;
             $('#off-request-id').val(d.id);
             
             const username = d.user?.username || 'Tidak Diketahui';
@@ -221,10 +315,10 @@
             $('#off-product-list').html(productListHtml);
             $('#off-total-products').text(totalProducts);
 
+            $('#section-form-update, #section-approved-info, #section-rejected-info').hide();
+            $('#footer-actions-form, #footer-actions-approved').hide();
+
             if (d.status === 'APPROVED' || d.status === 'SHIPPED') {
-                $('#section-form-update').hide();
-                $('#footer-actions-form').hide();
-                
                 $('#section-approved-info').show();
                 $('#footer-actions-approved').show();
 
@@ -310,10 +404,13 @@
                     });
                 }
 
-            } else {
-                $('#section-approved-info').hide();
-                $('#footer-actions-approved').hide();
+            } else if (d.status === 'REJECTED') {
+                $('#section-rejected-info').show();
+                $('#footer-actions-approved').show();
                 
+                $('#lbl-reject-reason').text(d.reject_reason || 'Tidak ada alasan penolakan yang dicantumkan.');
+                
+            } else {
                 $('#section-form-update').show();
                 $('#footer-actions-form').show();
                 

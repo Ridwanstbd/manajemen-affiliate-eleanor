@@ -121,7 +121,7 @@ class DashboardService
                 'name'  => $req->user->username ?? 'Kreator',
                 'time'  => $req->created_at->diffForHumans(),
                 'created_at' => $req->created_at,
-                'route' => route('request.sample')
+                'route' => route('admin-dashboard.request-samples.index')
             ]);
         }
 

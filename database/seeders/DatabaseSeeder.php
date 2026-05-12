@@ -36,8 +36,8 @@ class DatabaseSeeder extends Seeder
             'username' => 'testaffiliate2',
         ]);
 
-        // $this->call([
-
-        // ]);
+        $this->call([
+            SettingSeeder::class
+        ]);
     }
 }

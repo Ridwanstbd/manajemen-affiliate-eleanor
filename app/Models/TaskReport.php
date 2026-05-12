@@ -10,8 +10,14 @@ class TaskReport extends Model
     use HasFactory;
 
     protected $fillable = [
-        'tiktok_video_link', 'task_status'
+        'tiktok_video_link', 'task_status','due_date'
     ];
+    protected function casts(): array
+    {
+        return [
+            'due_date' => 'date',
+        ];
+    }
 
     public function sampleRequests()
     {

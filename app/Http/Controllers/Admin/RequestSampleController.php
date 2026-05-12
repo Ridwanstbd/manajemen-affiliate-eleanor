@@ -37,8 +37,16 @@ class RequestSampleController extends Controller
                         return 'Tidak Diketahui'; 
                     })
                     ->addColumn('status', function($row) {
+                        $statusIndo = [
+                            'PENDING'  => 'Menunggu',
+                            'APPROVED' => 'Disetujui',
+                            'SHIPPED'  => 'Terkirim',
+                            'REJECTED' => 'Ditolak',
+                        ];
+
+                        $displayStatus = $statusIndo[$row->status] ?? $row->status;
                         return view('components.atoms.badge', [
-                            'slot' => $row->status,
+                            'slot' => $displayStatus,
                             'status' => strtolower($row->status) 
                         ])->render();
                     })
@@ -107,5 +115,20 @@ class RequestSampleController extends Controller
         }
 
         return response()->json($responseData);
+    }
+
+    public function reject(Request $request)
+    {
+        $request->validate([
+            'sample_request_id' => 'required|exists:sample_requests,id',
+            'reject_reason' => 'required|string|max:500' 
+        ]);
+
+        $this->requestSampleService->rejectRequest(
+            $request->sample_request_id,
+            $request->reject_reason
+        );
+
+        return redirect()->back()->with('success', 'Pengajuan sampel telah ditolak.');
     }
 }

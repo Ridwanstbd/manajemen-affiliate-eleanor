@@ -108,6 +108,7 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/update-resi', [RequestSampleController::class, 'updateResi'])->name('update-resi');
             Route::post('/sync-status', [RequestSampleController::class, 'syncStatus'])->name('sync-status');
             Route::get('/track/{id}', [RequestSampleController::class, 'track'])->name('track');
+            Route::post('/reject', [RequestSampleController::class, 'reject'])->name('reject');
         });
     });
     Route::middleware(['role:affiliator'])->prefix('affiliator')->group(function () {

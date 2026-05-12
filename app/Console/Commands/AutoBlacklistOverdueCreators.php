@@ -16,7 +16,7 @@ class AutoBlacklistOverdueCreators extends Command
 
     public function handle()
     {
-        $setting = Setting::where('key', 'max_sample_deadline_days')->first();
+        $setting = Setting::where('key', 'task_deadline_days')->first();
         $maxDays = $setting ? (int) $setting->value : 14;
         $deadlineDate = Carbon::now()->subDays($maxDays);
 

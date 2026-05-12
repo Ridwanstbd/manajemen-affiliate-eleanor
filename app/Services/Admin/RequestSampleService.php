@@ -3,6 +3,8 @@
 namespace App\Services\Admin;
 
 use App\Models\SampleRequest;
+use App\Models\Setting;
+use App\Models\TaskReport;
 use Illuminate\Support\Facades\Http;
 
 class RequestSampleService
@@ -46,6 +48,7 @@ class RequestSampleService
 
             if ($isDelivered && $sampleRequest->status !== 'SHIPPED') {
                 $sampleRequest->update(['status' => 'SHIPPED']);
+                $this->generateTaskForSample($sampleRequest);
             }
 
             return $responseData;
@@ -53,5 +56,42 @@ class RequestSampleService
         } catch (\Exception $e) {
             return null;
         }
+    }
+
+    protected function generateTaskForSample(SampleRequest $sampleRequest)
+    {
+        if ($sampleRequest->taskReports()->exists()) {
+            return;
+        }
+
+        $setting = Setting::where('key', 'task_deadline_days')->first();
+        $deadlineDays = $setting ? (int) $setting->value : 7;
+        
+        $dueDate = now()->addDays($deadlineDays);
+
+        $taskReport = TaskReport::create([
+            'task_status' => 'PENDING',
+            'due_date' => $dueDate,
+        ]);
+
+        $taskReport->sampleRequests()->attach($sampleRequest->id);
+
+        $sampleRequest->load('details');
+        $productIds = $sampleRequest->details->pluck('product_id')->toArray();
+        
+        if (!empty($productIds)) {
+            $taskReport->products()->attach($productIds);
+        }
+    }
+    public function rejectRequest(int $id, string $reason)
+    {
+        $sampleRequest = SampleRequest::findOrFail($id);
+
+        $sampleRequest->update([
+            'status' => 'REJECTED',
+            'reject_reason' => $reason
+        ]);
+
+        return $sampleRequest;
     }
 }
