@@ -242,11 +242,13 @@
         
         const selectedVideo = metric === 'video_count' ? 'selected' : '';
         const selectedGmv = metric === 'gmv' ? 'selected' : '';
+        const selectedViews = metric === 'views' ? 'selected' : '';
 
         row.innerHTML = `
             <select name="rewards[${index}][target_metric]" class="form-control" required style="font-size: 13px;">
                 <option value="video_count" ${selectedVideo}>Upload Video</option>
                 <option value="gmv" ${selectedGmv}>Pencapaian GMV</option>
+                <option value="views" ${selectedViews}>Performa Views</option> </select>
             </select>
             <input type="number" name="rewards[${index}][target_value]" class="form-control" placeholder="Nilai Target" value="${value}" required style="font-size: 13px;">
             <input type="text" name="rewards[${index}][reward_description]" class="form-control" placeholder="Deskripsi Hadiah (Cth: Kaos)" value="${desc}" required style="font-size: 13px;">
@@ -315,7 +317,12 @@
             detailContainer.innerHTML = '';
             if(rowData.rewards && rowData.rewards.length > 0) {
                 rowData.rewards.forEach((r) => {
-                    const labelMetrik = r.target_metric === 'video_count' ? 'Upload Video' : 'Pencapaian GMV';
+                    let labelMetrik = 'Upload Video';
+                        if (r.target_metric === 'gmv') {
+                            labelMetrik = 'Pencapaian GMV';
+                        } else if (r.target_metric === 'views') {
+                            labelMetrik = 'Performa Views';
+                        }
                     detailContainer.innerHTML += `
                         <div style="display: grid; grid-template-columns: 1fr 1fr 2fr; gap: 8px; margin-bottom: 8px; padding: 12px; background: white; border: 1px solid var(--glass-border); border-radius: 6px;">
                             <div><span style="font-size: 11px; color: var(--text-tertiary); display: block;">Target</span><span style="font-size: 13px; font-weight: 600;">${labelMetrik}</span></div>

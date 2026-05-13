@@ -106,8 +106,11 @@ class ChallengeService
     {
         return CreatorMetric::select('user_id', DB::raw('SUM(affiliate_gmv) as total_gmv'))
             ->whereHas('importHistory', function ($query) use ($challenge) {
-                $query->where('start_date', '>=', $challenge->start_date)
-                      ->where('end_date', '<=', $challenge->end_date);
+                $query->where('start_date', '<=', $challenge->end_date)
+                      ->where('end_date', '>=', $challenge->start_date);
+            })
+            ->whereHas('user', function ($query) {
+                $query->where('is_kol', false);
             })
             ->groupBy('user_id')
             ->orderByDesc('total_gmv')
@@ -121,6 +124,9 @@ class ChallengeService
         return Video::select('user_id', DB::raw('COUNT(id) as total_videos'))
             ->whereBetween('post_date', [$challenge->start_date, $challenge->end_date])
             ->groupBy('user_id')
+            ->whereHas('user', function ($query) {
+                $query->where('is_kol', false);
+            })
             ->orderByDesc('total_videos')
             ->with('user')
             ->limit($limit)

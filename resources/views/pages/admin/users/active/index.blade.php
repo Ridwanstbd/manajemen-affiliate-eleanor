@@ -104,24 +104,15 @@
         <input type="hidden" name="user_id" id="create-contract-user-id">
 
         <div style="margin-bottom: 20px;">
-            <x-atoms.label value="Pilih Produk untuk Kontrak" />
-            
-            <div style="margin-bottom: 8px;">
-                <input type="text" id="search-product-input" placeholder="Cari nama produk..." onkeyup="filterProducts()" style="width: 100%; padding: 8px 12px; border: 1px solid var(--glass-border); border-radius: 6px; background: rgba(255,255,255,0.4); color: var(--text-primary); font-size: 13px; outline: none; transition: 0.2s;">
-            </div>
-
-            <div id="product-list-container" style="max-height: 180px; overflow-y: auto; border: 1px solid var(--glass-border); padding: 12px; border-radius: 8px; background: rgba(255,255,255,0.2); scrollbar-width: none;">
-                @foreach(\App\Models\Product::all() as $product)
-                    <div class="product-item" style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
-                        <input type="checkbox" name="product_ids[]" value="{{ $product->id }}" id="prod-{{ $product->id }}">
-                        <label for="prod-{{ $product->id }}" class="product-label" style="font-size: 13px; cursor: pointer; color: var(--text-primary);">{{ $product->name }}</label>
-                    </div>
-                @endforeach
-                
-                <div id="no-product-msg" style="display: none; font-size: 12px; color: var(--text-secondary); text-align: center; padding: 8px 0;">
-                    Produk tidak ditemukan
-                </div>
-            </div>
+            <x-atoms.searchable-multi-select 
+                name="product_ids" 
+                label="Pilih Produk untuk Kontrak"
+                placeholder="-- Cari dan Pilih Produk --"
+                :options="\App\Models\Product::all()->map(fn($product) => [
+                    'id' => $product->id, 
+                    'text' => $product->name
+                ])"
+            />
         </div>
 
         <div style="margin-bottom: 16px;">
