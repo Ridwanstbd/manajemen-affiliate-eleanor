@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AgreementController;
 use App\Http\Controllers\Admin\AnalyticsController;
 use App\Http\Controllers\Admin\ChallengeController;
+use App\Http\Controllers\Admin\ChallengeWinnerController;
 use App\Http\Controllers\Admin\ImportController;
 use App\Http\Controllers\Admin\LeaderboardController;
 use App\Http\Controllers\Admin\ProductController;
@@ -121,6 +122,14 @@ Route::middleware(['auth'])->group(function () {
         Route::prefix('challenge')->name('challenge.')->group(function (){
             Route::get('/',[ChallengeController::class, 'index'])->name('index');
             Route::get('/data',[ChallengeController::class, 'data'])->name('data');
+            Route::post('/',[ChallengeController::class, 'create'])->name('create');
+            Route::put('/',[ChallengeController::class, 'update'])->name('update');
+            Route::delete('/',[ChallengeController::class, 'destroy'])->name('destroy');
+        });
+        Route::prefix('challenge-winner')->name('challenge-winner.')->group(function (){
+            Route::get('/{challenge}', [ChallengeWinnerController::class, 'manage'])->name('manage');
+            Route::post('/{challenge}', [ChallengeWinnerController::class, 'store'])->name('store');
+            Route::delete('/{challenge}/{winner}', [ChallengeWinnerController::class, 'destroy'])->name('destroy');
         });
     });
     Route::middleware(['role:affiliator'])->prefix('affiliator')->group(function () {

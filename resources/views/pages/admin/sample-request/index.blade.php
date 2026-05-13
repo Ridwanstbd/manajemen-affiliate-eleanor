@@ -25,165 +25,161 @@
 </x-molecules.card>
 
 <x-organisms.offcanvas id="detailRequestsampleOffcanvas" title="Detail Pengajuan Sampel Gratis">
-    <div style="padding: 24px; padding-top: 0;">
-        <form id="updateResiForm" action="{{ route('admin-dashboard.request-samples.update-resi') }}" method="POST">
-            @csrf
-            <input type="hidden" name="sample_request_id" id="off-request-id">
+    <form id="updateResiForm" action="{{ route('admin-dashboard.request-samples.update-resi') }}" method="POST">
+        @csrf
+        <input type="hidden" name="sample_request_id" id="off-request-id">
 
-            <div style="border-bottom: 1px dashed var(--glass-border, #cbd5e1); padding-bottom: 24px; margin-bottom: 24px;">
-                <x-atoms.typography variant="card-title" as="h4" style="margin-bottom: 12px; font-size: 14px; color: var(--text-secondary);">Informasi Affiliator</x-atoms.typography>
-                <div id="off-username" style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px;"></div>
-                <div id="off-contact" style="font-size: 13px; color: var(--text-secondary); margin-bottom: 4px;"></div>
-                <div id="off-address" style="font-size: 13px; color: var(--text-secondary);"></div>
-            </div>
+        <div style="border-bottom: 1px dashed var(--glass-border, #cbd5e1); padding-bottom: 24px; margin-bottom: 24px;">
+            <x-atoms.typography variant="card-title" as="h4" style="margin-bottom: 12px; font-size: 14px; color: var(--text-secondary);">Informasi Affiliator</x-atoms.typography>
+            <div id="off-username" style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px;"></div>
+            <div id="off-contact" style="font-size: 13px; color: var(--text-secondary); margin-bottom: 4px;"></div>
+            <div id="off-address" style="font-size: 13px; color: var(--text-secondary);"></div>
+        </div>
 
-            <div style="border-bottom: 1px dashed var(--glass-border, #cbd5e1); padding-bottom: 24px; margin-bottom: 24px;">
-                <x-atoms.typography variant="card-title" as="h4" style="margin-bottom: 16px; font-size: 14px; color: var(--text-secondary);">
-                    Rincian Paket (<span id="off-total-products">0</span> Produk)
-                </x-atoms.typography>
-                <div id="off-product-list" style="display: flex; flex-direction: column; gap: 8px;"></div>
-            </div>
+        <div style="border-bottom: 1px dashed var(--glass-border, #cbd5e1); padding-bottom: 24px; margin-bottom: 24px;">
+            <x-atoms.typography variant="card-title" as="h4" style="margin-bottom: 16px; font-size: 14px; color: var(--text-secondary);">
+                Rincian Paket (<span id="off-total-products">0</span> Produk)
+            </x-atoms.typography>
+            <div id="off-product-list" style="display: flex; flex-direction: column; gap: 8px;"></div>
+        </div>
 
-            <div id="section-form-update" style="padding-bottom: 24px;">
-                <x-atoms.typography variant="card-title" as="h4" style="margin-bottom: 4px; font-size: 14px; color: var(--text-secondary);">Pembaruan Status Pengiriman</x-atoms.typography>
-                <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 16px;">Masukkan detail logistik untuk memproses paket.</p>
-                
-                <div style="margin-bottom: 16px;">
-                    <x-atoms.label value="Kurir Pengiriman" style="font-size: 12px; margin-bottom: 4px; display: block;" />
-                    <x-atoms.select name="courier" id="off-courier">
-                        <option value="">Pilih Kurir...</option>
-                        <option value="jne">JNE (Jalur Nugraha Ekakurir)</option>
-                        <option value="jnt">J&T Express</option>
-                        <option value="ninja">Ninja Xpress</option>
-                        <option value="tiki">TIKI (Titipan Kilat)</option>
-                        <option value="pos">POS Indonesia</option>
-                        <option value="anteraja">AnterAja</option>
-                        <option value="sicepat">SiCepat Ekspres</option>
-                        <option value="sap">SAP Express</option>
-                        <option value="lion">Lion Parcel</option>
-                        <option value="wahana">Wahana Prestasi Logistik</option>
-                        <option value="first">First Logistics</option>
-                        <option value="ide">ID Express</option>
-                    </x-atoms.select>
-                </div>
-
-                <div style="margin-bottom: 16px;">
-                    <x-atoms.label value="Nomor Resi (Tracking Number)" style="font-size: 12px; margin-bottom: 4px; display: block;" />
-                    <x-atoms.input type="text" name="tracking_number" id="off-tracking" placeholder="Contoh: JNT-123456..." />
-                </div>
-
-                <div style="margin-bottom: 16px;">
-                    <x-atoms.label value="Biaya Ongkos Kirim (Rp)" style="font-size: 12px; margin-bottom: 4px; display: block;" />
-                    <x-atoms.input type="number" name="shipping_cost" id="off-shipping-cost" placeholder="0" />
-                </div>
-            </div>
-
-            <div id="section-approved-info" style="display: none;">
-                <div style="margin-bottom: 24px;">
-                    <x-atoms.typography variant="card-title" as="h4" style="margin-bottom: 12px; font-size: 14px; color: var(--text-secondary);">Informasi Pengiriman</x-atoms.typography>
-                    <div class="shipping-info-box">
-                        <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 4px;">Kurir: <span id="lbl-courier"></span></div>
-                        <div style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px;">No. Resi: <span id="lbl-tracking-no"></span></div>
-                        <div style="font-size: 12px; color: var(--text-secondary);">Biaya Ongkir: Rp <span id="lbl-cost"></span></div>
-                        
-                        <button type="button" onclick="copyResi()" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); background: white; border: 1px solid #cbd5e1; padding: 6px 16px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer; color: var(--text-primary); transition: all 0.2s;">
-                            Salin Resi
-                        </button>
-                    </div>
-                </div>
-
-                <div style="padding-bottom: 24px;">
-                    <x-atoms.typography variant="card-title" as="h4" style="margin-bottom: 12px; font-size: 14px; color: var(--text-secondary);">Status Pelacakan</x-atoms.typography>
-                    <div id="tracking-content">
-                        {{-- Timeline akan di-generate via JS --}}
-                        <div style="font-size: 13px; color: var(--text-secondary);">Memuat data pelacakan...</div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="section-rejected-info" style="display: none; padding-bottom: 24px;">
-                <x-atoms.typography variant="card-title" as="h4" style="margin-bottom: 12px; font-size: 14px; color: var(--rose);">Alasan Penolakan</x-atoms.typography>
-                <div class="rejection-info-box">
-                    <div id="lbl-reject-reason" style="font-size: 13.5px; color: var(--text-primary); line-height: 1.5; font-style: italic;"></div>
-                </div>
-            </div>
+        <div id="section-form-update" style="padding-bottom: 24px;">
+            <x-atoms.typography variant="card-title" as="h4" style="margin-bottom: 4px; font-size: 14px; color: var(--text-secondary);">Pembaruan Status Pengiriman</x-atoms.typography>
+            <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 16px;">Masukkan detail logistik untuk memproses paket.</p>
             
-            <div id="footer-actions-form" style="display: flex; gap: 12px; border-top: 1px solid var(--glass-border, #cbd5e1); padding-top: 24px;">
-                <div style="flex: 1;">
-                    <x-atoms.button type="button" variant="outline" style="width: 100%; border-color: var(--text-secondary); color: var(--text-primary); background: transparent;" onclick="openRejectForm()">
-                        Tolak 
-                    </x-atoms.button>
+            <div style="margin-bottom: 16px;">
+                <x-atoms.label value="Kurir Pengiriman" style="font-size: 12px; margin-bottom: 4px; display: block;" />
+                <x-atoms.select name="courier" id="off-courier">
+                    <option value="">Pilih Kurir...</option>
+                    <option value="jne">JNE (Jalur Nugraha Ekakurir)</option>
+                    <option value="jnt">J&T Express</option>
+                    <option value="ninja">Ninja Xpress</option>
+                    <option value="tiki">TIKI (Titipan Kilat)</option>
+                    <option value="pos">POS Indonesia</option>
+                    <option value="anteraja">AnterAja</option>
+                    <option value="sicepat">SiCepat Ekspres</option>
+                    <option value="sap">SAP Express</option>
+                    <option value="lion">Lion Parcel</option>
+                    <option value="wahana">Wahana Prestasi Logistik</option>
+                    <option value="first">First Logistics</option>
+                    <option value="ide">ID Express</option>
+                </x-atoms.select>
+            </div>
+
+            <div style="margin-bottom: 16px;">
+                <x-atoms.label value="Nomor Resi (Tracking Number)" style="font-size: 12px; margin-bottom: 4px; display: block;" />
+                <x-atoms.input type="text" name="tracking_number" id="off-tracking" placeholder="Contoh: JNT-123456..." />
+            </div>
+
+            <div style="margin-bottom: 16px;">
+                <x-atoms.label value="Biaya Ongkos Kirim (Rp)" style="font-size: 12px; margin-bottom: 4px; display: block;" />
+                <x-atoms.input type="number" name="shipping_cost" id="off-shipping-cost" placeholder="0" />
+            </div>
+        </div>
+
+        <div id="section-approved-info" style="display: none;">
+            <div style="margin-bottom: 24px;">
+                <x-atoms.typography variant="card-title" as="h4" style="margin-bottom: 12px; font-size: 14px; color: var(--text-secondary);">Informasi Pengiriman</x-atoms.typography>
+                <div class="shipping-info-box">
+                    <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 4px;">Kurir: <span id="lbl-courier"></span></div>
+                    <div style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px;">No. Resi: <span id="lbl-tracking-no"></span></div>
+                    <div style="font-size: 12px; color: var(--text-secondary);">Biaya Ongkir: Rp <span id="lbl-cost"></span></div>
+                    
+                    <button type="button" onclick="copyResi()" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); background: white; border: 1px solid #cbd5e1; padding: 6px 16px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer; color: var(--text-primary); transition: all 0.2s;">
+                        Salin Resi
+                    </button>
                 </div>
-                <div style="flex: 1;">
-                    <x-atoms.button type="submit" variant="primary" style="width: 100%; background-color: #57534e; border-color: #57534e; color: white;">
-                        Kirim Produk (Update Resi)
-                    </x-atoms.button>
-                </div>
-            </div>
-
-            <div id="footer-actions-approved" style="display: none; border-top: 1px solid var(--glass-border, #cbd5e1); padding-top: 24px;">
-                <x-atoms.button type="button" variant="outline" style="width: 100%; border-color: #cbd5e1; color: var(--text-primary); background: transparent; font-weight: 600;" onclick="toggleOffcanvas('detailRequestsampleOffcanvas')">
-                    Tutup
-                </x-atoms.button>
-            </div>
-
-        </form>
-    </div>
-</x-organisms.offcanvas>
-
-<x-organisms.offcanvas id="rejectRequestsampleOffcanvas" title="Tolak Pengajuan">
-    <div style="padding: 24px; padding-top: 0;">
-        <form action="{{ route('admin-dashboard.request-samples.reject') }}" method="POST">
-            @csrf
-            <input type="hidden" name="sample_request_id" id="rej-request-id">
-
-            <div style="border-bottom: 1px dashed var(--glass-border, #cbd5e1); padding-bottom: 24px; margin-bottom: 24px;">
-                <x-atoms.typography variant="card-title" as="h4" style="margin-bottom: 12px; font-size: 14px; color: var(--text-secondary);">Informasi Affiliator</x-atoms.typography>
-                <div id="rej-username" style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px;"></div>
-                <div id="rej-contact" style="font-size: 13px; color: var(--text-secondary); margin-bottom: 4px;"></div>
-                <div id="rej-address" style="font-size: 13px; color: var(--text-secondary);"></div>
-            </div>
-
-            <div style="border-bottom: 1px dashed var(--glass-border, #cbd5e1); padding-bottom: 24px; margin-bottom: 24px;">
-                <x-atoms.typography variant="card-title" as="h4" style="margin-bottom: 16px; font-size: 14px; color: var(--text-secondary);">
-                    Rincian Paket yang Dibatalkan (<span id="rej-total-products">0</span> Produk)
-                </x-atoms.typography>
-                <div id="rej-product-list" style="display: flex; flex-direction: column; gap: 8px;"></div>
             </div>
 
             <div style="padding-bottom: 24px;">
-                <x-atoms.typography variant="card-title" as="h4" style="margin-bottom: 4px; font-size: 14px;">Form Penolakan Pengajuan</x-atoms.typography>
-                <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 16px;">Anda akan menolak pengajuan ini. Berikan alasan penolakan agar affiliator mengetahui penyebabnya.</p>
-                
-                <div style="margin-bottom: 16px;">
-                    <x-atoms.label value="Alasan Penolakan (Wajib Diisi)" style="font-size: 12px; margin-bottom: 4px; display: block;" />
-                    <textarea name="reject_reason" id="rej-reason" class="form-control" rows="4" placeholder="Tuliskan alasan penolakan di sini..." required style="height: auto;"></textarea>
+                <x-atoms.typography variant="card-title" as="h4" style="margin-bottom: 12px; font-size: 14px; color: var(--text-secondary);">Status Pelacakan</x-atoms.typography>
+                <div id="tracking-content">
+                    {{-- Timeline akan di-generate via JS --}}
+                    <div style="font-size: 13px; color: var(--text-secondary);">Memuat data pelacakan...</div>
                 </div>
+            </div>
+        </div>
 
-                <div>
-                    <span style="font-size: 12px; color: var(--text-secondary); display: block; margin-bottom: 8px;">Gunakan template cepat:</span>
-                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                        <button type="button" onclick="setRejectReason('Performa belum memenuhi')" style="background: #fffbeb; color: #b45309; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.2s;">Performa belum memenuhi</button>
-                        <button type="button" onclick="setRejectReason('Kategori tidak relevan')" style="background: #fffbeb; color: #b45309; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.2s;">Kategori tidak relevan</button>
-                        <button type="button" onclick="setRejectReason('Alamat tidak terjangkau')" style="background: #fffbeb; color: #b45309; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.2s;">Alamat tidak terjangkau</button>
-                    </div>
-                </div>
+        <div id="section-rejected-info" style="display: none; padding-bottom: 24px;">
+            <x-atoms.typography variant="card-title" as="h4" style="margin-bottom: 12px; font-size: 14px; color: var(--rose);">Alasan Penolakan</x-atoms.typography>
+            <div class="rejection-info-box">
+                <div id="lbl-reject-reason" style="font-size: 13.5px; color: var(--text-primary); line-height: 1.5; font-style: italic;"></div>
             </div>
+        </div>
+        
+        <div id="footer-actions-form" style="display: flex; gap: 12px; border-top: 1px solid var(--glass-border, #cbd5e1); padding-top: 24px;">
+            <div style="flex: 1;">
+                <x-atoms.button type="button" variant="outline" style="width: 100%; border-color: var(--text-secondary); color: var(--text-primary); background: transparent;" onclick="openRejectForm()">
+                    Tolak 
+                </x-atoms.button>
+            </div>
+            <div style="flex: 1;">
+                <x-atoms.button type="submit" variant="primary" style="width: 100%; background-color: #57534e; border-color: #57534e; color: white;">
+                    Kirim Produk (Update Resi)
+                </x-atoms.button>
+            </div>
+        </div>
+
+        <div id="footer-actions-approved" style="display: none; border-top: 1px solid var(--glass-border, #cbd5e1); padding-top: 24px;">
+            <x-atoms.button type="button" variant="outline" style="width: 100%; border-color: #cbd5e1; color: var(--text-primary); background: transparent; font-weight: 600;" onclick="toggleOffcanvas('detailRequestsampleOffcanvas')">
+                Tutup
+            </x-atoms.button>
+        </div>
+
+    </form>
+</x-organisms.offcanvas>
+
+<x-organisms.offcanvas id="rejectRequestsampleOffcanvas" title="Tolak Pengajuan">
+    <form action="{{ route('admin-dashboard.request-samples.reject') }}" method="POST">
+        @csrf
+        <input type="hidden" name="sample_request_id" id="rej-request-id">
+
+        <div style="border-bottom: 1px dashed var(--glass-border, #cbd5e1); padding-bottom: 24px; margin-bottom: 24px;">
+            <x-atoms.typography variant="card-title" as="h4" style="margin-bottom: 12px; font-size: 14px; color: var(--text-secondary);">Informasi Affiliator</x-atoms.typography>
+            <div id="rej-username" style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px;"></div>
+            <div id="rej-contact" style="font-size: 13px; color: var(--text-secondary); margin-bottom: 4px;"></div>
+            <div id="rej-address" style="font-size: 13px; color: var(--text-secondary);"></div>
+        </div>
+
+        <div style="border-bottom: 1px dashed var(--glass-border, #cbd5e1); padding-bottom: 24px; margin-bottom: 24px;">
+            <x-atoms.typography variant="card-title" as="h4" style="margin-bottom: 16px; font-size: 14px; color: var(--text-secondary);">
+                Rincian Paket yang Dibatalkan (<span id="rej-total-products">0</span> Produk)
+            </x-atoms.typography>
+            <div id="rej-product-list" style="display: flex; flex-direction: column; gap: 8px;"></div>
+        </div>
+
+        <div style="padding-bottom: 24px;">
+            <x-atoms.typography variant="card-title" as="h4" style="margin-bottom: 4px; font-size: 14px;">Form Penolakan Pengajuan</x-atoms.typography>
+            <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 16px;">Anda akan menolak pengajuan ini. Berikan alasan penolakan agar affiliator mengetahui penyebabnya.</p>
             
-            <div style="display: flex; gap: 12px; border-top: 1px solid var(--glass-border, #cbd5e1); padding-top: 24px;">
-                <div style="flex: 1;">
-                    <x-atoms.button type="button" variant="outline" style="width: 100%; border-color: #cbd5e1; color: var(--text-primary); background: transparent;" onclick="backToDetail()">
-                        Kembali
-                    </x-atoms.button>
-                </div>
-                <div style="flex: 1;">
-                    <x-atoms.button type="submit" variant="primary" style="width: 100%; background-color: #57534e; border-color: #57534e; color: white;">
-                        Konfirmasi Tolak Pengajuan
-                    </x-atoms.button>
+            <div style="margin-bottom: 16px;">
+                <x-atoms.label value="Alasan Penolakan (Wajib Diisi)" style="font-size: 12px; margin-bottom: 4px; display: block;" />
+                <textarea name="reject_reason" id="rej-reason" class="form-control" rows="4" placeholder="Tuliskan alasan penolakan di sini..." required style="height: auto;"></textarea>
+            </div>
+
+            <div>
+                <span style="font-size: 12px; color: var(--text-secondary); display: block; margin-bottom: 8px;">Gunakan template cepat:</span>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <button type="button" onclick="setRejectReason('Performa belum memenuhi')" style="background: #fffbeb; color: #b45309; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.2s;">Performa belum memenuhi</button>
+                    <button type="button" onclick="setRejectReason('Kategori tidak relevan')" style="background: #fffbeb; color: #b45309; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.2s;">Kategori tidak relevan</button>
+                    <button type="button" onclick="setRejectReason('Alamat tidak terjangkau')" style="background: #fffbeb; color: #b45309; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.2s;">Alamat tidak terjangkau</button>
                 </div>
             </div>
-        </form>
-    </div>
+        </div>
+        
+        <div style="display: flex; gap: 12px; border-top: 1px solid var(--glass-border, #cbd5e1); padding-top: 24px;">
+            <div style="flex: 1;">
+                <x-atoms.button type="button" variant="outline" style="width: 100%; border-color: #cbd5e1; color: var(--text-primary); background: transparent;" onclick="backToDetail()">
+                    Kembali
+                </x-atoms.button>
+            </div>
+            <div style="flex: 1;">
+                <x-atoms.button type="submit" variant="primary" style="width: 100%; background-color: #57534e; border-color: #57534e; color: white;">
+                    Konfirmasi Tolak Pengajuan
+                </x-atoms.button>
+            </div>
+        </div>
+    </form>
 </x-organisms.offcanvas>
 @endsection
 

@@ -37,8 +37,9 @@
     <script src="https://cdn.datatables.net/v/dt/jq-3.7.0/dt-2.3.7/r-3.0.8/datatables.min.js" integrity="sha384-boYeFHa9k/55HjzoiYWQCNzji5OI87gFtcxTbVleqB8IfcRSFAYu0NHM6XtV/5ej" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/shepherd.js@11.0.1/dist/js/shepherd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <x-molecules.alert />
+    <x-atoms.lightbox />
     @stack('scripts')
     <script src="{{ asset('js/scripts.js') }}"></script>
-    <x-molecules.alert />
 </body>
 </html>

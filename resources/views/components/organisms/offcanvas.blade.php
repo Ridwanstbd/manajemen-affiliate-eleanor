@@ -1,12 +1,23 @@
 @props([
     'id', 
     'title' => null, 
-    'position' => 'end' 
+    'position' => 'end',
+    'md' => false, 
+    'lg' => false, 
 ])
+
+@php
+    $sizeClass = '';
+    if ($lg) {
+        $sizeClass = 'offcanvas-lg';
+    } elseif ($md) {
+        $sizeClass = 'offcanvas-md';
+    }
+@endphp
 
 <x-atoms.offcanvas-overlay target="{{ $id }}" />
 
-<div class="offcanvas offcanvas-{{ $position }}" id="{{ $id }}" tabindex="-1">
+<div class="offcanvas offcanvas-{{ $position }} {{ $sizeClass }}" id="{{ $id }}" tabindex="-1">
     @if($title)
         <x-molecules.offcanvas-header :title="$title" target="{{ $id }}" />
     @endif
