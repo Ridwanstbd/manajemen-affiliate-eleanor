@@ -19,6 +19,6 @@ class MainController extends Controller
     {
         $dashboardData = $this->dashboardService->getDashboardStats();
 
-        return view('pages.dashboard', $dashboardData);
+        return view('pages.affiliator.dashboard', $dashboardData);
     }
 }

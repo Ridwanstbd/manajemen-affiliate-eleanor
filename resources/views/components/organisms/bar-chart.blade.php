@@ -65,35 +65,3 @@
         </div>
     </div>
 </div>
-
-<style>
-    .bar-with-tooltip {
-        position: relative;
-        cursor: pointer;
-        transition: opacity 0.2s ease;
-        z-index: 1;
-    }
-    
-    .bar-with-tooltip:hover {
-        opacity: 0.8;
-        z-index: 99;
-    }
-
-    .bar-with-tooltip:hover::after {
-        content: attr(data-tooltip);
-        position: absolute;
-        bottom: calc(100% + 5px);
-        left: 50%;
-        transform: translateX(-50%);
-        background-color: rgba(15, 23, 42, 0.9);
-        color: #ffffff;
-        padding: 6px 10px;
-        border-radius: 6px;
-        font-size: 11px;
-        font-weight: 500;
-        white-space: nowrap;
-        pointer-events: none;
-        z-index: 50;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    }
-</style>
