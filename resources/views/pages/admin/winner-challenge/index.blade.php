@@ -2,7 +2,7 @@
 @section('title', 'Kelola Pemenang Challenge')
 
 @section('content')
-<div class="content" style="max-width: 1200px; margin: 0 auto;">
+<div class="content">
     
     <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px;">
         <a href="{{ route('admin-dashboard.challenge.index') }}" class="btn btn-secondary btn-sm" style="padding: 8px 12px;">
@@ -88,7 +88,7 @@
             </div>
 
             <div id="tab-manual" class="tab-pane" style="display: none;">
-                <form action="{{ route('admin-dashboard.challenge-winner.store', $challenge->id) }}" method="POST" style="max-width: 500px; background: rgba(0,0,0,0.02); padding: 20px; border-radius: 12px; border: 1px solid var(--glass-border);">
+                <form action="{{ route('admin-dashboard.challenge-winner.store', $challenge->id) }}" method="POST" style=" background: rgba(0,0,0,0.02); padding: 20px; border-radius: 12px; border: 1px solid var(--glass-border);">
                     @csrf
                     <input type="hidden" name="challenge_id" value="{{ $challenge->id }}">
                     <input type="hidden" name="category" value="PERFORMA VIEWS">

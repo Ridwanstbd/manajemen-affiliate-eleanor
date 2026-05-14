@@ -18,6 +18,8 @@
         <div class="tab-content" style="animation: fadeInUp 0.4s ease;">
             @php
                 $tableColumns = [
+                    ['data' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'width' => '50px'],
+                    ['data' => 'image', 'name' => 'image', 'title' => 'Gambar'],
                     ['data' => 'name', 'name' => 'name', 'title' => 'Nama Produk', 'width' => '320px'],
                     ['data' => 'price_formated', 'name' => 'price', 'title' => 'Harga Retail'],
                     ['data' => 'stock', 'name' => 'stock', 'title' => 'Stok'],
@@ -65,43 +67,64 @@
     </form>
 </x-organisms.modal>
 
-<x-organisms.modal 
-    id="editProductModal" 
-    title="Edit Detail Produk" 
-    description="Perbarui informasi teknis dan target untuk produk ini."
->
-    <form id="formEditProduct" method="POST" action="">
+<x-organisms.modal id="editProductModal" title="Edit Produk">
+    <form id="formEditProduct" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
+        <input type="hidden" id="edit_id" name="id">
         
-        <div class="form-group" style="margin-bottom: 16px;">
+        <input type="hidden" id="edit_sku" name="seller_sku">
+
+        <div class="form-group mb-3">
+            <x-atoms.label value="Foto Produk" for="edit_image" />
+            <x-atoms.image-upload id="edit_image" name="image" />
+        </div>
+
+        <div class="form-group mb-3">
+            <x-atoms.label value="SKU Produk" for="edit_sku" />
+            <x-atoms.input type="text" id="edit_sku" name="seller_sku" placeholder="Contoh: PRD-001" required />
+        </div>
+
+        <div class="form-group mb-3">
             <x-atoms.label for="editProductName" value="Nama Produk" />
             <x-atoms.input type="text" id="editProductName" name="name" required />
         </div>
 
+        <div class="form-group mb-3">
+            <x-atoms.label for="editProductCategory" value="Kategori" />
+            <x-atoms.input type="text" id="editProductCategory" name="category" placeholder="Contoh: Alat Peternakan" />
+        </div>
+
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
             <div class="form-group">
-                <x-atoms.label for="editProductPrice" value="Harga Retail (Rp)" />
-                <x-atoms.input type="number" id="editProductPrice" name="price" required />
+                <x-atoms.label for="editProductVideoCount" value="Jumlah Wajib Video" />
+                <x-atoms.input type="number" id="editProductVideoCount" name="mandatory_video_count" />
             </div>
             <div class="form-group">
-                <x-atoms.label for="editProductStock" value="Stok" />
-                <x-atoms.input type="number" id="editProductStock" name="stock" required />
+                <x-atoms.label for="editProductStock" value="Jumlah Stok" />
+                <x-atoms.input type="number" id="editProductStock" name="stock" />
             </div>
         </div>
 
-        <div class="form-group">
-            <x-atoms.label for="editProductVideoCount" value="Target Wajib Video" />
-            <x-atoms.input type="number" id="editProductVideoCount" name="mandatory_video_count" />
-            <small style="color: var(--text-secondary); font-size: 11px;">Jumlah video minimum yang harus diunggah untuk produk ini.</small>
+        <div class="form-group mb-3">
+            <x-atoms.label for="editProductDetail" value="Detail Produk / S&K Tambahan" />
+            <textarea id="editProductDetail" name="product_detail" class="form-control" rows="5" style="border-radius: 8px; border: 1px solid var(--glass-border); padding: 10px; font-size: 13px;"></textarea>
+            <small style="color: var(--text-secondary); font-size: 11px;">*Mendukung format tag HTML</small>
+        </div>
+        
+        <div class="form-group" style="display: flex; justify-content: space-between; align-items: center; padding-top: 12px; margin-bottom: 16px;">
+            <div>
+                <x-atoms.typography variant="body" style="font-weight: 600; color: var(--text-primary); margin: 0; font-size: 14px;">Tampilkan di Katalog Affiliator</x-atoms.typography>
+                <div style="color: var(--text-secondary); font-size: 12px; margin-top: 2px;">Produk sedang aktif dan dapat dilihat oleh affiliator.</div>
+            </div>
+            <x-molecules.toggle id="editProductVisible" name="is_visible" />
         </div>
 
         <x-slot name="footer">
-            <x-atoms.button variant="secondary" type="button" onclick="closeModal('editProductModal')">
+            <x-atoms.button variant="secondary" type="button" onclick="closeModal('editProductModal')" style="background: white; border: 1px solid #cbd5e1; color: #475569;">
                 Batal
             </x-atoms.button>
             <x-atoms.button variant="primary" type="submit" form="formEditProduct">
-                <x-atoms.icon name="check" style="width: 15px; height: 15px; margin-right: 6px;" />
                 Simpan Perubahan
             </x-atoms.button>
         </x-slot>
@@ -155,6 +178,40 @@
 
     function prepareMassEdit() {
         openModal('massEditProductModal');
+    }
+
+    function editProduct(data) {
+        const form = document.getElementById('formEditProduct');
+        form.action = `/dashboard/products/${data.id}`;
+        
+        document.getElementById('edit_id').value = data.id || '';
+        document.getElementById('edit_sku').value = data.seller_sku || '';
+        document.getElementById('editProductName').value = data.name || '';  
+        
+        if(document.getElementById('editProductCategory')) document.getElementById('editProductCategory').value = data.category;
+        if(document.getElementById('editProductVideoCount')) document.getElementById('editProductVideoCount').value = data.mandatory_video_count;
+        if(document.getElementById('editProductStock')) document.getElementById('editProductStock').value = data.stock;
+        if(document.getElementById('editProductDetail')) document.getElementById('editProductDetail').value = data.product_detail;
+        
+        const visibleToggle = document.getElementById('editProductVisible');
+        if(visibleToggle) visibleToggle.checked = (data.is_visible == 1);
+
+        const previewImg = document.getElementById('preview-img-edit_image');
+        const previewPlaceholder = document.getElementById('preview-placeholder-edit_image');
+
+        if (previewImg && previewPlaceholder) {
+            if (data.image_url && data.image_url.trim() !== '') {
+                previewImg.src = data.image_url;
+                previewImg.style.display = 'block';
+                previewPlaceholder.style.display = 'none';
+            } else {
+                previewImg.src = '';
+                previewImg.style.display = 'none';
+                previewPlaceholder.style.display = 'flex';
+            }
+        }
+
+        openModal('editProductModal');
     }
     document.addEventListener('DOMContentLoaded', function() {
         $('#productTable').on('click', '.btn-edit', function(e) {

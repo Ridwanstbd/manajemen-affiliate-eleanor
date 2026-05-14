@@ -21,6 +21,7 @@
     <div class="tab-content" style="animation: fadeInUp 0.4s ease;">
         @php
             $tableColumns = [
+                ['data' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'width' => '50px'],
                 ['data' => 'username', 'name' => 'username', 'title' => 'Nama Kreator', 'width' => '320px'],
                 ['data' => 'phone_number', 'name' => 'phone_number', 'title' => 'Kontak'],
                 ['data' => 'email', 'name' => 'email', 'title' => 'Email'],

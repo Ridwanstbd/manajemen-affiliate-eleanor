@@ -32,6 +32,7 @@ class UserController extends Controller
             $data = $this->userService->getTabData('active', $request);
             $users = collect($data['users']);
             return DataTables::of($users)
+                ->addIndexColumn()
                 ->addColumn('action', function($row) {
                     return view('pages.admin.users.active.action-buttons', compact('row'))->render();
                 })
@@ -46,6 +47,7 @@ class UserController extends Controller
             
             $users = collect($data['users']);
             return DataTables::of($users)
+                ->addIndexColumn()
                 ->addColumn('action', function($row) {
                     return view('pages.admin.users.request-access.action-buttons', compact('row'))->render();
                 })
@@ -59,6 +61,7 @@ class UserController extends Controller
             $data = $this->userService->getTabData('blacklist', $request);
             $users = collect($data['users']);
             return DataTables::of($users)
+                ->addIndexColumn()
                 ->addColumn('action', function($row) {
                     return view('pages.admin.users.blacklist.action-buttons', compact('row'))->render();
                 })
@@ -72,6 +75,7 @@ class UserController extends Controller
             $data = $this->userService->getTabData('kol-contract',$request);
             $users = collect($data['users']);
             return DataTables::of($users)
+                ->addIndexColumn()
                 ->addColumn('action', function($row) {
                     return view('pages.admin.users.kol-contract.action-buttons', compact('row'))->render();
                 })

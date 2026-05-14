@@ -23,6 +23,7 @@ class TaskMonitoringController extends Controller
                 ->with(['taskReports.products', 'sampleRequests.details.product']);
 
             return DataTables::of($query)
+                ->addIndexColumn()
                 ->addColumn('username', function ($row) {
                     return '@' . $row->username;
                 })

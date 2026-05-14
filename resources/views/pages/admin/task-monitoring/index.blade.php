@@ -4,7 +4,7 @@
 @section('content')
 <x-molecules.card title="Pemantauan Tugas" description="Pengawasan progres unggahan konten video berdasarkan sampel yang diterima.">
     <x-slot name="headerAction">
-        <x-atoms.button variant="primary" onclick="openSettingModal()">
+        <x-atoms.button variant="primary" onclick="openModal('editSettingModal')">
             <x-atoms.icon name="gear" style="width: 18px; height: 18px;" />
             Pengaturan
         </x-atoms.button>
@@ -12,6 +12,7 @@
     <div class="tab-content">
         <x-organisms.datatables id="taskMonitorTable" url="{{ route('admin-dashboard.task-monitoring.data') }}"
         :columns="[
+            ['data' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'width' => '50px'],
             ['data' => 'username', 'name' => 'username', 'title' => 'AFFILIATOR'],
             ['data' => 'video_progress', 'name' => 'video_progress', 'title' => 'PROGRES VIDEO', 'searchable' => false],
             ['data' => 'updated_at', 'name' => 'updated_at', 'title' => 'TERAKHIR DIPERBARUI', 'searchable' => false],
@@ -20,6 +21,42 @@
         ]"/>
     </div>
 </x-molecules.card>
+
+<x-organisms.modal 
+    id="editSettingModal" 
+    title="Pengaturan Tugas" 
+>
+    <form id="formEditSetting" method="POST" action="{{ route('admin-dashboard.settings.update-task-deadline') }}">
+        @csrf
+        @method('PUT')
+        
+        <div class="form-group" style="margin-bottom: 24px;">
+            <x-atoms.label value="Batas Waktu Penyelesaian Tugas (Hari)" for="task_deadline_days" />
+            <x-atoms.input 
+                type="number" 
+                id="task_deadline_days" 
+                name="task_deadline_days" 
+                value="{{ \App\Models\Setting::where('key', 'task_deadline_days')->value('value') ?? 7 }}" 
+                required 
+                min="1" 
+                placeholder="Contoh: 7"
+            />
+            <div style="font-size: 12px; color: var(--text-tertiary); margin-top: 6px; line-height: 1.4;">
+                Tentukan batas maksimal waktu (dalam hari) bagi affiliator untuk mengunggah tautan konten video sejak status pengiriman produk dinyatakan <b>SHIPPED</b> atau tiba.
+            </div>
+        </div>
+
+        <x-slot name="footer">
+            <x-atoms.button variant="secondary" type="button" onclick="closeModal('editSettingModal')">
+                Batal
+            </x-atoms.button>
+            <x-atoms.button variant="primary" type="submit" form="formEditSetting">
+                <x-atoms.icon name="check" style="width: 15px; height: 15px; margin-right: 6px;" />
+                Simpan Perubahan
+            </x-atoms.button>
+        </x-slot>
+    </form>
+</x-organisms.modal>
 
 <x-organisms.offcanvas id="detailTaskOffcanvas" title="Detail Tugas">
     <div style="padding: 24px; padding-top: 0;">
@@ -49,6 +86,21 @@
 
 @push('scripts')
 <script>
+    function openModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    function closeModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    }
     function openOffcanvas(offcanvasId) {
         const offcanvas = document.getElementById(offcanvasId);
         const backdrop = document.getElementById(offcanvasId + '-backdrop');

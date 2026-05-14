@@ -207,6 +207,16 @@ class AnalyticsService
 
     private function getTotalCost($month, $year, $isKol)
     {
+        $productCost = SampleRequestDetail::whereHas('sampleRequest', function($q) use ($month, $year, $isKol) {
+            $q->whereMonth('created_at', $month)
+              ->whereYear('created_at', $year)
+              ->whereHas('user', function($u) use ($isKol) {
+                  $u->where('is_kol', $isKol);
+              });
+        })->with('product')->get()->sum(function($detail) {
+            return $detail->quantity * ($detail->product->price ?? 0);
+        });
+
         $shippingCost = SampleRequest::whereMonth('created_at', $month)
             ->whereYear('created_at', $year)
             ->whereHas('user', function($q) use ($isKol) {
@@ -220,7 +230,7 @@ class AnalyticsService
                 ->sum('contract_fee') ?? 0;
         }
 
-        return $shippingCost + $contractFee;
+        return $productCost + $shippingCost + $contractFee;
     }
 
     private function getProductPerformance($month, $year, $isKol)
@@ -242,7 +252,14 @@ class AnalyticsService
             $gmv = $pVideo->sum('video_gmv') + $pLive->sum('live_gmv');
             $orders = $pVideo->sum('orders') + $pLive->sum('orders');
 
-            $costSampel = SampleRequest::whereHas('details', function($q) use ($product) {
+            $sentQuantity = SampleRequestDetail::where('product_id', $product->id)
+                ->whereHas('sampleRequest.user', function($q) use ($isKol) {
+                    $q->where('is_kol', $isKol);
+                })->sum('quantity') ?? 0;
+
+            $productCost = ($product->price ?? 0) * $sentQuantity;
+
+            $shippingCost = SampleRequest::whereHas('details', function($q) use ($product) {
                 $q->where('product_id', $product->id);
             })->whereHas('user', function($q) use ($isKol) {
                 $q->where('is_kol', $isKol);
@@ -255,12 +272,7 @@ class AnalyticsService
                 })->sum('contract_fee') ?? 0;
             }
 
-            $totalCost = $costSampel + $costContract;
-
-            $sentQuantity = SampleRequestDetail::where('product_id', $product->id)
-                ->whereHas('sampleRequest.user', function($q) use ($isKol) {
-                    $q->where('is_kol', $isKol);
-                })->sum('quantity') ?? 0;
+            $totalCost = $productCost + $shippingCost + $costContract;
 
             return [
                 'name' => $product->name ?? 'Unknown',

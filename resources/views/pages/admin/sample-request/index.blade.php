@@ -15,6 +15,7 @@
         <x-organisms.datatables id="requestSampleTable"
         url="{{ route('admin-dashboard.request-samples.data') }}"
         :columns="[
+            ['data' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'width' => '50px'],
             ['data' => 'username', 'name' => 'user.username', 'title' => 'Affiliator'],
             ['data' => 'details_sum_quantity', 'name' => 'details_sum_quantity', 'title' => 'Total Item'],
             ['data' =>'created_at', 'name' => 'created_at', 'title' => 'Tanggal'],

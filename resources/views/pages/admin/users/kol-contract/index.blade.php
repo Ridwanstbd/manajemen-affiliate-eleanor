@@ -15,7 +15,11 @@
 
     <div class="tab-content">
         <x-organisms.datatables id="kolTable" url="{{ route('admin-dashboard.users.kol-contract-data', request()->query()) }}" 
-            :columns="[['data' => 'username', 'title' => 'Nama KOL'], ['data' => 'action', 'title' => 'Aksi']]" />
+            :columns="[
+                ['data' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'width' => '50px'],
+                ['data' => 'username','title' => 'Nama KOL'],
+                ['data' => 'action', 'title' => 'Aksi']
+                ]" />
     </div>
 </x-molecules.card>
 

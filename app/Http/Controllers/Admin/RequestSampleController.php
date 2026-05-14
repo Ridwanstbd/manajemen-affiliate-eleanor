@@ -30,6 +30,7 @@ class RequestSampleController extends Controller
             $query = SampleRequest::with(['user', 'details.product'])
                 ->withSum('details','quantity');
                     return DataTables::of($query)
+                    ->addIndexColumn()
                     ->addColumn('username', function ($row) {
                         if ($row->user && $row->user->username) {
                             return '@' . $row->user->username; 

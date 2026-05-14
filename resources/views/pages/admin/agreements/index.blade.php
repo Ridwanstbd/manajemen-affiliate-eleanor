@@ -14,6 +14,7 @@
         <x-organisms.datatables id="agreementsTable" 
             url="{{ route('admin-dashboard.agreements.data') }}" 
             :columns="[
+                ['data' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'width' => '50px'],
                 ['data' => 'content', 'title' => 'KONTEN PERSETUJUAN (S&K)'],
                 ['data' => 'status', 'title' => 'Status'],
                 ['data' => 'updated_at', 'title' => 'Terakhir diperbarui'],

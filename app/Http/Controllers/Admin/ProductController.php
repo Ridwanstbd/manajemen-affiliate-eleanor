@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Services\Admin\ImportService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Yajra\DataTables\Facades\DataTables;
 
 class ProductController extends Controller
@@ -24,16 +26,34 @@ class ProductController extends Controller
     public function data(Request $request)
     {
         if ($request->ajax()) {
-            $query = Product::select(['id','name','price','stock','seller_sku', 'mandatory_video_count']);
-
+            $query = Product::select([
+                        'id', 
+                        'name', 
+                        'price', 
+                        'stock', 
+                        'seller_sku', 
+                        'category', 
+                        'mandatory_video_count', 
+                        'product_detail', 
+                        'is_visible', 
+                        'image_path'
+                    ]);
             return DataTables::of($query)
+                ->addIndexColumn()
+                ->addColumn('image', function($row) {
+                    if($row->image_path) {
+                        $imageUrl = $row->image_path ? (Str::startsWith($row->image_path, ['http://', 'https://']) ? $row->image_path : asset('storage/' . $row->image_path)) : '';
+                        return '<img src="'.$imageUrl.'" onclick="openLightbox(\''.$imageUrl.'\')" style="width:48px; height:48px; object-fit:cover; border-radius:4px; cursor:pointer; border:1px solid #e2e8f0;">';
+                    }
+                    return '<span style="font-size:12px; color:#94a3b8;">No Image</span>';
+                })
                 ->addColumn('price_formated', function($row) {
                     return 'Rp ' . number_format($row['price'], 0, ',', '.');
                 })
                 ->addColumn('action', function($row) {
                     return view('pages.admin.product-sample.action-buttons', compact('row'))->render();
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['image','action'])
                 ->make(true);
         }
     }
@@ -55,8 +75,34 @@ class ProductController extends Controller
     }
     public function update(Request $request, $id)
     {
-        $product = Product::find($id);
-        $product->update($request->only(['name', 'price', 'stock', 'mandatory_video_count']));
+        $request->validate([
+            'seller_sku' => 'required|string|max:255',
+            'name'       => 'required|string|max:255',
+            'image'      => 'nullable|image|mimes:jpeg,png,jpg|max:2048', 
+        ], [
+            'seller_sku.required' => 'SKU wajib diisi.',
+            'name.required'       => 'Nama produk wajib diisi.',
+            'image.image'         => 'File harus berupa gambar.',
+            'image.mimes'         => 'Format gambar harus jpeg, png, atau jpg.',
+            'image.max'           => 'Ukuran gambar maksimal 2MB.',
+        ]);
+
+        $product = Product::findOrFail($id);
+        
+        $data = $request->only(['seller_sku', 'name', 'category', 'mandatory_video_count', 'stock', 'product_detail']);
+        $data['is_visible'] = $request->has('is_visible');
+
+        if ($request->hasFile('image')) {
+            if ($product->image && Storage::disk('public')->exists($product->image)) {
+                Storage::disk('public')->delete($product->image);
+            }
+            
+            $imagePath = $request->file('image')->store('products', 'public');
+            $data['image'] = $imagePath;
+        }
+
+        
+        $product->update($data);
 
         return redirect()->back()->with('success', 'Produk berhasil diperbarui.');
     }

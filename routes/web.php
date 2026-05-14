@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\ImportController;
 use App\Http\Controllers\Admin\LeaderboardController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\RequestSampleController;
+use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\TaskMonitoringController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AuthController;
@@ -131,6 +132,9 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/{challenge}', [ChallengeWinnerController::class, 'store'])->name('store');
             Route::delete('/{challenge}/{winner}', [ChallengeWinnerController::class, 'destroy'])->name('destroy');
         });
+
+        Route::put('/settings/task-deadline', [SettingController::class, 'updateTaskDeadline'])
+            ->name('settings.update-task-deadline');
     });
     Route::middleware(['role:affiliator'])->prefix('affiliator')->group(function () {
         Route::get('/', [MainAffiliateController::class,'index']);

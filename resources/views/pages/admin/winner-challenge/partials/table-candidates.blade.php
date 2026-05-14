@@ -13,7 +13,7 @@
             <tr>
                 <td style="padding: 12px; border-bottom: 1px solid rgba(0,0,0,0.05);">
                     <div style="display: flex; align-items: center; gap: 10px;">
-                        <x-atoms.avatar />
+                        <x-atoms.avatar :initials="strtoupper(substr($candidate->user->username, 0, 2))" />
                         <strong>{{ $candidate->user->username }}</strong>
                     </div>
                 </td>
