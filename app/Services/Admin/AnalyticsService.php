@@ -235,17 +235,21 @@ class AnalyticsService
 
     private function getProductPerformance($month, $year, $isKol)
     {
-        $videoMetrics = VideoProductMetric::whereHas('video.user', function($q) use ($isKol) {
+        $videoMetrics = VideoProductMetric::whereHas('importHistory', function($q) use ($month, $year) {
+            $q->whereMonth('start_date', $month)->whereYear('start_date', $year);
+        })->whereHas('video.user', function($q) use ($isKol) {
             $q->where('is_kol', $isKol);
         })->get();
 
-        $liveMetrics = LiveProductMetric::whereHas('liveStream.user', function($q) use ($isKol) {
+        $liveMetrics = LiveProductMetric::whereHas('importHistory', function($q) use ($month, $year) {
+            $q->whereMonth('start_date', $month)->whereYear('start_date', $year);
+        })->whereHas('liveStream.user', function($q) use ($isKol) {
             $q->where('is_kol', $isKol);
         })->get();
 
         $productIds = $videoMetrics->pluck('product_id')->merge($liveMetrics->pluck('product_id'))->unique();
         
-        return Product::whereIn('id', $productIds)->get()->map(function($product) use ($videoMetrics, $liveMetrics, $isKol) {
+        return Product::whereIn('id', $productIds)->get()->map(function($product) use ($videoMetrics, $liveMetrics, $month, $year, $isKol) {
             $pVideo = $videoMetrics->where('product_id', $product->id);
             $pLive = $liveMetrics->where('product_id', $product->id);
 
@@ -253,35 +257,51 @@ class AnalyticsService
             $orders = $pVideo->sum('orders') + $pLive->sum('orders');
 
             $sentQuantity = SampleRequestDetail::where('product_id', $product->id)
-                ->whereHas('sampleRequest.user', function($q) use ($isKol) {
-                    $q->where('is_kol', $isKol);
+                ->whereHas('sampleRequest', function($q) use ($month, $year, $isKol) {
+                    $q->whereMonth('created_at', $month)
+                      ->whereYear('created_at', $year)
+                      ->whereHas('user', function($u) use ($isKol) {
+                          $u->where('is_kol', $isKol);
+                      });
                 })->sum('quantity') ?? 0;
 
             $productCost = ($product->price ?? 0) * $sentQuantity;
 
-            $shippingCost = SampleRequest::whereHas('details', function($q) use ($product) {
-                $q->where('product_id', $product->id);
-            })->whereHas('user', function($q) use ($isKol) {
-                $q->where('is_kol', $isKol);
-            })->sum('shipping_cost') ?? 0;
+            $shippingCost = SampleRequest::whereMonth('created_at', $month)
+                ->whereYear('created_at', $year)
+                ->whereHas('details', function($q) use ($product) {
+                    $q->where('product_id', $product->id);
+                })->whereHas('user', function($q) use ($isKol) {
+                    $q->where('is_kol', $isKol);
+                })->sum('shipping_cost') ?? 0;
 
             $costContract = 0;
             if ($isKol) {
-                $costContract = KOLContract::whereHas('products', function($q) use ($product) {
-                    $q->where('products.id', $product->id);
-                })->sum('contract_fee') ?? 0;
+                $costContract = KOLContract::whereMonth('start_date', $month)
+                    ->whereYear('start_date', $year)
+                    ->whereHas('products', function($q) use ($product) {
+                        $q->where('products.id', $product->id);
+                    })->sum('contract_fee') ?? 0;
             }
 
             $totalCost = $productCost + $shippingCost + $costContract;
-
+            
+            $roiDisplay = '0x';
+            if ($totalCost > 0) {
+                $roiDisplay = number_format($gmv / $totalCost, 1) . 'x';
+            } elseif ($totalCost == 0 && $gmv > 0) {
+                $roiDisplay = '∞'; 
+            }
+            
             return [
+                'image_path' => $product->image_path,
                 'name' => $product->name ?? 'Unknown',
                 'cat' => $product->category ?? 'Umum',
                 'sent' => $sentQuantity . ' unit',
                 'cost' => $totalCost,
                 'gmv' => $gmv,
                 'orders' => $orders,
-                'roi' => $totalCost > 0 ? number_format($gmv / $totalCost, 1) . 'x' : '0x'
+                'roi' => $roiDisplay
             ];
         });
     }

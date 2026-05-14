@@ -160,5 +160,22 @@
             openModal('detailRequestModal');
         });
     });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const openRequestId = urlParams.get('open_request');
+        
+        if (openRequestId) {
+            $('#requestTable').on('draw.dt', function() {
+                const btn = $('.btn-detail[data-id="' + openRequestId + '"]');
+                if (btn.length > 0 && !btn.data('auto-clicked')) {
+                    btn.data('auto-clicked', true);
+                    setTimeout(() => {
+                        btn.click();
+                    }, 500);
+                }
+            });
+        }
+    });
 </script>
 @endpush

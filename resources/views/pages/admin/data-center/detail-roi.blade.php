@@ -61,6 +61,8 @@
 <x-molecules.card title="Analisis Detail ROI Per Produk">
     @php
         $columns = [
+            ['data' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'width' => '50px'],
+            ['data' => 'image', 'name' => 'image', 'title' => 'Gambar'],
             ['data' => 'name_cat', 'title' => 'NAMA PRODUK'],
             ['data' => 'sent', 'title' => 'SAMPEL TERKIRIM'],
             ['data' => 'cost_formatted', 'title' => 'BIAYA SAMPEL'],

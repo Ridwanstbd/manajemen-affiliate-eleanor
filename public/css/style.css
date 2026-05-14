@@ -376,13 +376,21 @@ body::before {
 
 .badge {
     position: absolute;
-    top: 9px;
-    right: 9px;
-    width: 7px;
-    height: 7px;
+    top: -4px;
+    right: -4px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
     background: var(--rose);
-    border-radius: 50%;
+    border-radius: 999px;
     border: 2px solid white;
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
 }
 
 .company-dropdown {

@@ -419,5 +419,21 @@
             openOffcanvas('detailRequestsampleOffcanvas');
         });
     });
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const openSampleId = urlParams.get('open_sample');
+        
+        if (openSampleId) {
+            $('#requestSampleTable').on('draw.dt', function() {
+                const btn = $('.btn-detail[data-id="' + openSampleId + '"]');
+                if (btn.length > 0 && !btn.data('auto-clicked')) {
+                    btn.data('auto-clicked', true);
+                    setTimeout(() => {
+                        btn.click();
+                    }, 500);
+                }
+            });
+        }
+    });
 </script>
 @endpush

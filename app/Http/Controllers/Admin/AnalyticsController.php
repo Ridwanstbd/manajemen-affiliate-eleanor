@@ -7,6 +7,7 @@ use App\Services\Admin\AnalyticsService;
 use App\Models\ImportHistory;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 use Yajra\DataTables\Facades\DataTables;
 
 class AnalyticsController extends Controller
@@ -62,6 +63,17 @@ class AnalyticsController extends Controller
             $products = collect($data['products']); 
 
             return DataTables::of($products)
+                ->addIndexColumn()
+                ->addColumn('image', function($row) {
+                    if (!empty($row['image_path'])) {
+                        $imageUrl = Str::startsWith($row['image_path'], ['http://', 'https://']) 
+                            ? $row['image_path'] 
+                            : asset('storage/' . $row['image_path']);
+                            
+                        return '<img src="'.$imageUrl.'" onclick="openLightbox(\''.$imageUrl.'\')" style="width:48px; height:48px; object-fit:cover; border-radius:4px; cursor:pointer; border:1px solid #e2e8f0;">';
+                    }
+                    return '<span style="font-size:12px; color:#94a3b8;">No Image</span>';
+                })
                 ->addColumn('name_cat', function($row) {
                     return '<div style="font-weight: 700; color: var(--text-primary);">' . $row['name'] . '</div>
                             <div style="font-size: 12px; color: var(--text-secondary);">' . $row['cat'] . '</div>';
@@ -75,7 +87,7 @@ class AnalyticsController extends Controller
                 ->addColumn('roi_badge', function($row) {
                     return '<span style="display:inline-block; padding:4px 8px; border-radius:4px; font-weight:600; font-size:14px; background:rgba(16, 185, 129, 0.1); color:#10b981;">' . $row['roi'] . '</span>';
                 })
-                ->rawColumns(['name_cat', 'roi_badge']) 
+                ->rawColumns(['image','name_cat', 'roi_badge']) 
                 ->make(true);
         }
     }

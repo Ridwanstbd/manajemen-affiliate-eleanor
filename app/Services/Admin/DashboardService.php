@@ -110,7 +110,7 @@ class DashboardService
                 'name'  => $req->tiktok_username ?? $req->email,
                 'time'  => $req->created_at->diffForHumans(),
                 'created_at' => $req->created_at,
-                'route' => route('admin-dashboard.users.index')
+                'route' => route('admin-dashboard.users.index', ['tab' => 'request-access', 'open_request' => $req->id])
             ]);
         }
 
@@ -121,7 +121,7 @@ class DashboardService
                 'name'  => $req->user->username ?? 'Kreator',
                 'time'  => $req->created_at->diffForHumans(),
                 'created_at' => $req->created_at,
-                'route' => route('admin-dashboard.request-samples.index')
+                'route' => route('admin-dashboard.request-samples.index', ['open_sample' => $req->id])
             ]);
         }
 
