@@ -1,10 +1,17 @@
 <header class="header">
     @if(View::hasSection('is_subpage'))
-        <a href="{{ url()->previous() }}" class="header-btn back-btn" aria-label="Kembali">
-            <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path></svg>
+        <a href="{{ url()->previous() }}" class="header-btn" aria-label="Kembali">
+            <x-atoms.icon name="chevron-left" style="width: 22px; height: 22px;"/>
         </a>
         <h2 class="subpage-title">@yield('title')</h2>
-        <div style="width: 40px;"></div>
+        <a href="{{ route('affiliator.cart.index') }}" class="header-btn" aria-label="Keranjang">
+            <x-atoms.icon name="cart" style="width: 22px; height: 22px;"/>
+            @if($notificationCount > 0)
+                <span class="badge">
+                    {{ $notificationCount > 99 ? '99+' : $notificationCount }}
+                </span>
+            @endif
+        </a>
     @else
     <div class="header-left">
         @if(!auth()->check() || auth()->user()->role !== 'AFFILIATOR')
@@ -76,7 +83,7 @@
                     </a>
                 @empty
                     <div style="text-align: center; padding: 40px 0;">
-                        <x-atoms.icon name="bell" style="width: 48px; height: 48px; color: var(--text-tertiary); margin-bottom: 16px; opacity: 0.5;" />
+                        <x-atoms.icon name="bell" style="width: 22px; height: 22px; color: var(--text-tertiary); margin-bottom: 16px; opacity: 0.5;" />
                         <p style="font-size: 14px; color: var(--text-secondary);">Semua sudah selesai! Tidak ada tugas tertunda.</p>
                     </div>
                 @endforelse
@@ -105,7 +112,7 @@
                     </a>
                 @empty
                     <div style="text-align: center; padding: 40px 0;">
-                        <x-atoms.icon name="bell" style="width: 48px; height: 48px; color: var(--text-tertiary); margin-bottom: 16px; opacity: 0.5;" />
+                        <x-atoms.icon name="bell" style="width: 22px; height: 22px; color: var(--text-tertiary); margin-bottom: 16px; opacity: 0.5;" />
                         <p style="font-size: 14px; color: var(--text-secondary);">Belum ada notifikasi aktivitas terbaru.</p>
                     </div>
                 @endforelse

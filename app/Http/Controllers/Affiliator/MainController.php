@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Affiliator;
 
 use App\Http\Controllers\Controller;
 use App\Services\Affiliator\DashboardService;
-use Illuminate\Http\Request;
 
 class MainController extends Controller
 {

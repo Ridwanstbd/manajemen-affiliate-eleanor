@@ -11,24 +11,20 @@ use App\Http\Controllers\Admin\RequestSampleController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\TaskMonitoringController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Affiliator\CartController;
+use App\Http\Controllers\Affiliator\CatalogController;
+use App\Http\Controllers\Affiliator\ProfileController;
+use App\Http\Controllers\Affiliator\TaskController;
+use App\Http\Controllers\Affiliator\LeaderboardController as AffiliatorLeaderboardController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Admin\MainController as MainAdminController;
 use App\Http\Controllers\Affiliator\MainController as MainAffiliateController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
 
 Route::get('/', function () {
     return redirect()->route('login');
-});
-
-Route::get('/test-email', function () {
-    Mail::raw('Halo, ini test SMTP Hostinger dari Laravel 12!', function ($message) {
-        $message->to('ridwansetiobudi77@gmail.com')
-                ->subject('Test SMTP Hostinger');
-    });
-    return 'Email terkirim!';
 });
 
 Route::middleware('guest')->group(function () {
@@ -136,8 +132,38 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/settings/task-deadline', [SettingController::class, 'updateTaskDeadline'])
             ->name('settings.update-task-deadline');
     });
-    Route::middleware(['role:affiliator'])->prefix('affiliator')->group(function () {
-        Route::get('/', [MainAffiliateController::class,'index']);
+
+    Route::middleware(['role:affiliator'])->prefix('affiliator')->name('affiliator.')->group(function () {
+        Route::get('/', [MainAffiliateController::class,'index'])->name('index');
+        
+        Route::prefix('catalog')->name('catalog.')->group(function (){
+            Route::get('/', [CatalogController::class, 'index'])->name('index');
+            Route::get('/{product}', [CatalogController::class, 'show'])->name('show');
+        });
+            
+        Route::prefix('challenge')->name('challenge.')->group(function (){
+            Route::get('/', [ChallengeController::class, 'index'])->name('index');
+            Route::get('/{id}', [ChallengeController::class, 'show'])->name('show');
+        });
+
+        Route::prefix('task')->name('task.')->group(function (){
+            Route::get('/', [TaskController::class, 'index'])->name('index');
+            Route::get('/{id}', [TaskController::class, 'show'])->name('show');
+        });
+
+        Route::prefix('leaderboard')->name('leaderboard.')->group(function (){
+            Route::get('/', [AffiliatorLeaderboardController::class, 'index'])->name('index');
+            Route::get('/{id}', [AffiliatorLeaderboardController::class, 'show'])->name('show');
+        });
+
+        Route::prefix('profile')->name('profile.')->group(function (){
+            Route::get('/', [ProfileController::class, 'index'])->name('index');
+            Route::get('/{id}', [ProfileController::class, 'show'])->name('show');
+        });
+
+        Route::prefix('cart')->name('cart.')->group(function (){
+            Route::get('/',[CartController::class, 'index'])->name('index');
+        });
     });
 
 });

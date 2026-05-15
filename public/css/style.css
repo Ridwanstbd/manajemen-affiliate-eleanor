@@ -1536,6 +1536,7 @@ body.role-affiliator .sidebar {
 body.role-affiliator .main.affiliator-main {
     max-width: 804px;
     margin: 0 auto;
+    margin-bottom: 70px;
     padding: 15px;
     width: 100%;
 }
@@ -1565,7 +1566,7 @@ body.role-affiliator .search-global {
 
 @media (min-width: 992px) {
     body.role-affiliator .stats-container {
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(2, 1fr);
     }
     body.role-affiliator .main.affiliator-main {
         padding: 30px 10%;
@@ -2507,4 +2508,416 @@ table.dataTable tbody tr:hover {
     pointer-events: none;
     z-index: 50;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.carousel-wrapper {
+    margin-bottom: 24px;
+    position: relative;
+    border-radius: var(--radius-2xl);
+    overflow: hidden;
+    box-shadow: var(--glass-shadow-lg);
+}
+
+.carousel-track {
+    display: flex;
+    transition: transform 0.5s var(--ease-bounce);
+}
+
+.carousel-slide {
+    flex: 0 0 100%;
+    display: block;
+    text-decoration: none;
+}
+
+.carousel-btn-prev,
+.carousel-btn-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: all 0.2s ease;
+    z-index: 10;
+}
+
+.carousel-btn-prev {
+    left: 16px;
+}
+
+.carousel-btn-next {
+    right: 16px;
+}
+
+.carousel-btn-prev:hover,
+.carousel-btn-next:hover {
+    background: rgba(0, 0, 0, 0.4);
+}
+
+.carousel-indicators {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    z-index: 10;
+}
+
+.carousel-dot {
+    width: 12px;
+    height: 4px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.carousel-dot.active {
+    width: 24px;
+    background: white;
+}
+
+.challenge-banner {
+    background: linear-gradient(135deg, var(--primary-blue), #60a5fa);
+    padding: 32px 40px;
+    color: white;
+    min-height: 220px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.challenge-banner-glow {
+    position: absolute;
+    right: -40px;
+    top: -40px;
+    width: 250px;
+    height: 250px;
+    background: radial-gradient(
+        circle,
+        rgba(255, 255, 255, 0.2) 0%,
+        transparent 70%
+    );
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.challenge-banner-icon {
+    position: absolute;
+    right: 10%;
+    bottom: -20px;
+    font-size: 120px;
+    opacity: 0.1;
+    line-height: 1;
+    transform: rotate(-15deg);
+    pointer-events: none;
+}
+
+.challenge-banner-content {
+    position: relative;
+    z-index: 2;
+    max-width: 70%;
+}
+
+.challenge-banner-badge {
+    background: rgba(255, 255, 255, 0.25);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 11.5px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    display: inline-block;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+.challenge-banner-title {
+    font-size: 26px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.challenge-banner-desc {
+    font-size: 14px;
+    opacity: 0.9;
+    margin-bottom: 18px;
+    line-height: 1.5;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.challenge-banner-btn {
+    font-size: 13.5px;
+    font-weight: 700;
+    background: white;
+    color: var(--primary-blue);
+    padding: 8px 18px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition:
+        transform 0.2s,
+        box-shadow 0.2s;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.challenge-banner-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+@media (max-width: 768px) {
+    .challenge-banner-content {
+        max-width: 100%;
+    }
+    .challenge-banner {
+        padding: 24px;
+    }
+    .challenge-banner-title {
+        font-size: 22px;
+    }
+}
+
+.banner-inner {
+    padding: 32px 40px;
+    color: white;
+    min-height: 220px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.banner-ornament-circle {
+    position: absolute;
+    right: -40px;
+    top: -40px;
+    width: 250px;
+    height: 250px;
+    background: radial-gradient(
+        circle,
+        rgba(255, 255, 255, 0.2) 0%,
+        transparent 70%
+    );
+    border-radius: 50%;
+}
+
+.banner-ornament-icon {
+    position: absolute;
+    right: 8%;
+    bottom: -30px;
+    opacity: 0.12;
+    transform: rotate(-15deg);
+    pointer-events: none;
+}
+
+.banner-ornament-icon svg {
+    width: 180px;
+    height: 180px;
+    color: white;
+}
+
+.banner-content {
+    position: relative;
+    z-index: 2;
+    max-width: 70%;
+}
+
+.banner-tag {
+    background: rgba(255, 255, 255, 0.25);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 11.5px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    display: inline-block;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+.banner-title {
+    font-size: 26px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.banner-description {
+    font-size: 14px;
+    opacity: 0.9;
+    margin-bottom: 18px;
+    line-height: 1.5;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.banner-btn {
+    font-size: 13.5px;
+    font-weight: 700;
+    background: white;
+    color: var(--primary-blue);
+    padding: 8px 18px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: transform 0.2s var(--ease-smooth);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Menambahkan efek interaktif kecil saat banner di-hover */
+.carousel-slide:hover .banner-btn {
+    transform: translateX(4px);
+}
+
+/* Responsivitas untuk layar HP */
+@media (max-width: 600px) {
+    .banner-inner {
+        padding: 24px;
+        min-height: 180px;
+    }
+    .banner-content {
+        max-width: 90%;
+    }
+    .banner-title {
+        font-size: 20px;
+    }
+    .banner-ornament-icon svg {
+        width: 120px;
+        height: 120px;
+    }
+}
+
+.header-section-mobile {
+    margin-bottom: 24px;
+}
+
+.page-title-mobile {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 0 0 8px 0;
+}
+
+.page-subtitle-mobile {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.search-container-mobile {
+    margin-bottom: 30px;
+}
+
+.search-box-mobile {
+    width: 100%;
+    background-color: rgba(241, 245, 249, 0.5);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    padding: 14px 16px;
+    border-radius: var(--radius-lg);
+    font-size: 14px;
+    color: var(--text-primary);
+    transition: all 0.25s var(--ease-smooth);
+}
+
+.search-box-mobile:focus {
+    outline: none;
+    background: white;
+    border-color: rgba(59, 130, 246, 0.3);
+    box-shadow: 0 0 0 4px var(--primary-blue-soft);
+}
+
+.product-grid-mobile {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.sentinel-mobile {
+    padding: 20px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+}
+
+.spinner-mobile {
+    width: 30px;
+    height: 30px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid var(--text-primary);
+    border-radius: 50%;
+    animation: spin-mobile 1s linear infinite;
+    display: none;
+}
+
+@keyframes spin-mobile {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.spinner-mobile.active {
+    display: block;
+}
+
+@media (max-width: 600px) {
+    .product-grid-mobile {
+        grid-template-columns: 1fr;
+    }
+}
+.card-img-container {
+    aspect-ratio: 1/1;
+    background: #eee;
+    position: relative;
+    overflow: hidden;
+}
+
+.card-img-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.card-info {
+    padding: 12px;
+}
+
+.category-label {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.product-name {
+    font-size: 16px;
+    font-weight: 700;
+    color: #000;
+    margin-bottom: 8px;
+    line-height: 1.2;
+}
+
+.stock-info {
+    font-size: 13px;
+    color: #444;
+}
+
+.stock-out {
+    color: #999;
 }

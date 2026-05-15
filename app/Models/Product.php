@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -60,5 +61,22 @@ class Product extends Model
 
     public function kolContracts() {
         return $this->belongsToMany(KOLContract::class, 'kol_contract_product');
+    }
+
+    protected function imageUrl(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                if (!$this->image_path) {
+                    return asset('img/default-product.png');
+                }
+                
+                if (filter_var($this->image_path, FILTER_VALIDATE_URL)) {
+                    return $this->image_path;
+                }
+
+                return asset('storage/' . $this->image_path);
+            },
+        );
     }
 }

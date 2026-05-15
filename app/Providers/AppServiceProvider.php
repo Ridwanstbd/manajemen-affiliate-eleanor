@@ -5,8 +5,10 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 use App\Models\SystemAccessRequest;
 use App\Models\SampleRequest;
+use App\Models\TaskReport;
 use App\Services\Admin\DashboardService;
 
 class AppServiceProvider extends ServiceProvider
@@ -40,7 +42,6 @@ class AppServiceProvider extends ServiceProvider
                         'pendingTasksList' => $pendingTasksList,
                     ]);
                 } 
-
                 elseif ($user->role === 'AFFILIATOR') {
                     $notificationCount = 0;
                     $affiliatorNotifications = collect();
@@ -48,7 +49,7 @@ class AppServiceProvider extends ServiceProvider
                     $shippedSamples = SampleRequest::where('user_id', $user->id)
                         ->where('status', 'SHIPPED')
                         ->latest('updated_at')
-                        ->take(3)
+                        ->take(2)
                         ->get();
 
                     foreach ($shippedSamples as $sample) {
@@ -56,7 +57,7 @@ class AppServiceProvider extends ServiceProvider
                             'title' => 'Paket Sampel Dikirim 🚚',
                             'desc'  => 'Dikirim via ' . ($sample->courier ?? 'Kurir') . '. Resi: ' . ($sample->tracking_number ?? '-'),
                             'time'  => $sample->updated_at->diffForHumans(),
-                            'route' => '#', // Ganti dengan route ke halaman riwayat sampel affiliator
+                            'route' => '#', // TODO: Ubah ke route detail sampel
                             'color' => 'var(--primary-blue)'
                         ]);
                         $notificationCount++;
@@ -73,7 +74,7 @@ class AppServiceProvider extends ServiceProvider
                             'title' => 'Pengajuan Sampel Disetujui ✅',
                             'desc'  => 'Admin sedang memproses logistik pengiriman paket Anda.',
                             'time'  => $sample->updated_at->diffForHumans(),
-                            'route' => '#', 
+                            'route' => '#',
                             'color' => 'var(--emerald)'
                         ]);
                         $notificationCount++;
@@ -88,15 +89,49 @@ class AppServiceProvider extends ServiceProvider
                     foreach ($rejectedSamples as $sample) {
                         $affiliatorNotifications->push((object)[
                             'title' => 'Pengajuan Sampel Dibatalkan ❌',
-                            'desc'  => 'Alasan: ' . ($sample->reject_reason ?? 'Tidak memenuhi syarat.'),
+                            'desc'  => 'Alasan: ' . ($sample->reject_reason ?? 'Tidak ada keterangan'),
                             'time'  => $sample->updated_at->diffForHumans(),
-                            'route' => '#', // Ganti dengan route ke halaman riwayat sampel affiliator
+                            'route' => '#',
                             'color' => 'var(--rose)'
                         ]);
                         $notificationCount++;
                     }
 
-                    $sortedNotifications = $affiliatorNotifications->sortByDesc('time')->values();
+                    $pendingTasks = TaskReport::where('user_id', $user->id)
+                        ->where('task_status', '!=', 'COMPLETED') 
+                        ->whereNotNull('due_date')
+                        ->get();
+
+                    $now = Carbon::now();
+
+                    foreach ($pendingTasks as $task) {
+                        $dueDate = Carbon::parse($task->due_date);
+                        
+                        if ($dueDate->isPast()) {
+                            $affiliatorNotifications->push((object)[
+                                'title' => 'Peringatan Tugas Terlambat ⚠️',
+                                'desc'  => 'Tugas konten video Anda telah melewati batas waktu pada ' . $dueDate->translatedFormat('d M Y') . '. Segera unggah link.',
+                                'time'  => $task->updated_at->diffForHumans(),
+                                'route' => '#', // TODO: Ubah ke route submit link
+                                'color' => 'var(--rose)'
+                            ]);
+                            $notificationCount++;
+                        } 
+                        elseif ($dueDate->diffInDays($now) <= 3) {
+                            $affiliatorNotifications->push((object)[
+                                'title' => 'Tenggat Waktu Tugas Mendekat ⏳',
+                                'desc'  => 'Ingat, Anda harus mengunggah link video TikTok sebelum ' . $dueDate->translatedFormat('d M Y') . '.',
+                                'time'  => $task->updated_at->diffForHumans(),
+                                'route' => '#',
+                                'color' => '#f59e0b'
+                            ]);
+                            $notificationCount++;
+                        }
+                    }
+
+                    $sortedNotifications = $affiliatorNotifications->sortByDesc(function ($notif) {
+                        return strtotime(str_replace(' yang lalu', '', $notif->time));
+                    })->values();
 
                     $view->with([
                         'notificationCount' => $notificationCount,

@@ -1,22 +1,7 @@
 <nav class="bottom-nav">
-    <a href="#" class="nav-item-bottom active">
-        <x-atoms.icon name="dashboard" class="nav-icon" />
-        <span>Beranda</span>
-    </a>
-    <a href="#" class="nav-item-bottom">
-        <x-atoms.icon name="revenue" class="nav-icon" />
-        <span>Katalog</span>
-    </a>
-    <a href="#" class="nav-item-bottom">
-        <x-atoms.icon name="journal" class="nav-icon" />
-        <span>Tugas</span>
-    </a>
-    <a href="#" class="nav-item-bottom">
-        <x-atoms.icon name="trend-up" class="nav-icon" />
-        <span>Peringkat</span>
-    </a>
-    <a href="#" class="nav-item-bottom">
-        <x-atoms.icon name="profile" class="nav-icon" />
-        <span>Profil</span>
-    </a>
+    <x-molecules.bottom-nav-item icon="reports" label="Dashboard" href="{{route('affiliator.index')}}" :active="request()->routeIs('affiliator.index')" />
+    <x-molecules.bottom-nav-item icon="revenue" label="Katalog" href="{{route('affiliator.catalog.index')}}" :active="request()->routeIs('affiliator.catalog.index')" />
+    <x-molecules.bottom-nav-item icon="journal" label="Tugas" href="{{route('affiliator.task.index')}}" :active="request()->routeIs('affiliator.task.index')" />
+    <x-molecules.bottom-nav-item icon="trend-up" label="Peringkat" href="{{route('affiliator.leaderboard.index')}}" :active="request()->routeIs('affiliator.leaderboard.index')" />
+    <x-molecules.bottom-nav-item icon="profile" label="Profil" href="{{route('affiliator.profile.index')}}" :active="request()->routeIs('affiliator.profile.index')" />
 </nav>
