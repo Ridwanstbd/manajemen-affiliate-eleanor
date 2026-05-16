@@ -1,17 +1,20 @@
 <header class="header">
     @if(View::hasSection('is_subpage'))
         <a href="{{ url()->previous() }}" class="header-btn" aria-label="Kembali">
-            <x-atoms.icon name="chevron-left" style="width: 22px; height: 22px;"/>
+            <x-atoms.icon name="chevron-left" style="width: 28px; height: 28px;"/>
         </a>
         <h2 class="subpage-title">@yield('title')</h2>
+        <div class="" style="width: 240px"></div>
+        @if (request()->routeIs('affiliator.catalog.*')) 
         <a href="{{ route('affiliator.cart.index') }}" class="header-btn" aria-label="Keranjang">
-            <x-atoms.icon name="cart" style="width: 22px; height: 22px;"/>
+            <x-atoms.icon name="cart" style="width: 28px; height: 28px;"/>
             @if($notificationCount > 0)
                 <span class="badge">
                     {{ $notificationCount > 99 ? '99+' : $notificationCount }}
                 </span>
             @endif
         </a>
+        @endif
     @else
     <div class="header-left">
         @if(!auth()->check() || auth()->user()->role !== 'AFFILIATOR')
@@ -36,26 +39,16 @@
                 </span>
             @endif
         </button>
-
-        <x-molecules.dropdown>
-            <x-slot:trigger>
-                <div class="header-btn">
-                    <x-atoms.icon name="profile" style="width: 28px; height: 28px;"/>
-                </div>
-            </x-slot:trigger>
-
-            <x-atoms.dropdown-item href="{{ route('admin-dashboard.dashboard') }}">
-                Dashboard
-            </x-atoms.dropdown-item>
-                        
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <x-atoms.dropdown-item href="#" onclick="event.preventDefault(); this.closest('form').submit();">
-                    Keluar
-                </x-atoms.dropdown-item>
-            </form>
-        </x-molecules.dropdown>
-
+        @if (request()->routeIs('affiliator.catalog.*')) 
+        <a href="{{ route('affiliator.cart.index') }}" class="header-btn" aria-label="Keranjang">
+            <x-atoms.icon name="cart" style="width: 28px; height: 28px;"/>
+            @if($notificationCount > 0)
+                <span class="badge">
+                    {{ $notificationCount > 99 ? '99+' : $notificationCount }}
+                </span>
+            @endif
+        </a>
+        @endif
     </div>
     @endif
 </header>
@@ -83,7 +76,7 @@
                     </a>
                 @empty
                     <div style="text-align: center; padding: 40px 0;">
-                        <x-atoms.icon name="bell" style="width: 22px; height: 22px; color: var(--text-tertiary); margin-bottom: 16px; opacity: 0.5;" />
+                        <x-atoms.icon name="bell" style="width: 28px; height: 28px; color: var(--text-tertiary); margin-bottom: 16px; opacity: 0.5;" />
                         <p style="font-size: 14px; color: var(--text-secondary);">Semua sudah selesai! Tidak ada tugas tertunda.</p>
                     </div>
                 @endforelse
@@ -112,7 +105,7 @@
                     </a>
                 @empty
                     <div style="text-align: center; padding: 40px 0;">
-                        <x-atoms.icon name="bell" style="width: 22px; height: 22px; color: var(--text-tertiary); margin-bottom: 16px; opacity: 0.5;" />
+                        <x-atoms.icon name="bell" style="width: 28px; height: 28px; color: var(--text-tertiary); margin-bottom: 16px; opacity: 0.5;" />
                         <p style="font-size: 14px; color: var(--text-secondary);">Belum ada notifikasi aktivitas terbaru.</p>
                     </div>
                 @endforelse
