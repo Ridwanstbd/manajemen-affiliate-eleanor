@@ -14,8 +14,9 @@ class Taskservice
             case 'process-overdue':
                 return $this->getTaskData($request);
             case 'completed':
-            default:
                 return $this->getCompletedTaskData($request);
+            default:
+                return $this->getTaskData($request);
         }
     }
 
