@@ -50,10 +50,13 @@
             </x-atoms.typography>
 
             <div style="display: flex; gap: 12px; margin-top: 20px; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 20px;">
-                <x-atoms.button variant="primary" style="width: 100%; display: flex; align-items: center; justify-content: center;" :disabled="$product->stock <= 0">
-                    <x-atoms.icon name="cart" style="width: 18px; height: 18px;"/>
-                    Tambah ke Keranjang
-                </x-atoms.button>
+                <form action="{{ route('affiliator.cart.store', $product->id) }}" method="POST" style="width: 100%;">
+                    @csrf
+                    <x-atoms.button type="submit" variant="primary" style="width: 100%; display: flex; align-items: center; justify-content: center;" :disabled="$product->stock <= 0">
+                        <x-atoms.icon name="cart" style="width: 18px; height: 18px; margin-right: 8px;"/>
+                        Tambah ke Keranjang
+                    </x-atoms.button>
+                </form>
             </div>
         </div>
     </x-molecules.card>

@@ -91,7 +91,7 @@
                 </div>
             </div>
             <div style="margin-top: 20px;">
-                <x-atoms.button variant="outline" style="width: 100%;" onclick="window.location.href='#'">
+                <x-atoms.button variant="outline" style="width: 100%;" href="{{route('affiliator.sample-request.index')}}">
                     Lihat Semua Pengajuan
                 </x-atoms.button>
             </div>

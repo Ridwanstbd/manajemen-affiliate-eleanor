@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Affiliator\CartController;
 use App\Http\Controllers\Affiliator\CatalogController;
 use App\Http\Controllers\Affiliator\ProfileController;
+use App\Http\Controllers\Affiliator\SampleRequestController;
 use App\Http\Controllers\Affiliator\TaskController;
 use App\Http\Controllers\Affiliator\LeaderboardController as AffiliatorLeaderboardController;
 use App\Http\Controllers\AuthController;
@@ -163,6 +164,14 @@ Route::middleware(['auth'])->group(function () {
 
         Route::prefix('cart')->name('cart.')->group(function (){
             Route::get('/',[CartController::class, 'index'])->name('index');
+            Route::post('/checkout', [CartController::class, 'checkout'])->name('checkout');
+            Route::post('/{product}', [CartController::class, 'store'])->name('store');
+            Route::delete('/{id}', [CartController::class, 'destroy'])->name('destroy');
+        });
+
+        Route::prefix('sample-request')->name('sample-request.')->group(function () {
+            Route::get('/', [SampleRequestController::class, 'index'])->name('index');
+            Route::get('/{id}', [SampleRequestController::class, 'show'])->name('show');
         });
     });
 
