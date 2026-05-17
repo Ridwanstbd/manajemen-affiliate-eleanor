@@ -4,21 +4,55 @@ namespace App\Http\Controllers\Affiliator;
 
 use App\Http\Controllers\Controller;
 use App\Models\TaskReport;
-use Illuminate\Support\Facades\Request;
+use App\Services\Affiliator\Taskservice;
+use Illuminate\Http\Request;
 
 class TaskController extends Controller
 {
-    public function index()
+    public function __construct(
+        protected Taskservice $taskService
+    ){}
+    public function index(Request $request)
     {
-        return view('pages.affiliator.task.index');
-    }
-    public function detail($id)
-    {
-        return view('pages.affiliator.task.detail');
-    }
-    public function report($id)
-    {}
+        $tab = $request->query('tab', 'request-sample');
+                                     
+        $data = $this->taskService->getTabData($tab, $request);
+        
+        if ($request->ajax() || $request->wantsJson()) {
+            $viewPath = $tab === 'completed' 
+                ? 'pages.affiliator.task.completed.partials.items' 
+                : 'pages.affiliator.task.all.partials.items';
 
+            $html = view($viewPath, compact('data'))->render();
+            
+            return response()->json([
+                'html' => $html,
+                'next_page_url' => $data->nextPageUrl()
+            ]);
+        }
+
+        $viewData = [
+            'currentTab' => $tab,
+            'data' => $data
+        ];
+        return view('pages.affiliator.task.index',$viewData);
+    }
+    public function show($id)
+    {
+        try {
+            $task = $this->taskService->getTaskDetail(auth()->user(), (int)$id);
+            
+            return view('pages.affiliator.task.detail', compact('task'));
+            
+        } catch (\Exception $e) {
+            return redirect()->route('affiliator.task.index')
+                ->with('error', 'Tugas tidak ditemukan atau Anda tidak memiliki hak akses.');
+        }
+    }
+    public function submitForm()
+    {
+        return view('pages.affiliator.task.report');
+    }
     
     public function submitTask(Request $request, $id)
     {

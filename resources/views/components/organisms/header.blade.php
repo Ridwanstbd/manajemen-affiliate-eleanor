@@ -46,6 +46,26 @@
                     </span>
                 @endif
             </button>
+            @if(auth()->check() && auth()->user()->role === 'ADMINISTRATOR')
+            <x-molecules.dropdown>
+                <x-slot:trigger>
+                    <div class="header-btn">
+                        <x-atoms.icon name="profile" style="width: 28px; height: 28px;"/>
+                    </div>
+                </x-slot:trigger>
+
+                <x-atoms.dropdown-item href="{{ route('admin-dashboard.dashboard') }}">
+                    Dashboard
+                </x-atoms.dropdown-item>
+                            
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <x-atoms.dropdown-item href="#" onclick="event.preventDefault(); this.closest('form').submit();">
+                        Keluar
+                    </x-atoms.dropdown-item>
+                </form>
+            </x-molecules.dropdown>
+            @endif
             
             @if (request()->routeIs('affiliator.catalog.*')) 
                 @php $cartCount = count(session('affiliate_cart', [])); @endphp
@@ -97,7 +117,7 @@
 
         <div style="display: flex; flex-direction: column; gap: 12px;">
             @forelse($affiliatorNotifications ?? [] as $notif)
-                <a href="{{ $notif->route }}" style="display: block; padding: 14px 16px; background: rgba(255,255,255,0.6); border: 1px solid var(--glass-border, #cbd5e1); border-left: 4px solid {{ $notif->color }}; border-radius: 8px; text-decoration: none; transition: 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
+                <a href="{{ $notif->route }}" style="display: block; padding: 14px 16px; background: rgba(255,255,255,0.6); border: 1px solid var(--glass-border, #cbd5e1); border-left: 8px solid {{ $notif->color }}; border-radius: 8px; text-decoration: none; transition: 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
                     
                     <div style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px;">
                         {{ $notif->title }}

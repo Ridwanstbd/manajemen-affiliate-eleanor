@@ -331,22 +331,22 @@
                         method: 'GET',
                         success: function(res) {
                             $('#requestSampleTable').DataTable().ajax.reload(null, false);
+                            
                             let historyHtml = '<div class="tracking-timeline">';
-                            const dateApproved = new Date(d.updated_at || d.created_at).toLocaleString('id-ID', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }) + ' WIB';
+                            
                             let trackingDetails = [];
                             if (res && res.data && res.data.manifest) {
                                 trackingDetails = res.data.manifest.slice().reverse();
                             }
 
                             if(trackingDetails && trackingDetails.length > 0) {
+                                historyHtml += `<div style="margin-bottom: 12px; font-size: 11px; font-weight: 700; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.5px;">Update Logistik Kurir</div>`;
                                 
                                 trackingDetails.forEach((item, index) => {
                                     let dotClass = index === 0 ? 'current' : 'completed';
-                                    
                                     let statusDesc = item.manifest_description || item.title || 'Update Status';
                                     let statusDate = item.manifest_date || '';
                                     let statusTime = item.manifest_time || '';
-                                    
                                     let formattedDate = `${statusDate} ${statusTime}`.trim();
 
                                     historyHtml += `
@@ -357,39 +357,28 @@
                                     `;
                                 });
                                 
-                                historyHtml += `
-                                    <div class="timeline-item completed">
-                                        <div class="timeline-title">Pesanan Disetujui</div>
-                                        <div class="timeline-date">${dateApproved}</div>
-                                    </div>
-                                `;
+                                historyHtml += `<div style="margin: 20px 0 12px 0; border-top: 1px dashed #cbd5e1;"></div>`;
+                            }
 
-                                const isDelivered = res.data.delivered === true || (res.data.summary && res.data.summary.status === 'DELIVERED');
+                            if (res.internal_timeline && res.internal_timeline.length > 0) {
+                                historyHtml += `<div style="margin-bottom: 12px; font-size: 11px; font-weight: 700; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.5px;">Riwayat Sistem</div>`;
                                 
-                                if(!isDelivered) {
-                                    historyHtml = `
-                                        <div class="timeline-item pending">
-                                            <div class="timeline-title">Paket Diterima oleh Affiliator</div>
-                                            <div class="timeline-date">Menunggu konfirmasi</div>
+                                let systemTimeline = res.internal_timeline.slice().reverse();
+                                
+                                systemTimeline.forEach((step, index) => {
+                                    let dotClass = step.is_completed ? 'completed' : 'pending';
+                                    if (step.is_danger) dotClass = 'danger';
+                                    
+                                    historyHtml += `
+                                        <div class="timeline-item ${dotClass}">
+                                            <div class="timeline-title">${step.title}</div>
+                                            <div class="timeline-date">${step.time || 'Menunggu pembaruan...'}</div>
+                                            <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px; line-height: 1.4;">
+                                                ${step.description}
+                                            </div>
                                         </div>
-                                    ` + historyHtml;
-                                }
-
-                            } else {
-                                historyHtml += `
-                                    <div class="timeline-item pending">
-                                        <div class="timeline-title">Paket Diterima oleh Affiliator</div>
-                                        <div class="timeline-date">Menunggu konfirmasi</div>
-                                    </div>
-                                    <div class="timeline-item current">
-                                        <div class="timeline-title">Menunggu Update dari Kurir</div>
-                                        <div class="timeline-date">Resi: ${d.tracking_number}</div>
-                                    </div>
-                                    <div class="timeline-item completed">
-                                        <div class="timeline-title">Pesanan Disetujui</div>
-                                        <div class="timeline-date">${dateApproved}</div>
-                                    </div>
-                                `;
+                                    `;
+                                });
                             }
                             
                             historyHtml += '</div>';

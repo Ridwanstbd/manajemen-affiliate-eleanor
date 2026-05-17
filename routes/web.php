@@ -150,6 +150,7 @@ Route::middleware(['auth'])->group(function () {
         Route::prefix('task')->name('task.')->group(function (){
             Route::get('/', [TaskController::class, 'index'])->name('index');
             Route::get('/{id}', [TaskController::class, 'show'])->name('show');
+            Route::get('/{id}/report', [TaskController::class, 'submitForm'])->name('report');
         });
 
         Route::prefix('leaderboard')->name('leaderboard.')->group(function (){

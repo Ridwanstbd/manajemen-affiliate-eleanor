@@ -25,7 +25,8 @@ class AuthService{
         $user->update([
             'email' => $data['email'],
             'phone_number' => $data['phone_number'],
-            'password' => Hash::make($data['password'])
+            'password' => Hash::make($data['password']),
+            'is_claimed' => true
         ]);
         return $user;
     }

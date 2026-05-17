@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Papan Peringkat')
+@section('title', 'Pengajuan Sampel Saya')
 
 @section('content')
 <x-organisms.mobile-page-wrapper title="Pengajuan Sampel Saya" subtitle="Pantau proses pengiriman dan konfirmasi sampel Anda.">
@@ -30,4 +30,45 @@
 @endsection
 
 @push('scripts')
+<style>
+    .spin-animation { animation: spin 1s linear infinite; }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+</style>
+
+<script>
+    let nextPageUrl = '{{ $data->nextPageUrl() }}';
+    let isLoading = false;
+    let currentTab = '{{ $currentTab }}';
+
+    $(window).scroll(function() {
+        if($(window).scrollTop() + $(window).height() >= $(document).height() - 100) {
+            if(nextPageUrl && !isLoading) {
+                loadMoreData();
+            }
+        }
+    });
+
+    function loadMoreData() {
+        isLoading = true;
+        $('#loading-spinner').show();
+
+        $.ajax({
+            url: nextPageUrl,
+            type: 'GET',
+            data: { tab: currentTab }, 
+            success: function(response) {
+                if(response.html) {
+                    $('#infinite-scroll-container').append(response.html);
+                    nextPageUrl = response.next_page_url; 
+                }
+                isLoading = false;
+                $('#loading-spinner').hide();
+            },
+            error: function() {
+                isLoading = false;
+                $('#loading-spinner').hide();
+            }
+        });
+    }
+</script>
 @endpush

@@ -61,6 +61,58 @@ class RequestSampleService
             return null;
         }
     }
+    public function getTrackingTimeline(SampleRequest $sampleRequest)
+    {
+        $rajaOngkirData = $this->checkAndUpdateDeliveryStatus($sampleRequest);
+
+        $timeline = [];
+
+        $timeline[] = [
+            'title' => 'Pengajuan Sampel Dikirim',
+            'description' => 'Permintaan sampel produk telah dikirim oleh affiliator dan masuk antrean sistem.',
+            'time' => $sampleRequest->created_at->translatedFormat('d M Y, H:i'),
+            'is_completed' => true,
+            'icon' => 'paper-plane'
+        ];
+
+        if ($sampleRequest->status === 'REJECTED') {
+            $timeline[] = [
+                'title' => 'Pengajuan Ditolak',
+                'description' => 'Alasan: ' . ($sampleRequest->reject_reason ?? 'Tidak ada alasan spesifik.'),
+                'time' => $sampleRequest->updated_at->translatedFormat('d M Y, H:i'),
+                'is_completed' => true,
+                'is_danger' => true,
+                'icon' => 'x-circle'
+            ];
+        } else {
+            $isApprovedPast = in_array($sampleRequest->status, ['APPROVED', 'SHIPPED']);
+            $timeline[] = [
+                'title' => 'Pengajuan Disetujui',
+                'description' => $isApprovedPast 
+                    ? 'Admin telah menyetujui permintaan. Paket dipersiapkan untuk diserahkan ke ekspedisi.' 
+                    : 'Menunggu peninjauan dan persetujuan dari tim administrator.',
+                'time' => $sampleRequest->status !== 'PENDING' ? $sampleRequest->updated_at->translatedFormat('d M Y, H:i') : null,
+                'is_completed' => $isApprovedPast,
+                'icon' => 'check-circle'
+            ];
+
+            $isShipped = $sampleRequest->status === 'SHIPPED';
+            $timeline[] = [
+                'title' => 'Paket Dalam Pengiriman',
+                'description' => $isShipped 
+                    ? 'Paket telah diserahkan ke kurir ' . strtoupper($sampleRequest->courier ?? 'mitra') . ' dengan nomor resi ' . $sampleRequest->tracking_number . '.'
+                    : 'Nomor resi pengiriman akan muncul setelah paket diserahkan ke pihak kurir.',
+                'time' => $isShipped ? $sampleRequest->updated_at->translatedFormat('d M Y, H:i') : null,
+                'is_completed' => $isShipped,
+                'icon' => 'truck'
+            ];
+        }
+
+        return [
+            'rajaongkir' => $rajaOngkirData,
+            'timeline'   => $timeline
+        ];
+    }
 
     protected function generateTaskForSample(SampleRequest $sampleRequest)
     {

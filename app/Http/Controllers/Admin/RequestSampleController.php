@@ -109,15 +109,17 @@ class RequestSampleController extends Controller
     {
         $sampleRequest = SampleRequest::findOrFail($id);
 
-        $responseData = $this->requestSampleService->checkAndUpdateDeliveryStatus($sampleRequest);
+        $responseData = $this->requestSampleService->getTrackingTimeline($sampleRequest);
 
         if (!$responseData) {
             return response()->json(['error' => 'Gagal menghubungi server pelacakan atau data resi tidak lengkap.'], 500);
         }
 
-        return response()->json($responseData);
-    }
+        $finalResponse = $responseData['rajaongkir'] ?? [];
+        $finalResponse['internal_timeline'] = $responseData['timeline'];
 
+        return response()->json($finalResponse);
+    }
     public function reject(Request $request)
     {
         $request->validate([

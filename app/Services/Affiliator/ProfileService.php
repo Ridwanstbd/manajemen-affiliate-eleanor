@@ -41,7 +41,7 @@ class ProfileService
                 'title'    => 'Pengajuan Sampel Saya',
                 'subtitle' => 'Lacak pengiriman & konfirmasi sampel diterima.',
                 'icon'     => 'invoices',
-                'route'    => 'affiliator.sample-request.index',
+                'route'    => 'sample-request',
             ],
             [
                 'title'    => 'Integritas & Status Akun',
