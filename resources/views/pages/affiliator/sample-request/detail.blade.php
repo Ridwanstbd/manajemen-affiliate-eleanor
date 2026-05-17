@@ -2,6 +2,7 @@
 
 @section('title', 'Detail Pengajuan')
 @section('is_subpage', true)
+@section('back_url', route('affiliator.sample-request.index'))
 
 @section('content')
 <x-organisms.mobile-page-wrapper title="Detail Pengajuan" subtitle="Pantau status persetujuan dan pelacakan pengiriman sampel gratis Anda.">

@@ -151,6 +151,7 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/', [TaskController::class, 'index'])->name('index');
             Route::get('/{id}', [TaskController::class, 'show'])->name('show');
             Route::get('/{id}/report', [TaskController::class, 'submitForm'])->name('report');
+            Route::post('/{id}/submit', [TaskController::class, 'submitTask'])->name('submit');
         });
 
         Route::prefix('leaderboard')->name('leaderboard.')->group(function (){

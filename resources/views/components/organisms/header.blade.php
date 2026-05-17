@@ -1,7 +1,7 @@
 <header class="header">
     @if(View::hasSection('is_subpage'))
         <div style="display: flex; z-index: 2;">
-            <a href="{{ url()->previous() }}" class="header-btn" aria-label="Kembali">
+            <a href="@yield('back_url', url()->previous())" class="header-btn" aria-label="Kembali">
                 <x-atoms.icon name="chevron-left" style="width: 28px; height: 28px;"/>
             </a>
         </div>

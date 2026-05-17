@@ -2,6 +2,7 @@
 
 @section('title', 'Detail Produk')
 @section('is_subpage', true)
+@section('back_url', route('affiliator.catalog.index'))
 
 @section('content')
     @php

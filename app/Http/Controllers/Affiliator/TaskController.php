@@ -49,18 +49,26 @@ class TaskController extends Controller
                 ->with('error', 'Tugas tidak ditemukan atau Anda tidak memiliki hak akses.');
         }
     }
-    public function submitForm()
+    public function submitForm($id)
     {
-        return view('pages.affiliator.task.report');
+        try {
+            $task = $this->taskService->getTaskDetail(auth()->user(), (int)$id);
+            return view('pages.affiliator.task.report', compact('task'));
+        } catch (\Exception $e) {
+            return redirect()->route('affiliator.task.index')
+                ->with('error', 'Tugas tidak ditemukan.');
+        }
     }
     
     public function submitTask(Request $request, $id)
     {
         $request->validate([
             'tiktok_video_link' => 'required|url|max:1000',
+            'products' => 'required|array|min:1', 
         ], [
             'tiktok_video_link.required' => 'Link video wajib diisi!',
-            'tiktok_video_link.url' => 'Format link tidak valid.'
+            'tiktok_video_link.url' => 'Format link tidak valid.',
+            'products.required' => 'Pilih minimal satu produk yang ditautkan pada video Anda.'
         ]);
 
         $url = $request->tiktok_video_link;
@@ -100,6 +108,6 @@ class TaskController extends Controller
             'task_status' => 'COMPLETED'
         ]);
 
-        return redirect()->back()->with('success', 'Tugas berhasil dikumpulkan dan video diverifikasi!');
+        return redirect()->route('affiliator.task.show', $id)->with('success', 'Tugas berhasil dikumpulkan dan video diverifikasi!');
     }
 }

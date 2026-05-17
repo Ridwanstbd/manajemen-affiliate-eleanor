@@ -1,6 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Keranjang')
 @section('is_subpage', true)
+@section('back_url', route('affiliator.catalog.index'))
 
 @section('content')
 <x-organisms.mobile-page-wrapper title="Keranjang Sampel" subtitle="Tinjau produk sebelum melanjutkan pengajuan.">
