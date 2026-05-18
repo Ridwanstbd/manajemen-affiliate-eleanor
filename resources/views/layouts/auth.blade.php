@@ -13,6 +13,7 @@
     <link rel="icon" type="image/png" href="{{ asset('img\logo.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shepherd.js@11.0.1/dist/css/shepherd.css"/>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
@@ -56,6 +57,8 @@
     <div class="auth-wrapper">
         @yield('content')
     </div>
+	<script src="https://cdn.jsdelivr.net/npm/shepherd.js@11.0.1/dist/js/shepherd.min.js"></script>
+
     @yield('scripts')
     <script src="{{ asset('js/scripts.js') }}"></script>
     <x-molecules.alert />

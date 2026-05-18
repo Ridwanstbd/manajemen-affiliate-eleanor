@@ -8,7 +8,7 @@
     >
         <form action="{{ route('login.verify-username') }}" method="POST">
             @csrf
-            <div class="form-group">
+            <div class="form-group" id="input-username-tiktok">
                 <x-atoms.label value="Username Tiktok" />
                 <x-atoms.input type="text" name="username" placeholder="mazzprifarm" required />
             </div>
@@ -22,4 +22,44 @@
             Langkah untuk konfirmasi akun terdaftar
         </x-slot>
     </x-organisms.auth-card>
+@endsection
+
+@section('scripts')
+    <script>
+        const tour = new Shepherd.Tour({
+            useModalOverlay: true,
+            defaultStepOptions: {
+                classes: 'shadow-md bg-purple-dark',
+                scrollTo: true,
+                cancelIcon: {
+                    enabled: true
+                }
+            }
+        });
+
+        tour.addStep({
+            id: 'step-username',
+            title: 'Informasi Username',
+            text: 'Buka profil TikTok Anda. Username Anda diawali tanda <strong>"@"</strong>.<br><br>💡 <strong>Tips Cepat:</strong> Cukup <strong>ketuk (tap)</strong> username tersebut di profil TikTok Anda, maka akan otomatis tercopy. Setelah itu, paste (tempel) di kolom ini tanpa menyertakan tanda "@".',
+            attachTo: {
+                element: '#input-username-tiktok', 
+                on: 'bottom' 
+            },
+            buttons: [
+                {
+                    text: 'Mengerti',
+                    action: tour.complete,
+                    classes: 'shepherd-button-primary'
+                }
+            ]
+        });
+
+        function startTour() {
+            tour.start();
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            startTour();
+        });
+    </script>
 @endsection

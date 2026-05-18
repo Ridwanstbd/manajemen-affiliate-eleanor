@@ -3337,3 +3337,20 @@ body.role-affiliator .cart-bottom-bar {
         transform: translateY(0);
     }
 }
+
+.help-trigger {
+    font-size: 12px;
+    color: var(--primary-blue, #3b82f6);
+    cursor: pointer;
+    font-weight: 600;
+    transition: color 0.2s;
+}
+.help-trigger:hover {
+    text-decoration: underline;
+}
+.form-group-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
