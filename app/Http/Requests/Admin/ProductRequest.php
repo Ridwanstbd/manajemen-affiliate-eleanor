@@ -13,7 +13,7 @@ class ProductRequest extends FormRequest
 
     public function rules()
     {
-        if ($this->routeIs('*.massUpdate')) {
+        if ($this->routeIs('*product-mass-update')) {
             return [
                 'stock'                 => 'nullable|integer',
                 'mandatory_video_count' => 'nullable|integer',
