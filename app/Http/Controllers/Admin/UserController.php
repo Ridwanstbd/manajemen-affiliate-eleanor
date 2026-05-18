@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\UserManagementRequest;
 use App\Services\Admin\UserService;
 use Exception;
 use Illuminate\Http\Request;
@@ -83,37 +84,19 @@ class UserController extends Controller
                 ->make(true);
         }
     }
-    public function storeKOLContract(Request $request)
+    public function storeKOLContract(UserManagementRequest $request)
     {
-        $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after:start_date',
-            'contract_fee' => 'required|numeric',
-            'required_video_count' => 'required|integer',
-            'product_ids' => 'required|array',
-            'product_ids.*' => 'exists:products,id',
-        ]);
-
         try {
-            $this->userService->createKOLContract($request->all());
+            $this->userService->createKOLContract($request->validated());
             return redirect()->back()->with('success', 'Berhasil mendaftarkan KOL dan membuat kontrak baru.');
         } catch (Exception $e) {
             return redirect()->back()->with('error', 'Gagal memproses kontrak: ' . $e->getMessage());
         }
     }
-    public function extendKOLContract(Request $request)
+    public function extendKOLContract(UserManagementRequest $request)
     {
-        $request->validate([
-            'original_contract_id' => 'required|exists:kol_contracts,id',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after:start_date',
-            'contract_fee' => 'required|numeric',
-            'required_video_count' => 'required|integer',
-        ]);
-
         try {
-            $this->userService->extendKOLContract($request->all());
+            $this->userService->extendKOLContract($request->validated());
             return redirect()->back()->with('success', 'Kontrak KOL berhasil diperpanjang.');
         } catch (Exception $e) {
             return redirect()->back()->with('error', 'Gagal memperpanjang kontrak: ' . $e->getMessage());

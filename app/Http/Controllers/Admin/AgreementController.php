@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\AgreementRequest;
 use App\Models\Agreement;
 use App\Services\Admin;
 use Illuminate\Http\Request;
@@ -44,26 +45,16 @@ class AgreementController extends Controller
             ->make(true);
     }
 
-    public function store(Request $request)
+    public function store(AgreementRequest $request)
     {
-        $validated = $request->validate([
-            'content'   => 'required|string',
-            'is_active' => 'required|boolean',
-        ]);
-
-        $this->agreementService->createAgreement($validated);
+        $this->agreementService->createAgreement($request->validated());
 
         return redirect()->back()->with('success', 'Persetujuan baru berhasil ditambahkan!');
     }
 
-    public function update(Request $request, Agreement $agreement)
+    public function update(AgreementRequest $request, Agreement $agreement)
     {
-        $validated = $request->validate([
-            'content'   => 'required|string',
-            'is_active' => 'required|boolean',
-        ]);
-
-        $this->agreementService->updateAgreement($agreement, $validated);
+        $this->agreementService->updateAgreement($agreement, $request->validated());
 
         return redirect()->back()->with('success', 'Persetujuan berhasil diperbarui!');
     }

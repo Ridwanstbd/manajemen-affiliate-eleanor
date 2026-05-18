@@ -11,7 +11,6 @@ class ChallengeRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        // Set ke true karena otorisasi biasanya sudah ditangani oleh middleware route
         return true; 
     }
 

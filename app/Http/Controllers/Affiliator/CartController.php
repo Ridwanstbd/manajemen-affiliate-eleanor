@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Affiliator;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Affiliator\CheckoutRequest;
 use App\Models\Agreement;
 use App\Models\Product;
 use App\Services\Affiliator\CartService;
@@ -39,15 +40,8 @@ class CartController extends Controller
         return back()->with('success', 'Produk dihapus dari keranjang.');
     }
 
-    public function checkout(Request $request)
+    public function checkout(CheckoutRequest $request)
     {
-        $request->validate([
-            'address' => 'required|string|min:10|max:255',
-        ], [
-            'address.required' => 'Alamat pengiriman wajib diisi.',
-            'address.min' => 'Alamat pengiriman terlalu pendek. Mohon isi dengan lengkap.',
-        ]);
-
         try {
             $this->cartService->checkout(auth()->user(), $request->address);
             

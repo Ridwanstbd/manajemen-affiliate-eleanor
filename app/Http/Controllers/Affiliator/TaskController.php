@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Affiliator;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Affiliator\SubmitTaskRequest;
 use App\Models\TaskReport;
 use App\Services\Affiliator\Taskservice;
 use Illuminate\Http\Request;
@@ -60,17 +61,8 @@ class TaskController extends Controller
         }
     }
     
-    public function submitTask(Request $request, $id)
+    public function submitTask(SubmitTaskRequest $request, $id)
     {
-        $request->validate([
-            'tiktok_video_link' => 'required|url|max:1000',
-            'products' => 'required|array|min:1', 
-        ], [
-            'tiktok_video_link.required' => 'Link video wajib diisi!',
-            'tiktok_video_link.url' => 'Format link tidak valid.',
-            'products.required' => 'Pilih minimal satu produk yang ditautkan pada video Anda.'
-        ]);
-
         $url = $request->tiktok_video_link;
         $finalUrl = $url;
 

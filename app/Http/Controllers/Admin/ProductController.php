@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\ImportProductRequest;
+use App\Http\Requests\Admin\ProductRequest;
 use App\Models\Product;
 use App\Services\Admin\ImportService;
 use Illuminate\Http\Request;
@@ -58,13 +60,8 @@ class ProductController extends Controller
         }
     }
 
-    public function importData(Request $request)
+    public function importData(ImportProductRequest $request)
     {
-        $request->validate([
-            'files' => 'required|array',
-            'files.*' => 'required|file|extensions:xlsx,xls,csv'
-        ]);
-
         try {
             $this->importService->executeProductUpdateImport($request->file('files'));
             
@@ -73,20 +70,8 @@ class ProductController extends Controller
             return redirect()->back()->with('error','Terjadi kesalahan saat import: ' . $e->getMessage());
         }
     }
-    public function update(Request $request, $id)
+    public function update(ProductRequest $request, $id)
     {
-        $request->validate([
-            'seller_sku' => 'required|string|max:255',
-            'name'       => 'required|string|max:255',
-            'image'      => 'nullable|image|mimes:jpeg,png,jpg|max:2048', 
-        ], [
-            'seller_sku.required' => 'SKU wajib diisi.',
-            'name.required'       => 'Nama produk wajib diisi.',
-            'image.image'         => 'File harus berupa gambar.',
-            'image.mimes'         => 'Format gambar harus jpeg, png, atau jpg.',
-            'image.max'           => 'Ukuran gambar maksimal 2MB.',
-        ]);
-
         $product = Product::findOrFail($id);
         
         $data = $request->only(['seller_sku', 'name', 'category', 'mandatory_video_count', 'stock', 'product_detail']);
@@ -107,14 +92,9 @@ class ProductController extends Controller
         return redirect()->back()->with('success', 'Produk berhasil diperbarui.');
     }
 
-    public function massUpdate(Request $request)
+    public function massUpdate(ProductRequest $request)
     {
-        $request->validate([
-            'stock' => 'nullable|integer',
-            'mandatory_video_count' => 'nullable|integer',
-        ]);
-
-        $updateData = array_filter($request->only(['stock', 'mandatory_video_count']), function($value) {
+        $updateData = array_filter($request->validated(), function($value) {
             return $value !== null;
         });
 
