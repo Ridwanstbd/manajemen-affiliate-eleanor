@@ -5,7 +5,7 @@
         @else
             <div style="text-align: center; padding: 40px 20px; color: var(--text-secondary);">
                 <x-atoms.icon name="truck" style="width: 48px; height: 48px; color: var(--text-tertiary); margin-bottom: 12px; opacity: 0.5;"/>
-                <p>Tidak ada paket sampel yang sedang dalam pengiriman.</p>
+                <p>Tidak ada paket sampel yang selesai.</p>
             </div>
         @endif
     </div>

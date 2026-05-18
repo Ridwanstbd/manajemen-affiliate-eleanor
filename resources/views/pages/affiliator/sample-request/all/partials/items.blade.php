@@ -36,7 +36,7 @@
         </div>
 
         @if($request->status === 'REJECTED' && $request->reject_reason)
-            <div style="margin-top: 14px; background: var(--rose-soft); padding: 10px 14px; border-radius: 8px; border-left: 4px solid var(--rose);">
+            <div style="margin-top: 14px; background: var(--rose-soft); padding: 10px 14px; border-radius: 8px;">
                 <x-atoms.typography variant="body" style="font-size: 12px; color: var(--rose); font-weight: 600;">Alasan Penolakan: {{ $request->reject_reason }}</x-atoms.typography>
             </div>
         @endif

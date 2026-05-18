@@ -121,7 +121,8 @@
         const modal = document.getElementById(modalId);
         if (modal) {
             modal.classList.remove('active');
-            document.body.style.overflow = '';
+            document.body.style.removeProperty('overflow');
+            document.body.style.overflow = 'auto';
         }
     }
 
@@ -172,6 +173,11 @@
                     btn.data('auto-clicked', true);
                     setTimeout(() => {
                         btn.click();
+                        
+                        urlParams.delete('open_request');
+                        const newUrl = urlParams.toString() ? window.location.pathname + '?' + urlParams.toString() : window.location.pathname;
+                        window.history.replaceState({}, document.title, newUrl);
+                        
                     }, 500);
                 }
             });

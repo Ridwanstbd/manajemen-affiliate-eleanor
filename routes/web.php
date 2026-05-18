@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Affiliator\CartController;
 use App\Http\Controllers\Affiliator\CatalogController;
 use App\Http\Controllers\Affiliator\ProfileController;
+use App\Http\Controllers\Affiliator\AgreementController as AffiliatorAgreementController;
 use App\Http\Controllers\Affiliator\SampleRequestController;
 use App\Http\Controllers\Affiliator\TaskController;
 use App\Http\Controllers\Affiliator\LeaderboardController as AffiliatorLeaderboardController;
@@ -174,6 +175,10 @@ Route::middleware(['auth'])->group(function () {
         Route::prefix('sample-request')->name('sample-request.')->group(function () {
             Route::get('/', [SampleRequestController::class, 'index'])->name('index');
             Route::get('/{id}', [SampleRequestController::class, 'show'])->name('show');
+        });
+
+        Route::prefix('agreement')->name('agreement')->group(function() {
+            Route::get('/', [AffiliatorAgreementController::class, 'index'])->name('affiliator.agreement.index');
         });
     });
 

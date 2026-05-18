@@ -44,22 +44,10 @@ class ProfileService
                 'route'    => 'sample-request',
             ],
             [
-                'title'    => 'Integritas & Status Akun',
-                'subtitle' => 'Rapor kepatuhan tugas dan peringatan (warning).',
-                'icon'     => 'check-circle', 
-                'route'    => '#',
-            ],
-            [
-                'title'    => 'Pengaturan Keamanan',
-                'subtitle' => 'Ubah kata sandi dan pemulihan keamanan.',
-                'icon'     => 'gear',
-                'route'    => '#',
-            ],
-            [
                 'title'    => 'Persetujuan Kerjasama',
                 'subtitle' => 'Lihat kembali Syarat & Ketentuan (Agreement).',
                 'icon'     => 'journal',
-                'route'    => '#',
+                'route'    => 'agreement',
             ],
         ];
     }

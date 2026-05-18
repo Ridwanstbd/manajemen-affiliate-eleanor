@@ -10,9 +10,6 @@ use Illuminate\Support\Facades\Http;
 
 class SampleRequestService
 {
-    /**
-     * Memfilter data berdasarkan tab aktif
-     */
     public function getTabData($tab, Request $request)
     {
         switch ($tab) {
@@ -28,7 +25,7 @@ class SampleRequestService
         $user = auth()->user(); 
 
         $query = SampleRequest::where('user_id', $user->id)
-            ->where('status', ['PENDING','APPROVED', 'REJECTED'])
+            ->whereIn('status', ['PENDING','APPROVED', 'REJECTED'])
             ->with(['details.product']) 
             ->latest();
 

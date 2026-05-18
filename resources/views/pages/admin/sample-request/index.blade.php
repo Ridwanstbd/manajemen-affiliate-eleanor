@@ -202,7 +202,8 @@
         const backdrop = document.getElementById(offcanvasId + '-backdrop');
         if (offcanvas) offcanvas.classList.remove('show');
         if (backdrop) backdrop.classList.remove('show');
-        document.body.style.overflow = '';
+        document.body.style.removeProperty('overflow');
+        document.body.style.overflow = 'auto';
     }
 
     function copyResi() {
@@ -418,7 +419,11 @@
                 if (btn.length > 0 && !btn.data('auto-clicked')) {
                     btn.data('auto-clicked', true);
                     setTimeout(() => {
-                        btn.click();
+                        btn.click(); 
+                        urlParams.delete('open_sample');
+                        const newUrl = urlParams.toString() ? window.location.pathname + '?' + urlParams.toString() : window.location.pathname;
+                        window.history.replaceState({}, document.title, newUrl);
+                        
                     }, 500);
                 }
             });

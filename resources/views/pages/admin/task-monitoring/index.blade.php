@@ -254,9 +254,9 @@
                                     <div style="width: 48px; height: 48px; min-width: 48px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #cbd5e1;">
                                         <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                     </div>
-                                    <div style="overflow: hidden;">
+                                    <div style="overflow: hidden;"> 
                                         <div style="font-size: 13.5px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px;">Tautan Video ${videoNum}</div>
-                                        <div style="font-size: 12px; color: var(--primary-blue); text-overflow: ellipsis; overflow: hidden; white-space: nowrap; max-width: 250px;">${task.tiktok_video_link}</div>
+                                        <div style="font-size: 12px; color: var(--primary-blue); text-overflow: ellipsis; overflow: hidden; white-space: nowrap; max-width: 250px;">${task.tiktok_video_link.length > 45 ? task.tiktok_video_link.substring(0, 30) + '...' : task.tiktok_video_link}</div>
                                         <div style="font-size: 11px; color: var(--text-tertiary); margin-top: 4px;">Waktu Lapor: ${reportDate}</div>
                                     </div>
                                 </div>

@@ -117,7 +117,7 @@
 
         <div style="display: flex; flex-direction: column; gap: 12px;">
             @forelse($affiliatorNotifications ?? [] as $notif)
-                <a href="{{ $notif->route }}" style="display: block; padding: 14px 16px; background: rgba(255,255,255,0.6); border: 1px solid var(--glass-border, #cbd5e1); border-left: 8px solid {{ $notif->color }}; border-radius: 8px; text-decoration: none; transition: 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
+                <a href="{{ $notif->route }}" style="display: block; padding: 14px 16px; background: rgba(255,255,255,0.6); border: 1px solid var(--glass-border, #cbd5e1);  border-radius: 8px; text-decoration: none; transition: 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
                     
                     <div style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px;">
                         {{ $notif->title }}
@@ -163,7 +163,8 @@
             const backdrop = document.getElementById(offcanvasId + '-backdrop');
             if (offcanvas) offcanvas.classList.remove('show');
             if (backdrop) backdrop.classList.remove('show');
-            document.body.style.overflow = '';
+            document.body.style.removeProperty('overflow');
+            document.body.style.overflow = 'auto';
         };
     }
 </script>

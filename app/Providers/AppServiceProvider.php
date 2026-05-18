@@ -57,8 +57,7 @@ class AppServiceProvider extends ServiceProvider
                             'title' => 'Paket Sampel Dikirim 🚚',
                             'desc'  => 'Dikirim via ' . ($sample->courier ?? 'Kurir') . '. Resi: ' . ($sample->tracking_number ?? '-'),
                             'time'  => $sample->updated_at->diffForHumans(),
-                            'route' => '#', // TODO: Ubah ke route detail sampel
-                            'color' => 'var(--primary-blue)'
+                            'route' => route('affiliator.sample-request.show', $sample->id), 
                         ]);
                         $notificationCount++;
                     }
@@ -74,8 +73,7 @@ class AppServiceProvider extends ServiceProvider
                             'title' => 'Pengajuan Sampel Disetujui ✅',
                             'desc'  => 'Admin sedang memproses logistik pengiriman paket Anda.',
                             'time'  => $sample->updated_at->diffForHumans(),
-                            'route' => '#',
-                            'color' => 'var(--emerald)'
+                            'route' => route('affiliator.sample-request.show', $sample->id),
                         ]);
                         $notificationCount++;
                     }
@@ -91,8 +89,7 @@ class AppServiceProvider extends ServiceProvider
                             'title' => 'Pengajuan Sampel Dibatalkan ❌',
                             'desc'  => 'Alasan: ' . ($sample->reject_reason ?? 'Tidak ada keterangan'),
                             'time'  => $sample->updated_at->diffForHumans(),
-                            'route' => '#',
-                            'color' => 'var(--rose)'
+                            'route' => route('affiliator.sample-request.show', $sample->id),
                         ]);
                         $notificationCount++;
                     }
@@ -112,8 +109,7 @@ class AppServiceProvider extends ServiceProvider
                                 'title' => 'Peringatan Tugas Terlambat ⚠️',
                                 'desc'  => 'Tugas konten video Anda telah melewati batas waktu pada ' . $dueDate->translatedFormat('d M Y') . '. Segera unggah link.',
                                 'time'  => $task->updated_at->diffForHumans(),
-                                'route' => '#', // TODO: Ubah ke route submit link
-                                'color' => 'var(--rose)'
+                                'route' => route('affiliator.task.report', $task->id), 
                             ]);
                             $notificationCount++;
                         } 
@@ -122,8 +118,7 @@ class AppServiceProvider extends ServiceProvider
                                 'title' => 'Tenggat Waktu Tugas Mendekat ⏳',
                                 'desc'  => 'Ingat, Anda harus mengunggah link video TikTok sebelum ' . $dueDate->translatedFormat('d M Y') . '.',
                                 'time'  => $task->updated_at->diffForHumans(),
-                                'route' => '#',
-                                'color' => '#f59e0b'
+                                'route' => route('affiliator.task.report', $task->id),
                             ]);
                             $notificationCount++;
                         }
