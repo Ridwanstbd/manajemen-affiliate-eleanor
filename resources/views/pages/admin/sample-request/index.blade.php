@@ -419,11 +419,7 @@
                 if (btn.length > 0 && !btn.data('auto-clicked')) {
                     btn.data('auto-clicked', true);
                     setTimeout(() => {
-                        btn.click(); 
-                        urlParams.delete('open_sample');
-                        const newUrl = urlParams.toString() ? window.location.pathname + '?' + urlParams.toString() : window.location.pathname;
-                        window.history.replaceState({}, document.title, newUrl);
-                        
+                        btn.click();
                     }, 500);
                 }
             });

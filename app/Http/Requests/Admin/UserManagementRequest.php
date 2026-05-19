@@ -15,7 +15,7 @@ class UserManagementRequest extends FormRequest
     {
         $routeName = $this->route()->getName();
 
-        if (str_contains($routeName, 'storeKOL')) {
+        if (str_contains($routeName, 'store-kol')) {
             return [
                 'user_id'              => 'required|exists:users,id',
                 'start_date'           => 'required|date',
@@ -27,7 +27,7 @@ class UserManagementRequest extends FormRequest
             ];
         }
 
-        if (str_contains($routeName, 'extendKOL')) {
+        if (str_contains($routeName, 'extend-kol')) {
             return [
                 'original_contract_id' => 'required|exists:kol_contracts,id',
                 'start_date'           => 'required|date',
@@ -37,22 +37,22 @@ class UserManagementRequest extends FormRequest
             ];
         }
 
-        if (str_contains($routeName, 'approveAccess')) {
+        if (str_contains($routeName, 'approve-access') || str_contains($routeName, 'approveAccess')) {
             return ['id' => 'required|exists:system_access_requests,id'];
         }
 
-        if (str_contains($routeName, 'rejectAccess')) {
+        if (str_contains($routeName, 'reject-access') || str_contains($routeName, 'rejectAccess')) {
             return ['id' => 'required|string'];
         }
 
-        if (str_contains($routeName, 'storeBlacklist')) {
+        if (str_contains($routeName, 'store-blacklist')) {
             return [
                 'user_id'          => 'required|exists:users,id',
                 'violation_reason' => 'required|string|max:1000',
             ];
         }
 
-        if (str_contains($routeName, 'restoreBlacklist')) {
+        if (str_contains($routeName, 'restore-blacklist')) {
             return ['id' => 'required|exists:users,id'];
         }
 
