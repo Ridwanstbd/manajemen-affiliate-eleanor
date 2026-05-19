@@ -90,13 +90,14 @@ body::before {
     backdrop-filter: blur(4px);
     z-index: 98;
     opacity: 0;
+    pointer-events: none;
     transition: opacity 0.35s var(--ease-smooth);
 }
 
 .sidebar-overlay.active {
     opacity: 1;
+    pointer-events: auto;
 }
-
 .sidebar {
     position: fixed;
     left: 20px;
