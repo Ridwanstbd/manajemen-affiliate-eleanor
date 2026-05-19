@@ -347,4 +347,40 @@ class UserService
             return $contract;
         });
     }
+    public function updateKOLContract(array $data)
+    {
+        return DB::transaction(function () use ($data) {
+            $contract = KOLContract::findOrFail($data['id']);
+
+            $contract->update([
+                'start_date' => $data['start_date'],
+                'end_date' => $data['end_date'],
+                'contract_fee' => $data['contract_fee'],
+                'required_video_count' => $data['required_video_count'],
+                'status' => $data['status'] ?? $contract->status,
+                'notes' => $data['notes'] ?? $contract->notes,
+            ]);
+            if (isset($data['product_ids'])) {
+                $contract->products()->sync($data['product_ids']);
+            }
+
+            return $contract;
+        });
+    }
+
+    public function destroyKOLContract(int $id)
+    {
+        return DB::transaction(function () use ($id) {
+            $contract = KOLContract::findOrFail($id);
+            $user = User::findOrFail($contract->user_id);
+            $contractCount = KOLContract::where('user_id', $user->id)->count();
+            if ($contractCount <= 1) { 
+                $user->update(['is_kol' => false]);
+            }
+
+            $contract->products()->detach();
+
+            return $contract->delete();
+        });
+    }
 }

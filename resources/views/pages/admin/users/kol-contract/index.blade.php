@@ -33,6 +33,7 @@
     </div>
 </x-organisms.offcanvas>
 
+{{-- Offcanvas Perpanjang --}}
 <x-organisms.offcanvas id="offcanvasExtendKOL" title="Perpanjang Kontrak KOL">
     <form action="{{ route('admin-dashboard.users.extend-kol-contract') }}" method="POST" style="padding: 24px; padding-top: 0;">
         @csrf
@@ -53,8 +54,91 @@
         <x-atoms.button type="submit" variant="primary" style="width: 100%;">Simpan Kontrak Baru</x-atoms.button>
     </form>
 </x-organisms.offcanvas>
+
+{{-- Offcanvas Edit --}}
+<x-organisms.offcanvas id="offcanvasEditKOL" title="Edit Kontrak KOL">
+    <form id="editKolContractForm" action="{{ route('admin-dashboard.users.kol-contract.update') }}" method="POST" style="padding: 24px; padding-top: 0;">
+        @csrf
+        @method('PUT')
+        <input type="hidden" name="id" id="edit-contract-id">
+        
+        <div style="margin-bottom: 16px;">
+            <x-atoms.label value="Biaya Kontrak (Rp)" />
+            <x-atoms.input type="number" name="contract_fee" id="edit-contract-fee" required />
+        </div>
+        <x-organisms.grid-layout columns="1fr 1fr" gap="16px" marginBottom="16px">
+            <div><x-atoms.label value="Tgl Mulai" /><x-atoms.input type="date" name="start_date" id="edit-start-date" required /></div>
+            <div><x-atoms.label value="Tgl Selesai" /><x-atoms.input type="date" name="end_date" id="edit-end-date" required /></div>
+        </x-organisms.grid-layout>
+        <div style="margin-bottom: 16px;">
+            <x-atoms.label value="Target Video" />
+            <x-atoms.input type="number" name="required_video_count" id="edit-required-video-count" required />
+        </div>
+        <div style="margin-bottom: 16px;">
+            <x-atoms.label value="Status" />
+            <select name="status" id="edit-status" class="form-control" required style="font-size: 13px;">
+                <option value="ACTIVE">ACTIVE</option>
+                <option value="EXPIRED">EXPIRED</option>
+                <option value="CANCELLED">CANCELLED</option>
+            </select>
+        </div>
+
+        {{-- Pilihan Produk Checklist --}}
+        <div style="margin-bottom: 16px;">
+            <x-atoms.label value="Produk Terkait" />
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; max-height: 150px; overflow-y: auto; border: 1px solid var(--glass-border); padding: 12px; border-radius: 6px; background: white;">
+                @foreach($products as $p)
+                    <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer; margin-bottom: 0;">
+                        <input type="checkbox" name="product_ids[]" value="{{ $p->id }}" class="edit-product-checkbox" data-id="{{ $p->id }}">
+                        {{ $p->name }}
+                    </label>
+                @endforeach
+            </div>
+        </div>
+
+        <div style="margin-top: 24px; border-top: 1px solid var(--glass-border); padding-top: 16px;">
+            <x-atoms.button type="submit" variant="primary" style="width: 100%;">Simpan Perubahan</x-atoms.button>
+        </div>
+    </form>
+</x-organisms.offcanvas>
+
+{{-- Modal Hapus --}}
+<x-organisms.modal id="modalDeleteKOL" title="Hapus Kontrak KOL">
+    <form id="deleteKolContractForm" action="{{ route('admin-dashboard.users.kol-contract.destroy') }}" method="POST">
+        @csrf
+        @method('DELETE')
+        <input type="hidden" name="id" id="delete-contract-id">
+        
+        <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">
+            Apakah Anda yakin ingin menghapus kontrak KOL ini?<br>
+            <strong style="color: #ef4444;">Peringatan:</strong> Data yang terhapus tidak dapat dikembalikan.
+        </p>
+
+        <x-slot name="footer">
+            <x-atoms.button variant="secondary" type="button" onclick="closeModal('modalDeleteKOL')">Batal</x-atoms.button>
+            <x-atoms.button variant="primary" type="submit" form="deleteKolContractForm" style="background-color: #ef4444; border-color: #ef4444;">Ya, Hapus</x-atoms.button>
+        </x-slot>
+    </form>
+</x-organisms.modal>
+
 @push('scripts')
 <script>
+    function openModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    function closeModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    }
+
     function openOffcanvas(offcanvasId) {
         const offcanvas = document.getElementById(offcanvasId);
         const backdrop = document.getElementById(offcanvasId + '-backdrop');
@@ -80,12 +164,45 @@
     function openExtendForm(contractId, fee, reqVideo) {
         if (contractId) {
             $('#ext-orig-id').val(contractId);
-            $('#ext-fee').val(fee);
+            $('#ext-fee').val(Math.floor(fee));
             $('#ext-video').val(reqVideo);
         }
         toggleOffcanvas('offcanvasDetailKOL');
         setTimeout(() => {
             openOffcanvas('offcanvasExtendKOL');
+        }, 350);
+    }
+
+    function openEditForm(id, fee, reqVideo, start, end, status, productIds) {
+        $('#edit-contract-id').val(id);
+        $('#edit-contract-fee').val(Math.floor(fee));
+        $('#edit-required-video-count').val(reqVideo);
+        $('#edit-start-date').val(start);
+        $('#edit-end-date').val(end);
+        $('#edit-status').val(status);
+        
+        // Reset semua checkbox produk terlebih dahulu
+        $('.edit-product-checkbox').prop('checked', false);
+        
+        // Centang produk yang terhubung dengan kontrak ini
+        if (productIds && productIds.length > 0) {
+            productIds.forEach(function(productId) {
+                $(`.edit-product-checkbox[data-id="${productId}"]`).prop('checked', true);
+            });
+        }
+        
+        toggleOffcanvas('offcanvasDetailKOL');
+        setTimeout(() => {
+            openOffcanvas('offcanvasEditKOL');
+        }, 350);
+    }
+
+    function openDeleteForm(id) {
+        $('#delete-contract-id').val(id);
+        
+        toggleOffcanvas('offcanvasDetailKOL');
+        setTimeout(() => {
+            openModal('modalDeleteKOL');
         }, 350);
     }
 
@@ -98,20 +215,18 @@
             e.preventDefault();
             
             try {
-                const id = $(this).attr('data-id');
-                const contractId = $(this).attr('data-contract-id');
-                const fee = $(this).attr('data-fee');
-                const reqVideo = $(this).attr('data-req-video');
-                const start = $(this).attr('data-start');
-                const end = $(this).attr('data-end');
-
                 const contracts = JSON.parse($(this).attr('data-contracts') || '[]');
                 const wrapper = $('#det-contracts-wrapper');
                 wrapper.empty();
 
+                if(contracts.length === 0) {
+                    wrapper.append('<div style="font-size: 13px; color: var(--text-tertiary);">Belum ada riwayat kontrak.</div>');
+                }
+
                 contracts.forEach(function(c, index) {
-                    const statusColor = c.status === 'ACTIVE' ? 'var(--emerald)' : 'var(--text-tertiary)';
-                    const statusLabel = c.status === 'ACTIVE' ? 'Aktif' : (c.status === 'EXPIRED' ? 'Kedaluwarsa' : c.status);
+                    const statusColor = c.status === 'ACTIVE' ? 'var(--emerald)' : (c.status === 'CANCELLED' ? '#ef4444' : 'var(--text-tertiary)');
+                    const statusBg = c.status === 'ACTIVE' ? 'var(--emerald-soft)' : (c.status === 'CANCELLED' ? '#fef2f2' : 'rgba(0,0,0,0.05)');
+                    const statusLabel = c.status === 'ACTIVE' ? 'Aktif' : (c.status === 'EXPIRED' ? 'Kedaluwarsa' : 'Dibatalkan');
                     
                     const productTags = c.products.length > 0
                         ? c.products.map(p =>
@@ -122,6 +237,31 @@
                         ).join('')
                         : '<span style="font-size:12px; color: var(--text-tertiary);">Tidak ada produk</span>';
 
+                    const productIdsArr = JSON.stringify(c.products.map(p => p.id));
+
+                    let actionsHtml = '';
+                    
+                    if (c.status === 'ACTIVE' || c.status === 'EXPIRED') {
+                        actionsHtml += `
+                            <button type="button" class="btn btn-primary btn-sm" style="flex: 1;"
+                                onclick="openExtendForm('${c.id}', '${c.fee}', '${c.req_video}')">
+                                Perpanjang
+                            </button>
+                        `;
+                    }
+                    
+                    actionsHtml += `
+                        <button type="button" class="btn btn-outline btn-sm" style="flex: 1; border-color: var(--glass-border); color: var(--text-primary);"
+                            onclick='openEditForm("${c.id}", "${c.fee}", "${c.req_video}", "${c.start}", "${c.end}", "${c.status}", ${productIdsArr})'>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                            Edit
+                        </button>
+                        <button type="button" class="btn btn-outline btn-sm" style="background: #fef2f2; color: #ef4444; border-color: #fca5a5;"
+                            onclick="openDeleteForm('${c.id}')" title="Hapus">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                        </button>
+                    `;
+
                     wrapper.append(`
                         <div style="border: 1px solid var(--glass-border); border-radius: 10px; padding: 14px 16px;
                             background: rgba(255,255,255,0.2); position: relative;">
@@ -131,8 +271,7 @@
                                     Kontrak #${index + 1}
                                 </span>
                                 <span style="font-size: 11px; font-weight: 700; color: ${statusColor};
-                                    background: ${c.status === 'ACTIVE' ? 'var(--emerald-soft)' : 'rgba(0,0,0,0.05)'};
-                                    padding: 2px 10px; border-radius: 999px;">
+                                    background: ${statusBg}; padding: 2px 10px; border-radius: 999px;">
                                     ${statusLabel}
                                 </span>
                             </div>
@@ -156,25 +295,17 @@
                                 </div>
                             </div>
 
-                            <div>
+                            <div style="margin-bottom: 16px;">
                                 <div style="font-size: 11px; color: var(--text-secondary); margin-bottom: 6px;">Produk Terkait</div>
                                 <div>${productTags}</div>
                             </div>
 
-                            ${(c.status === 'ACTIVE' || c.status === 'EXPIRED') ? `
-                            <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--glass-border);">
-                                <button type="button" class="btn btn-primary btn-sm" style="width: 100%;"
-                                    onclick="openExtendForm('${c.id}', '${c.fee}', '${c.req_video}')">
-                                    Perpanjang Kontrak Ini
-                                </button>
-                            </div>` : ''}
+                            <div style="padding-top: 12px; border-top: 1px solid var(--glass-border); display: flex; gap: 8px;">
+                                ${actionsHtml}
+                            </div>
                         </div>
                     `);
                 });
-                
-                $('#ext-orig-id').val(contractId);
-                $('#ext-fee').val(fee);
-                $('#ext-video').val(reqVideo);
                 
                 openOffcanvas('offcanvasDetailKOL');
 

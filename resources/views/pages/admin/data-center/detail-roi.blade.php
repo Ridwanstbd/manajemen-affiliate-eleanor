@@ -37,25 +37,6 @@
         title="Sumber Konversi (Video vs Live)"
         :data="$sumberKonversi"
     />
-
-    <div style="position: relative;">
-        <x-organisms.line-chart-card
-            id="trenRoi"
-            title="Tren Rasio ROI Bulanan"
-            :labels="['Jan', 'Feb', 'Mar', 'Apr', 'Mei']"
-            :datasets="[[
-                'label' => 'Rasio ROI (x)',
-                'data' => [3.2, 3.8, 4.5, 4.2, number_format($avgRoi, 2)],
-                'borderColor' => '#8b5cf6',
-                'backgroundColor' => 'rgba(139, 92, 246, 0.1)',
-                'fill' => true,
-                'tension' => 0.4
-            ]]"
-        />
-        <div style="text-align: center; font-size: 11px; color: var(--text-secondary); margin-top: -20px; padding-bottom: 24px; width: 100%;">
-            Metrik: Rasio Pengembalian Investasi (GMV / Biaya Sampel)
-        </div>
-    </div>
 </x-organisms.grid-layout>
 
 <x-molecules.card title="Analisis Detail ROI Per Produk">

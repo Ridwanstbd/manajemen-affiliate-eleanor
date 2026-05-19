@@ -27,7 +27,6 @@ class ChallengeRequest extends FormRequest
             'rules' => 'required|string',
             'rewards' => 'nullable|array',
             'rewards.*.target_metric' => 'required|string',
-            'rewards.*.target_value' => 'required|numeric|min:1',
             'rewards.*.reward_description' => 'required|string|max:255',
         ];
 
@@ -65,8 +64,6 @@ class ChallengeRequest extends FormRequest
             'banner_image.max' => 'Ukuran file banner maksimal adalah 800 KB agar cepat dimuat.',
             
             'rewards.*.target_metric.required' => 'Jenis target wajib dipilih.',
-            'rewards.*.target_value.required' => 'Nilai target wajib diisi.',
-            'rewards.*.target_value.numeric' => 'Nilai target harus berupa angka.',
             'rewards.*.reward_description.required' => 'Deskripsi hadiah wajib diisi.',
         ];
     }

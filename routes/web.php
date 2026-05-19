@@ -84,18 +84,22 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/analytics/detail-roi-data', [AnalyticsController::class, 'detailRoiData'])->name('analytics.detail-roi-data');
         Route::get('/leaderboard',[LeaderboardController::class,'index'])->name('leaderboard');
 
-        Route::get('/users', [UserController::class, 'index'])->name('users.index');
-        Route::get('/users/data/active', [UserController::class, 'activeData'])->name('users.active-data');
-        Route::get('/users/data/request-access', [UserController::class, 'requestAccessData'])->name('users.request-access-data');
-        Route::get('/users/data/blacklist', [UserController::class, 'blacklistData'])->name('users.blacklist-data');
-        Route::get('/users/data/kol-contract', [UserController::class, 'kolContractData'])->name('users.kol-contract-data');
-        Route::post('/users/approve-access', [UserController::class, 'approveAccess'])->name('users.approve-access');
-        Route::post('/users/reject-access', [UserController::class, 'rejectAccess'])->name('users.reject-access');
-        Route::post('/users/store-blacklist', [UserController::class, 'storeBlacklist'])->name('users.store-blacklist');
-        Route::post('/users/restore-blacklist', [UserController::class, 'restoreBlacklist'])->name('users.restore-blacklist');
-        Route::post('/users/extend-kol-contract', [UserController::class, 'extendKOLContract'])->name('users.extend-kol-contract');
-        Route::post('/users/store-kol-contract', [UserController::class, 'storeKOLContract'])->name('users.store-kol-contract');
-    
+        Route::prefix('users')->name('users.')->group(function(){
+            Route::get('/', [UserController::class, 'index'])->name('index');
+            Route::get('/data/active', [UserController::class, 'activeData'])->name('active-data');
+            Route::get('/data/request-access', [UserController::class, 'requestAccessData'])->name('request-access-data');
+            Route::get('/data/blacklist', [UserController::class, 'blacklistData'])->name('blacklist-data');
+            Route::post('/approve-access', [UserController::class, 'approveAccess'])->name('approve-access');
+            Route::post('/reject-access', [UserController::class, 'rejectAccess'])->name('reject-access');
+            Route::post('/store-blacklist', [UserController::class, 'storeBlacklist'])->name('store-blacklist');
+            Route::post('/restore-blacklist', [UserController::class, 'restoreBlacklist'])->name('restore-blacklist');
+            Route::get('/data/kol-contract', [UserController::class, 'kolContractData'])->name('kol-contract-data');
+            Route::post('/extend-kol-contract', [UserController::class, 'extendKOLContract'])->name('extend-kol-contract');
+            Route::post('/store-kol-contract', [UserController::class, 'storeKOLContract'])->name('store-kol-contract');
+            Route::put('/kol-contract/update', [UserController::class, 'updateKOLContract'])->name('kol-contract.update');
+            Route::delete('/kol-contract/destroy', [UserController::class, 'destroyKOLContract'])->name('kol-contract.destroy');
+        });
+        
         Route::prefix('agreements')->name('agreements.')->group(function () {
             Route::get('/', [AgreementController::class, 'index'])->name('index');
             Route::get('/data', [AgreementController::class, 'getData'])->name('data'); 

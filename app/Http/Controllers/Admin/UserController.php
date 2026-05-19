@@ -102,6 +102,41 @@ class UserController extends Controller
             return redirect()->back()->with('error', 'Gagal memperpanjang kontrak: ' . $e->getMessage());
         }
     }
+    public function updateKOLContract(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|exists:kol_contracts,id',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+            'contract_fee' => 'required|numeric|min:0',
+            'required_video_count' => 'required|integer|min:0',
+            'status' => 'required|string|in:ACTIVE,EXPIRED,CANCELLED',
+            'notes' => 'nullable|string',
+            'product_ids' => 'nullable|array',
+            'product_ids.*' => 'exists:products,id',
+        ]);
+
+        try {
+            $this->userService->updateKOLContract($request->all());
+            return redirect()->back()->with('success', 'Kontrak KOL berhasil diperbarui.');
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', 'Gagal memperbarui kontrak: ' . $e->getMessage());
+        }
+    }
+
+    public function destroyKOLContract(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|exists:kol_contracts,id'
+        ]);
+
+        try {
+            $this->userService->destroyKOLContract($request->id);
+            return redirect()->back()->with('success', 'Kontrak KOL berhasil dihapus.');
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', 'Gagal menghapus kontrak: ' . $e->getMessage());
+        }
+    }
 
     public function approveAccess(Request $request)
     {

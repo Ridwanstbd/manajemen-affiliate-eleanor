@@ -246,11 +246,10 @@
 
         row.innerHTML = `
             <select name="rewards[${index}][target_metric]" class="form-control" required style="font-size: 13px;">
-                <option value="video_count" ${selectedVideo}>Upload Video</option>
-                <option value="gmv" ${selectedGmv}>Pencapaian GMV</option>
-                <option value="views" ${selectedViews}>Performa Views</option> </select>
+                <option value="video_count" ${selectedVideo}>Video Terbanyak</option>
+                <option value="gmv" ${selectedGmv}>GMV Terbanyak</option>
+                <option value="views" ${selectedViews}>Views Terbanyak</option>
             </select>
-            <input type="number" name="rewards[${index}][target_value]" class="form-control" placeholder="Nilai Target" value="${value}" required style="font-size: 13px;">
             <input type="text" name="rewards[${index}][reward_description]" class="form-control" placeholder="Deskripsi Hadiah (Cth: Kaos)" value="${desc}" required style="font-size: 13px;">
             <button type="button" class="btn btn-secondary btn-sm" onclick="this.parentElement.remove()" style="padding: 8px 12px; color: #ef4444; border-color: #fca5a5; background: #fef2f2;">
                 <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
@@ -280,7 +279,7 @@
             const editContainer = document.getElementById('rewards-container-edit');
             editContainer.innerHTML = '';
             if(rowData.rewards && rowData.rewards.length > 0) {
-                rowData.rewards.forEach(r => addRewardRow('edit', r.target_metric, r.target_value, r.reward_description));
+                rowData.rewards.forEach(r => addRewardRow('edit', r.target_metric, r.reward_description));
             } else {
                 addRewardRow('edit');
             }
@@ -317,16 +316,15 @@
             detailContainer.innerHTML = '';
             if(rowData.rewards && rowData.rewards.length > 0) {
                 rowData.rewards.forEach((r) => {
-                    let labelMetrik = 'Upload Video';
+                    let labelMetrik = 'Video Terbanyak';
                         if (r.target_metric === 'gmv') {
-                            labelMetrik = 'Pencapaian GMV';
+                            labelMetrik = 'GMV Terbanyak';
                         } else if (r.target_metric === 'views') {
-                            labelMetrik = 'Performa Views';
+                            labelMetrik = 'Views Terbanyak';
                         }
                     detailContainer.innerHTML += `
-                        <div style="display: grid; grid-template-columns: 1fr 1fr 2fr; gap: 8px; margin-bottom: 8px; padding: 12px; background: white; border: 1px solid var(--glass-border); border-radius: 6px;">
+                        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 8px; margin-bottom: 8px; padding: 12px; background: white; border: 1px solid var(--glass-border); border-radius: 6px;">
                             <div><span style="font-size: 11px; color: var(--text-tertiary); display: block;">Target</span><span style="font-size: 13px; font-weight: 600;">${labelMetrik}</span></div>
-                            <div><span style="font-size: 11px; color: var(--text-tertiary); display: block;">Nilai</span><span style="font-size: 13px; font-weight: 600;">${r.target_value}</span></div>
                             <div><span style="font-size: 11px; color: var(--text-tertiary); display: block;">Hadiah</span><span style="font-size: 13px; font-weight: 600;">${r.reward_description}</span></div>
                         </div>
                     `;
