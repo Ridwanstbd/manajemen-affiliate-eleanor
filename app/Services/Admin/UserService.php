@@ -4,6 +4,7 @@ namespace App\Services\Admin;
 
 use App\Models\Blacklist;
 use App\Models\ImportHistory;
+use App\Models\Product;
 use App\Models\KOLContract;
 use App\Models\ProductTaskReport;
 use App\Models\SampleRequest;
@@ -20,17 +21,27 @@ class UserService
 {
     public function getTabData($tab, Request $request)
     {
+        $data = [];
+
         switch ($tab) {
             case 'active':
-                return $this->getActiveData($request);
+                $data = $this->getActiveData($request);
+                break;
             case 'blacklist':
-                return $this->getBlacklistData($request);
+                $data = $this->getBlacklistData($request);
+                break;
             case 'kol-contract':
-                return $this->getKOLContractData($request);
+                $data = $this->getKOLContractData($request);
+                break;
             case 'request-access':
             default:
-                return $this->getRequestData($request);
+                $data = $this->getRequestData($request);
+                break;
         }
+
+        $data['products'] = Product::select('id', 'name')->get();
+
+        return $data;
     }
     private function getActiveData(Request $request)
     {
