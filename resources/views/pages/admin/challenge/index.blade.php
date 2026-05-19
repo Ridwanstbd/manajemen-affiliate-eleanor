@@ -279,7 +279,9 @@
             const editContainer = document.getElementById('rewards-container-edit');
             editContainer.innerHTML = '';
             if(rowData.rewards && rowData.rewards.length > 0) {
-                rowData.rewards.forEach(r => addRewardRow('edit', r.target_metric, r.reward_description));
+                rowData.rewards.forEach(r => {
+                    addRewardRow('edit', r.target_metric, r.reward_description || '');
+                });
             } else {
                 addRewardRow('edit');
             }
