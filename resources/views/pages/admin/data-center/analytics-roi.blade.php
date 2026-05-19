@@ -92,14 +92,16 @@
                         data: dataBulan1,
                         backgroundColor: 'rgba(15, 23, 42, 0.15)',
                         borderWidth: 1,
-                        borderRadius: 4
+                        borderRadius: 4,
+                        minBarLength: 8 
                     },
                     {
                         label: 'Bulan Kedua',
                         data: dataBulan2,
                         backgroundColor: '#3b82f6',
                         borderWidth: 1,
-                        borderRadius: 4
+                        borderRadius: 4,
+                        minBarLength: 8 
                     }
                 ]
             },
@@ -119,6 +121,7 @@
                         }
                     },
                     x: {
+                        type: 'logarithmic',
                         grid: {
                             display: false
                         }
@@ -133,7 +136,23 @@
                         }
                     },
                     tooltip: {
-                        enabled: true
+                        enabled: true,
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                let value = context.raw;
+                                
+                                if (context.label === 'Tk. Pengembalian') {
+                                    label += 'Rp ' + new Intl.NumberFormat('id-ID').format(value);
+                                } else {
+                                    label += new Intl.NumberFormat('id-ID').format(value) + ' pcs';
+                                }
+                                return label;
+                            }
+                        }
                     }
                 }
             }
