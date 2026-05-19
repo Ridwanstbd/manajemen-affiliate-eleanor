@@ -35,20 +35,7 @@ class ChallengeRequest extends FormRequest
             'nullable',
             'image',
             'mimes:jpg,jpeg,png,webp',
-            'max:200',
-            function ($attribute, $value, $fail) {
-                if ($value) {
-                    $imageSize = getimagesize($value->getRealPath());
-                    if ($imageSize) {
-                        $width = $imageSize[0];
-                        $height = $imageSize[1];
-                        
-                        if ($width <= $height) {
-                            $fail('Gambar banner harus berbentuk persegi panjang (lebar harus lebih besar dari tinggi).');
-                        }
-                    }
-                }
-            },
+            'max:800',
         ];
 
         $rules['banner_image'] = $bannerRule;
@@ -75,7 +62,7 @@ class ChallengeRequest extends FormRequest
             
             'banner_image.image' => 'File banner harus berupa gambar.',
             'banner_image.mimes' => 'Format banner harus berupa: jpg, jpeg, png, atau webp.',
-            'banner_image.max' => 'Ukuran file banner maksimal adalah 200 KB agar cepat dimuat.',
+            'banner_image.max' => 'Ukuran file banner maksimal adalah 800 KB agar cepat dimuat.',
             
             'rewards.*.target_metric.required' => 'Jenis target wajib dipilih.',
             'rewards.*.target_value.required' => 'Nilai target wajib diisi.',

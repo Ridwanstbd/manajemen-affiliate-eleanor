@@ -5,13 +5,13 @@ namespace App\Http\Controllers\Affiliator;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Affiliator\SubmitTaskRequest;
 use App\Models\TaskReport;
-use App\Services\Affiliator\Taskservice;
+use App\Services\Affiliator\TaskService;
 use Illuminate\Http\Request;
 
 class TaskController extends Controller
 {
     public function __construct(
-        protected Taskservice $taskService
+        protected TaskService $taskService
     ){}
     public function index(Request $request)
     {

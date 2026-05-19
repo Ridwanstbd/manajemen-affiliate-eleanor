@@ -6,7 +6,7 @@ use App\Models\TaskReport;
 use App\Models\User;
 use Illuminate\Http\Request;
 
-class Taskservice
+class TaskService
 {
     public function getTabData($tab, Request $request)
     {
