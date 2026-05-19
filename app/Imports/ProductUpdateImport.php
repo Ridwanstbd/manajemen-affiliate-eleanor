@@ -6,8 +6,9 @@ use App\Models\Product;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
-class ProductUpdateImport implements ToCollection, WithHeadingRow, WithChunkReading
+class ProductUpdateImport implements ToCollection, WithHeadingRow, ShouldQueue, WithChunkReading
 {
     public function headingRow(): int
     {

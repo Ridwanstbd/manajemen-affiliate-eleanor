@@ -65,7 +65,7 @@ class ProductController extends Controller
         try {
             $this->importService->executeProductUpdateImport($request->file('files'));
             
-            return redirect()->back()->with('success', 'File Excel berhasil diimport dan data produk telah diperbarui.');
+            return redirect()->back()->with('success', 'File Excel berhasil masuk antrean. Sinkronisasi data produk sedang diproses di latar belakang.');
         } catch (\Exception $e) {
             return redirect()->back()->with('error','Terjadi kesalahan saat import: ' . $e->getMessage());
         }
