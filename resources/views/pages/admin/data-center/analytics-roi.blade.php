@@ -1,5 +1,5 @@
 <x-organisms.grid-layout columns="repeat(3, 1fr)">
-    <x-molecules.glass-metric-card title="BIAYA SAMPEL" 
+    <x-molecules.glass-metric-card title="BIAYA INVEST" 
         value="Rp {{ number_format($metrics['biaya']['val'], 0, ',', '.') }}" 
         subtext="Bulan ini" 
         trend="{{ $metrics['biaya']['trend'] >= 0 ? 'up' : 'down' }}" 
