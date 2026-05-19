@@ -145,9 +145,10 @@
                                 }
                                 let value = context.raw;
                                 
-                                if (context.label === 'Tk. Pengembalian') {
+                                if (context.label === 'Tk. Pengembalian' && context.label === 'GMV Afiliasi') {
                                     label += 'Rp ' + new Intl.NumberFormat('id-ID').format(value);
-                                } else {
+                                }
+                                 else {
                                     label += new Intl.NumberFormat('id-ID').format(value) + ' pcs';
                                 }
                                 return label;
