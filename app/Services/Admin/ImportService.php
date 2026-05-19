@@ -62,7 +62,9 @@ class ImportService
     public function executeProductUpdateImport($files)
     {
         foreach ($files as $file) {
-            Excel::import(new ProductUpdateImport, $file);
+            $path = $file->store('imports');
+            
+            Excel::queueImport(new ProductUpdateImport, $path);
         }
     }
 }
