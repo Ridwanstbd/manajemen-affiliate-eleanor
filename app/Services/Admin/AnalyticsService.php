@@ -98,8 +98,8 @@ class AnalyticsService
 
         $komparasiData = [
             ['kategori' => 'GMV Afiliasi', 'bulan_1' => (float)$core1->gmv, 'bulan_2' => (float)$core2->gmv],
-            ['kategori' => 'Brg Terjual', 'bulan_1' => (int)$core1->items, 'bulan_2' => (int)$core2->items],
             ['kategori' => 'Tk. Pengembalian', 'bulan_1' => (float)$core1->refunds, 'bulan_2' => (float)$core2->refunds],
+            ['kategori' => 'Brg Terjual', 'bulan_1' => (int)$core1->items, 'bulan_2' => (int)$core2->items],
         ];
 
         return [
