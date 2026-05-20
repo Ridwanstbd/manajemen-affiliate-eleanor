@@ -17,17 +17,17 @@
         <nav class="nav-section">
             <div class="nav-label">Manajemen Kemitraan</div>
             <div class="nav-list">
-                <x-molecules.nav-item icon="customers" label="Kelola Affiliator" href="{{ route('admin-dashboard.users.index') }}" :active="request()->routeIs('admin-dashboard.users.index')"/>
+                <x-molecules.nav-item icon="customers" label="Kelola Affiliator" href="{{ route('admin-dashboard.users.index') }}" :active="request()->routeIs('admin-dashboard.users.index')" :badge="$accessPendingCount ?? 0" />
                 <x-molecules.nav-item icon="eye" label="Monitoring Tugas" href="{{ route('admin-dashboard.task-monitoring.index') }}" :active="request()->routeIs('admin-dashboard.task-monitoring.index')" />
-                <x-molecules.nav-item icon="check" label="Kelola Persetujuan" href="{{ route('admin-dashboard.agreements.index') }}" :active="request()->routeIs('admin-dashboard.agreements.index')"/>
+                <x-molecules.nav-item icon="check" label="Kelola Peraturan" href="{{ route('admin-dashboard.agreements.index') }}" :active="request()->routeIs('admin-dashboard.agreements.index')"/>
             </div>
         </nav>
     
         <nav class="nav-section">
             <div class="nav-label">Operasional & Inventaris</div>
             <div class="nav-list">
-                <x-molecules.nav-item icon="vendors" label="Kelola Sampel Produk" href="{{ route('admin-dashboard.product-index') }}" :active="request()->routeIs('admin-dashboard.product-index')" />
-                <x-molecules.nav-item icon="invoices" label="Persetujuan & Pengiriman" href="{{ route('admin-dashboard.request-samples.index') }}" :active="request()->routeIs('admin-dashboard.request-samples.index')" />
+                <x-molecules.nav-item icon="vendors" label="Kelola Sampel Produk" href="{{ route('admin-dashboard.product-index') }}" :active="request()->routeIs('admin-dashboard.product-index')" :badge="$productUpdateCount ?? 0" />
+                <x-molecules.nav-item icon="invoices" label="Permintaan Sampel" href="{{ route('admin-dashboard.request-samples.index') }}" :active="request()->routeIs('admin-dashboard.request-samples.index')" :badge="$samplePendingCount ?? 0" />
             </div>
         </nav>
         <nav class="nav-section">

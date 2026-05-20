@@ -23,7 +23,8 @@ class AppServiceProvider extends ServiceProvider
         View::composer([
             'layouts.app', 
             'components.organisms.header', 
-            'components.organisms.offcanvas'
+            'components.organisms.offcanvas',
+            'components.organisms.sidebar'
         ], function ($view) {
             
             if (Auth::check()) {
@@ -55,9 +56,14 @@ class AppServiceProvider extends ServiceProvider
                         ]);
                     }
 
+                    $productUpdateCount = $user->unreadNotifications()->where('data->type', 'product_updated')->count(); 
+
                     $view->with([
                         'notificationCount' => $totalNotificationCount,
                         'pendingTasksList' => $systemNotifs->merge($pendingTasksList), 
+                        'accessPendingCount' => $accessPendingCount,
+                        'samplePendingCount' => $samplePendingCount,
+                        'productUpdateCount' => $productUpdateCount,
                     ]);
                 } 
                 elseif ($user->role === 'AFFILIATOR') {
@@ -156,6 +162,9 @@ class AppServiceProvider extends ServiceProvider
                     'notificationCount' => 0,
                     'pendingTasksList' => collect([]),
                     'affiliatorNotifications' => collect([]),
+                    'accessPendingCount' => 0,
+                    'samplePendingCount' => 0,
+                    'productUpdateCount' => 0,
                 ]);
             }
         });

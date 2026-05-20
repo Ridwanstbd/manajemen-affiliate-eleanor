@@ -55,7 +55,7 @@
                     @csrf
                     <x-atoms.button type="submit" variant="primary" style="width: 100%; display: flex; align-items: center; justify-content: center;" :disabled="$product->stock <= 0">
                         <x-atoms.icon name="cart" style="width: 18px; height: 18px; margin-right: 8px;"/>
-                        Tambah ke Keranjang
+                        Minta Sampel
                     </x-atoms.button>
                 </form>
             </div>

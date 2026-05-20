@@ -94,11 +94,19 @@
         <x-slot name="footer">
             <button type="button" class="btn btn-ghost" onclick="closeModal('agreementModal')">Batal</button>
             <x-atoms.button type="submit" id="btnSubmitCheckout" variant="primary" form="checkoutForm" disabled style="opacity: 0.5;">
-                Saya Mengerti & Ajukan
+                Saya Mengerti & Ajukan Sampel
             </x-atoms.button>
         </x-slot>
     </form>
 </x-organisms.modal>
+<x-organisms.modal id="addressModal" title="Logistik">
+    <div class="form-group" style="margin-bottom: 20px;">
+        <label class="form-label">Alamat Pengiriman</label>
+        <x-atoms.input type="text" name="address" placeholder="Tulis alamat pengiriman lengkap..." required />
+    </div>
+    {{-- tambah input kota dan kecamatan, provinsi menggunakan rajaongkir --}}
+</x-organisms.modal>
+
 @endsection
 
 @push('scripts')
