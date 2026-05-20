@@ -4,8 +4,7 @@ namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
-use NotificationChannels\WebPush\WebPushMessage;
-use NotificationChannels\WebPush\WebPushChannel;
+use Illuminate\Notifications\Messages\MailMessage;
 
 class AccessRequestNotification extends Notification
 {
@@ -20,34 +19,23 @@ class AccessRequestNotification extends Notification
 
     public function via($notifiable)
     {
-        return ['database', WebPushChannel::class];
+        return ['mail'];
     }
 
-    public function toArray($notifiable)
+    public function toMail($notifiable)
     {
         if ($this->status === 'APPROVED') {
-            return [
-                'title' => 'Permintaan Akses Disetujui! 🎉',
-                'desc'  => 'Akun affiliator Anda aktif. Password bawaan: password123',
-                'route' => route('login'),
-            ];
+            return (new MailMessage)
+                ->subject('Permintaan Akses Disetujui! 🎉')
+                ->greeting('Selamat Datang!')
+                ->line('Akun affiliator Anda kini telah aktif.')
+                ->line('Silakan login menggunakan password bawaan sistem: password123')
+                ->action('Login Sekarang', route('login'));
         }
 
-        return [
-            'title' => 'Permintaan Akses Ditandai ❌',
-            'desc'  => 'Mohon maaf, permintaan akses Anda belum dapat kami setujui.',
-            'route' => '#',
-        ];
-    }
-
-    public function toWebPush($notifiable, $notification)
-    {
-        $data = $this->toArray($notifiable);
-
-        return (new WebPushMessage)
-            ->title($data['title'])
-            ->body($data['desc'])
-            ->icon('/img/logo.png')
-            ->data(['url' => $data['route']]);
+        return (new MailMessage)
+            ->subject('Permintaan Akses Ditangguhkan ❌')
+            ->greeting('Halo,')
+            ->line('Mohon maaf, permintaan akses Anda sebagai Affiliator belum dapat kami setujui saat ini.');
     }
 }
