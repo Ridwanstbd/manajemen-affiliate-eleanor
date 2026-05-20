@@ -44,7 +44,6 @@
     </form>
 </x-organisms.modal>
 
-
 <x-organisms.modal id="modalEditAgreement" title="Ubah Persetujuan">
     <form id="formEditAgreement" method="POST">
         @csrf
@@ -67,6 +66,23 @@
         <x-atoms.button type="submit" variant="primary" style="width: 100%;">Simpan Perubahan</x-atoms.button>
     </form>
 </x-organisms.modal>
+
+<x-organisms.modal id="modalDetailAgreement" title="Detail Persetujuan">
+    <div style="margin-bottom: 16px;">
+        <x-atoms.label value="Konten / Isi" />
+        <div id="detail-content" class="form-control" 
+            style="width: 100%; min-height: 120px; height: auto; max-height: 400px; overflow-y: auto; background-color: #f8fafc; border: 1px solid var(--glass-border); border-radius: 8px; padding: 10px;">
+        </div>
+    </div>
+
+    <div style="margin-bottom: 24px;">
+        <x-atoms.label value="Status" />
+        <x-atoms.input type="text" id="detail-status" readonly />
+    </div>
+
+    <x-atoms.button type="button" variant="secondary" style="width: 100%;" onclick="closeModal('modalDetailAgreement')">Tutup</x-atoms.button>
+</x-organisms.modal>
+
 @endsection
 
 @push('scripts')
@@ -104,6 +120,25 @@
         $('#edit-status').val(statusVal);
 
         openModal('modalEditAgreement');
+    }
+
+    function openDetailModal(button) {
+        const content = $(button).data('content');
+        const isActive = $(button).data('status');
+        
+        let escapedContent = (content || '').toString().replace(/[&<>'"]/g, function(tag) {
+            const chars = { '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' };
+            return chars[tag] || tag;
+        });
+        
+        let formattedContent = escapedContent.replace(/(?:\r\n|\r|\n)/g, '<br>');
+        
+        $('#detail-content').html(formattedContent);
+        
+        const statusText = (isActive == 1 || isActive === true || isActive === '1') ? 'Aktif' : 'Non-Aktif';
+        $('#detail-status').val(statusText);
+
+        openModal('modalDetailAgreement');
     }
 
     function deleteAgreement(id) {

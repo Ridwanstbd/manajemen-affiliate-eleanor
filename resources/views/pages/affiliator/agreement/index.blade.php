@@ -67,7 +67,7 @@
                     </div>
                     <div style="flex-grow: 1;">
                         <div style="font-size: 14.5px; color: var(--text-secondary); line-height: 1.5;">
-                            {!! $agreement->content !!}
+                            {!! nl2br(e($agreement->content)) !!}
                         </div>
                     </div>
                 </div>

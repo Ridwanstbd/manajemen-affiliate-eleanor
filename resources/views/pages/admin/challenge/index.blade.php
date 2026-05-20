@@ -165,7 +165,7 @@
 
         <div style="margin-bottom: 16px;">
             <x-atoms.label value="Syarat & Ketentuan (Rules)" />
-            <textarea name="rules" class="form-control" rows="6" readonly></textarea>
+            <div id="detail_rules_container" class="form-control" style="min-height: 140px; height: auto; overflow-y: auto; background-color: #f8fafc;"></div>
         </div>
 
         <div style="margin-bottom: 24px; padding: 16px; background: rgba(0,0,0,0.02); border: 1px solid var(--glass-border); border-radius: 8px;">
@@ -300,7 +300,14 @@
             detailCanvas.querySelector('[name="start_date"]').value = rowData.start_date ? rowData.start_date.substring(0, 10) : '';
             detailCanvas.querySelector('[name="end_date"]').value = rowData.end_date ? rowData.end_date.substring(0, 10) : '';
             detailCanvas.querySelector('[name="commission_bonus"]').value = "Rp " + new Intl.NumberFormat('id-ID').format(rowData.commission_bonus);
-            detailCanvas.querySelector('[name="rules"]').value = rowData.rules;
+            
+            // Format rules: Escape HTML and replace newlines with <br>
+            let escapedRules = (rowData.rules || '').replace(/[&<>'"]/g, function(tag) {
+                const chars = { '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' };
+                return chars[tag] || tag;
+            });
+            let formattedRules = escapedRules.replace(/(?:\r\n|\r|\n)/g, '<br>');
+            document.getElementById('detail_rules_container').innerHTML = formattedRules;
 
             const bannerContainer = document.getElementById('detail_banner_container');
             const bannerPreview = document.getElementById('detail_banner_preview');
