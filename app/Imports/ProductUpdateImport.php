@@ -3,13 +3,21 @@
 namespace App\Imports;
 
 use App\Models\Product;
+use App\Models\User;
+use App\Notifications\ImportFinishedNotification;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Notification;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
-class ProductUpdateImport implements ToCollection, WithHeadingRow, ShouldQueue, WithChunkReading
+use Maatwebsite\Excel\Concerns\WithEvents; 
+use Maatwebsite\Excel\Concerns\RegistersEventListeners; 
+use Maatwebsite\Excel\Events\AfterImport; 
+
+class ProductUpdateImport implements ToCollection, WithHeadingRow, ShouldQueue, WithChunkReading, WithEvents
 {
+    use RegistersEventListeners;
     public function headingRow(): int
     {
         return 1;
@@ -56,6 +64,12 @@ class ProductUpdateImport implements ToCollection, WithHeadingRow, ShouldQueue, 
                 ]
             );
         }
+    }
+    public static function afterImport(AfterImport $event)
+    {
+        $admins = User::where('role', 'ADMINISTRATOR')->get();
+        
+        Notification::send($admins, new ImportFinishedNotification());
     }
 
     public function chunkSize(): int

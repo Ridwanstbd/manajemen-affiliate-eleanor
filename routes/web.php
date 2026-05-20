@@ -21,6 +21,7 @@ use App\Http\Controllers\Affiliator\LeaderboardController as AffiliatorLeaderboa
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Admin\MainController as MainAdminController;
 use App\Http\Controllers\Affiliator\MainController as MainAffiliateController;
+use App\Http\Controllers\PushController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
@@ -66,6 +67,7 @@ Route::middleware(['auth'])->group(function () {
         return back()->with('message', 'Link verifikasi telah dikirim ulang!');
     })->middleware(['throttle:6,1'])->name('verification.send');
 
+    Route::post('/push-subscribe', [PushController::class, 'store'])->name('push.subscribe');
     Route::middleware(['role:administrator'])->prefix('dashboard')->name('admin-dashboard.')->group(function () {
         Route::get('/', [MainAdminController::class, 'index'])->name('dashboard');
 
@@ -99,7 +101,7 @@ Route::middleware(['auth'])->group(function () {
             Route::put('/kol-contract/update', [UserController::class, 'updateKOLContract'])->name('kol-contract.update');
             Route::delete('/kol-contract/destroy', [UserController::class, 'destroyKOLContract'])->name('kol-contract.destroy');
         });
-        
+
         Route::prefix('agreements')->name('agreements.')->group(function () {
             Route::get('/', [AgreementController::class, 'index'])->name('index');
             Route::get('/data', [AgreementController::class, 'getData'])->name('data'); 

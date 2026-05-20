@@ -31,15 +31,33 @@ class AppServiceProvider extends ServiceProvider
                 if ($user->role === 'ADMINISTRATOR') {
                     $accessPendingCount = SystemAccessRequest::where('status', 'PENDING')->count();
                     $samplePendingCount = SampleRequest::where('status', 'PENDING')->count();
-                    $totalNotificationCount = $accessPendingCount + $samplePendingCount;
+                    
+                    $dbNotifications = $user->notifications()->latest()->take(5)->get();
+                    $dbUnreadCount = $user->unreadNotifications()->count();
+
+                    $totalNotificationCount = $accessPendingCount + $samplePendingCount + $dbUnreadCount;
+
+                    if ($dbUnreadCount > 0) {
+                        $user->unreadNotifications->markAsRead();
+                    }
 
                     $dashboardService = app(DashboardService::class);
                     $dashboardData = $dashboardService->getDashboardStats();
-                    $pendingTasksList = $dashboardData['pendingTasksList'] ?? collect([]);
+                    $pendingTasksList = collect($dashboardData['pendingTasksList'] ?? []);
+
+                    $systemNotifs = collect();
+                    foreach ($dbNotifications as $notif) {
+                        $systemNotifs->push((object)[
+                            'title' => $notif->data['title'],
+                            'name'  => 'Sistem Otomatis', 
+                            'time'  => $notif->created_at->diffForHumans(),
+                            'route' => $notif->data['route'] ?? '#',
+                        ]);
+                    }
 
                     $view->with([
                         'notificationCount' => $totalNotificationCount,
-                        'pendingTasksList' => $pendingTasksList,
+                        'pendingTasksList' => $systemNotifs->merge($pendingTasksList), 
                     ]);
                 } 
                 elseif ($user->role === 'AFFILIATOR') {

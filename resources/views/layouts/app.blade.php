@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    
     <title>
         @if(View::hasSection('title'))
             @yield('title') - Affiliate Eleanor
@@ -41,5 +43,50 @@
     <x-atoms.lightbox />
     @stack('scripts')
     <script src="{{ asset('js/scripts.js') }}"></script>
+
+    @auth
+    <script>
+        function urlBase64ToUint8Array(base64String) {
+            const padding = '='.repeat((4 - base64String.length % 4) % 4);
+            const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
+            const rawData = window.atob(base64);
+            const outputArray = new Uint8Array(rawData.length);
+            for (let i = 0; i < rawData.length; ++i) {
+                outputArray[i] = rawData.charCodeAt(i);
+            }
+            return outputArray;
+        }
+
+        if ('serviceWorker' in navigator && 'PushManager' in window) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js').then(function (registration) {
+                    Notification.requestPermission().then(function (permission) {
+                        if (permission === 'granted') {
+                            registration.pushManager.subscribe({
+                                userVisibleOnly: true,
+                                applicationServerKey: urlBase64ToUint8Array("{{ env('VAPID_PUBLIC_KEY') }}")
+                            }).then(function (subscription) {
+                                fetch("{{ route('push.subscribe') }}", {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                    },
+                                    body: JSON.stringify(subscription)
+                                }).catch(function(error) {
+                                    console.error('Gagal mengirim langganan ke server:', error);
+                                });
+                            }).catch(function(error) {
+                                console.error('Gagal melakukan subscribe:', error);
+                            });
+                        }
+                    });
+                }).catch(function(error) {
+                    console.error('Pendaftaran Service Worker gagal:', error);
+                });
+            });
+        }
+    </script>
+    @endauth
 </body>
 </html>

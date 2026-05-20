@@ -233,7 +233,7 @@
         document.body.style.overflow = '';
     }
 
-    function addRewardRow(formType, metric = 'video_count', value = '', desc = '') {
+    function addRewardRow(formType, metric = 'video_count', desc = '') {
         const container = document.getElementById(`rewards-container-${formType}`);
         const index = container.children.length;
         
@@ -244,13 +244,15 @@
         const selectedGmv = metric === 'gmv' ? 'selected' : '';
         const selectedViews = metric === 'views' ? 'selected' : '';
 
+        const safeDesc = desc ? desc.toString().replace(/"/g, '&quot;') : '';
+
         row.innerHTML = `
             <select name="rewards[${index}][target_metric]" class="form-control" required style="font-size: 13px;">
                 <option value="video_count" ${selectedVideo}>Video Terbanyak</option>
                 <option value="gmv" ${selectedGmv}>GMV Terbanyak</option>
                 <option value="views" ${selectedViews}>Views Terbanyak</option>
             </select>
-            <input type="text" name="rewards[${index}][reward_description]" class="form-control" placeholder="Deskripsi Hadiah (Cth: Kaos)" value="${desc}" required style="font-size: 13px;">
+            <input type="text" name="rewards[${index}][reward_description]" class="form-control" placeholder="Deskripsi Hadiah (Cth: Kaos)" value="${safeDesc}" required style="font-size: 13px;">
             <button type="button" class="btn btn-secondary btn-sm" onclick="this.parentElement.remove()" style="padding: 8px 12px; color: #ef4444; border-color: #fca5a5; background: #fef2f2;">
                 <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
             </button>
@@ -258,7 +260,6 @@
         
         container.appendChild(row);
     }
-    
     document.addEventListener('DOMContentLoaded', function() {
         addRewardRow('create');
     });

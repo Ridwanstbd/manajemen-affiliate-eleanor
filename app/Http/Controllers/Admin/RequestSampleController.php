@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\SampleRequest;
+use App\Notifications\SampleStatusNotification;
 use App\Services\Admin\RequestSampleService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -79,6 +80,10 @@ class RequestSampleController extends Controller
             $request->sample_request_id, 
             $request->only(['courier', 'tracking_number', 'shipping_cost'])
         );
+        $sampleRequest = SampleRequest::with('user')->find($request->sample_request_id);
+        if ($sampleRequest && $sampleRequest->user) {
+            $sampleRequest->user->notify(new SampleStatusNotification($sampleRequest, 'SHIPPED'));
+        }
 
         return redirect()->back()->with('success', 'Produk berhasil dikirim dan status diubah menjadi APPROVED.');
     }

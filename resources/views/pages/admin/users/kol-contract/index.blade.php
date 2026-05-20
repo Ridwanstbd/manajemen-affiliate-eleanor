@@ -86,14 +86,16 @@
         {{-- Pilihan Produk Checklist --}}
         <div style="margin-bottom: 16px;">
             <x-atoms.label value="Produk Terkait" />
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; max-height: 150px; overflow-y: auto; border: 1px solid var(--glass-border); padding: 12px; border-radius: 6px; background: white;">
-                @foreach($products as $p)
-                    <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer; margin-bottom: 0;">
-                        <input type="checkbox" name="product_ids[]" value="{{ $p->id }}" class="edit-product-checkbox" data-id="{{ $p->id }}">
-                        {{ $p->name }}
-                    </label>
-                @endforeach
-            </div>
+            <x-atoms.searchable-multi-select 
+                id="edit-product-select"
+                name="product_ids" 
+                label="Produk Terkait"
+                placeholder="-- Cari dan Pilih Produk --"
+                :options="$products->map(fn($p) => [
+                    'id' => $p->id, 
+                    'text' => $p->name
+                ])"
+            />
         </div>
 
         <div style="margin-top: 24px; border-top: 1px solid var(--glass-border); padding-top: 16px;">
@@ -181,14 +183,16 @@
         $('#edit-end-date').val(end);
         $('#edit-status').val(status);
         
-        // Reset semua checkbox produk terlebih dahulu
-        $('.edit-product-checkbox').prop('checked', false);
+        $('#edit-product-select-list input[type="checkbox"]').prop('checked', false);
         
-        // Centang produk yang terhubung dengan kontrak ini
         if (productIds && productIds.length > 0) {
             productIds.forEach(function(productId) {
-                $(`.edit-product-checkbox[data-id="${productId}"]`).prop('checked', true);
+                $(`#edit-product-select-opt-${productId}`).prop('checked', true);
             });
+        }
+        
+        if (typeof updateMultiSelectText === 'function') {
+            updateMultiSelectText('edit-product-select', '-- Cari dan Pilih Produk --');
         }
         
         toggleOffcanvas('offcanvasDetailKOL');

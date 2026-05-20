@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UserManagementRequest;
+use App\Models\SystemAccessRequest;
+use App\Models\User;
+use App\Notifications\AccessRequestNotification;
 use App\Services\Admin\UserService;
 use Exception;
 use Illuminate\Http\Request;
@@ -145,8 +148,16 @@ class UserController extends Controller
         ]);
 
         try {
+            $accessRequest = SystemAccessRequest::find($request->id);
+
             $this->userService->approveAccess($request);
             
+            if ($accessRequest) {
+                $user = User::where('email', $accessRequest->email)->first();
+                if ($user) {
+                    $user->notify(new AccessRequestNotification('APPROVED'));
+                }
+            }
             return redirect()->back()->with('success', 'Akses berhasil disetujui. Akun affiliator otomatis terbuat dengan password bawaan: password123');
         } catch (Exception $e) {
             return redirect()->back()->with('error', 'Gagal menyetujui akses: ' . $e->getMessage());
