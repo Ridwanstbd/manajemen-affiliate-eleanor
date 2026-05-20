@@ -42,6 +42,12 @@
         @case('medal')
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 9 1-1 1 1 2-9m-7-7a4 4 0 118 0 4 4 0 01-8 0zM5 8l4 4m10-4l-4 4M12 21V12"></path>
             @break
+        @case('medal-ribbon')
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6.2 7.1C7.5 5.2 9.6 4 12 4c4.4 0 8 3.6 8 8s-3.6 8-8 8c-3.1 0-5.8-1.8-7.1-4.4"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 16.5L6 21c-1.3.6-2.5-.7-2-2l2.3-4.5"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 16.5L18 21c1.3.6 2.5-.7 2-2l-2.3-4.5"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 7.5l1.3 2.7 3 .4-2.2 2.1.5 3-2.6-1.4-2.6 1.4.5-3-2.2-2.1 3-.4z"></path>
+            @break
         @case('chevron-last')
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7M19 5v14"></path>
             @break

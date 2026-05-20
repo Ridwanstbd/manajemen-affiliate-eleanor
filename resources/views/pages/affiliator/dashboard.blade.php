@@ -12,7 +12,7 @@
                     :title="$challenge->title"
                     :description="Str::limit($challenge->rules, 110)" 
                     :banner="$challenge->banner_image_path ? asset('storage/' . $challenge->banner_image_path) : null"
-                    icon="trophy"
+                    icon="medal-ribbon"
                 />
             @endforeach
         </x-organisms.carousel>
