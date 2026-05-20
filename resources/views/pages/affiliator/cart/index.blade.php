@@ -81,7 +81,7 @@
                 <label class="agreement-item">
                     <input type="checkbox" class="agreement-checkbox agreement-tick" onchange="checkAgreements()">
                     <div class="agreement-content">
-                        {!! $agree->content !!}
+                        {!! nl2br(e($agree->content)) !!}
                     </div>
                 </label>
             @endforeach

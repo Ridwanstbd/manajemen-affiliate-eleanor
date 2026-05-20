@@ -47,7 +47,7 @@
         <div style="margin-bottom: 8px;">
             <x-atoms.typography variant="card-title" as="h3" style="font-size: 15px; margin-bottom: 12px;">Aturan & Mekanisme</x-atoms.typography>
             <div style="font-size: 13.5px; color: var(--text-secondary); line-height: 1.6; white-space: pre-line;">
-                {{ $challenge->rules }}
+                {!! nl2br(e($challenge->rules)) !!}
             </div>
         </div>
     </x-molecules.card>
