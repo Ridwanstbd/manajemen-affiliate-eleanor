@@ -39,7 +39,7 @@
             <div>
                 <div style="font-size: 12px; color: var(--text-tertiary); margin-bottom: 4px;">Ekstra Komisi Bonus</div>
                 <div style="font-size: 14px; font-weight: 800; color: var(--primary-blue);">
-                    Up to {{ number_format($challenge->commission_bonus, 0, ',', '.') }}%
+                    Up to Rp {{ number_format($challenge->commission_bonus, 0, ',', '.') }}
                 </div>
             </div>
         </div>
