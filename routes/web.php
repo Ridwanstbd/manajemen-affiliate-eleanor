@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Affiliator\CartController;
 use App\Http\Controllers\Affiliator\CatalogController;
 use App\Http\Controllers\Affiliator\ProfileController;
+use App\Http\Controllers\Affiliator\ChallengeController as AffiliatorChallengeController;
 use App\Http\Controllers\Affiliator\AgreementController as AffiliatorAgreementController;
 use App\Http\Controllers\Affiliator\SampleRequestController;
 use App\Http\Controllers\Affiliator\TaskController;
@@ -150,8 +151,8 @@ Route::middleware(['auth'])->group(function () {
         });
             
         Route::prefix('challenge')->name('challenge.')->group(function (){
-            Route::get('/', [ChallengeController::class, 'index'])->name('index');
-            Route::get('/{id}', [ChallengeController::class, 'show'])->name('show');
+            Route::get('/', [AffiliatorChallengeController::class, 'index'])->name('index');
+            Route::get('/{id}', [AffiliatorChallengeController::class, 'show'])->name('show');
         });
 
         Route::prefix('task')->name('task.')->group(function (){
