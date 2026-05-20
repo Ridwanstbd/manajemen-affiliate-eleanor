@@ -67,7 +67,7 @@ class ImportController extends Controller
             
             $this->importService->executeProductUpdateImport($files);
 
-            return redirect()->back()->with('success', count($files) . ' File Excel diterima. Proses sinkronisasi produk sedang berjalan di latar belakang. Silakan muat ulang halaman ini dalam beberapa menit.');
+            return redirect()->back()->with('success', count($files) . ' File Excel diterima. Proses sinkronisasi produk sedang berjalan di latar belakang. Silakan tunggu notifikasi selesai.');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Terjadi kesalahan saat update produk: ' . $e->getMessage());
         }
