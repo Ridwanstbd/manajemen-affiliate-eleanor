@@ -33,8 +33,8 @@ class AgreementController extends Controller
                     return '<span style="color: var(--primary-blue); font-weight: 600;">Personal: @' . ($row->user->username ?? 'User Terhapus') . '</span>';
                 }
                 return $row->is_kol 
-                    ? '<span style="color: #d97706; font-weight: 600;">Global KOL</span>' 
-                    : '<span style="color: #059669; font-weight: 600;">Global Reguler</span>';
+                    ? '<span style="color: #d97706; font-weight: 600;">Kontrak KOL Umum</span>' 
+                    : '<span style="color: #059669; font-weight: 600;">Umum</span>';
             })
             ->addColumn('status', function($row) {
                 return view('components.atoms.badge', [

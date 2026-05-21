@@ -94,7 +94,7 @@
         
         document.getElementById('method-container').innerHTML = '<input type="hidden" name="_method" value="PUT">';
         
-        document.getElementById('form-content').value = decodeURIComponent(escape(atob(contentBase64)));
+        document.getElementById('form-content').value = decodeURIComponent(atob(contentBase64));
         document.getElementById('form-is-active').checked = isActive == '1';
         document.getElementById('form-is-kol').checked = isKol == '1';
         
