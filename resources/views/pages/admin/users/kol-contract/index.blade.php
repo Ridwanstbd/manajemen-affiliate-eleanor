@@ -98,6 +98,12 @@
             />
         </div>
 
+        {{-- Form Edit Agreement Content --}}
+        <div style="margin-bottom: 16px;">
+            <x-atoms.label value="Isi Perjanjian Kontrak (Agreement)" />
+            <textarea name="agreement_content" id="edit-agreement-content" class="form-control" rows="5" placeholder="Tuliskan syarat dan ketentuan perjanjian kontrak..." required style="height: auto; resize: vertical; padding: 12px; width: 100%; border-radius: 8px; border: 1px solid var(--glass-border); background: white; color: var(--text-primary); font-family: inherit; font-size: 13px; box-sizing: border-box; margin-top: 4px;"></textarea>
+        </div>
+
         <div style="margin-top: 24px; border-top: 1px solid var(--glass-border); padding-top: 16px;">
             <x-atoms.button type="submit" variant="primary" style="width: 100%;">Simpan Perubahan</x-atoms.button>
         </div>
@@ -175,13 +181,16 @@
         }, 350);
     }
 
-    function openEditForm(id, fee, reqVideo, start, end, status, productIds) {
+    function openEditForm(id, fee, reqVideo, start, end, status, productIds, encodedAgreement) {
         $('#edit-contract-id').val(id);
         $('#edit-contract-fee').val(Math.floor(fee));
         $('#edit-required-video-count').val(reqVideo);
         $('#edit-start-date').val(start);
         $('#edit-end-date').val(end);
         $('#edit-status').val(status);
+        
+        const decodedAgreement = encodedAgreement ? decodeURIComponent(escape(atob(encodedAgreement))) : '';
+        $('#edit-agreement-content').val(decodedAgreement);
         
         $('#edit-product-select-list input[type="checkbox"]').prop('checked', false);
         
@@ -242,6 +251,7 @@
                         : '<span style="font-size:12px; color: var(--text-tertiary);">Tidak ada produk</span>';
 
                     const productIdsArr = JSON.stringify(c.products.map(p => p.id));
+                    const encodedAgreement = btoa(unescape(encodeURIComponent(c.agreement_content || '')));
 
                     let actionsHtml = '';
                     
@@ -256,7 +266,7 @@
                     
                     actionsHtml += `
                         <button type="button" class="btn btn-outline btn-sm" style="flex: 1; border-color: var(--glass-border); color: var(--text-primary);"
-                            onclick='openEditForm("${c.id}", "${c.fee}", "${c.req_video}", "${c.start}", "${c.end}", "${c.status}", ${productIdsArr})'>
+                            onclick='openEditForm("${c.id}", "${c.fee}", "${c.req_video}", "${c.start}", "${c.end}", "${c.status}", ${productIdsArr}, "${encodedAgreement}")'>
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
                             Edit
                         </button>
@@ -280,7 +290,7 @@
                                 </span>
                             </div>
 
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
                                 <div>
                                     <div style="font-size: 11px; color: var(--text-secondary);">Biaya Kontrak</div>
                                     <div style="font-weight: 700;">${formatCurrency(c.fee)}</div>
@@ -302,6 +312,11 @@
                             <div style="margin-bottom: 16px;">
                                 <div style="font-size: 11px; color: var(--text-secondary); margin-bottom: 6px;">Produk Terkait</div>
                                 <div>${productTags}</div>
+                            </div>
+
+                            <div style="margin-bottom: 16px;">
+                                <div style="font-size: 11px; color: var(--text-secondary); margin-bottom: 6px;">Isi Perjanjian (Agreement)</div>
+                                <div style="font-size: 13px; color: var(--text-primary); background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid var(--glass-border); white-space: pre-wrap; word-break: break-word;">${c.agreement_content ? c.agreement_content : '<span style="color: var(--text-tertiary); font-style: italic;">Tidak ada perjanjian yang dilampirkan.</span>'}</div>
                             </div>
 
                             <div style="padding-top: 12px; border-top: 1px solid var(--glass-border); display: flex; gap: 8px;">

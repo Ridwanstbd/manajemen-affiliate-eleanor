@@ -11,6 +11,7 @@ use App\Models\SampleRequest;
 use App\Models\SystemAccessRequest;
 use App\Models\TaskReport;
 use App\Models\User;
+use App\Models\Agreement;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -341,8 +342,16 @@ class UserService
             $user = User::findOrFail($data['user_id']);
             $user->update(['is_kol' => true]);
 
+            $agreement = Agreement::create([
+                'user_id' => $user->id,
+                'content' => $data['agreement_content'],
+                'is_active' => true,
+                'is_kol' => true,
+            ]);
+
             $contract = KOLContract::create([
                 'user_id' => $user->id,
+                'agreement_id' => $agreement->id,
                 'start_date' => $data['start_date'],
                 'end_date' => $data['end_date'],
                 'contract_fee' => $data['contract_fee'],
@@ -361,7 +370,7 @@ class UserService
     public function updateKOLContract(array $data)
     {
         return DB::transaction(function () use ($data) {
-            $contract = KOLContract::findOrFail($data['id']);
+            $contract = KOLContract::with('agreement')->findOrFail($data['id']);
 
             $contract->update([
                 'start_date' => $data['start_date'],
@@ -371,8 +380,21 @@ class UserService
                 'status' => $data['status'] ?? $contract->status,
                 'notes' => $data['notes'] ?? $contract->notes,
             ]);
+
             if (isset($data['product_ids'])) {
                 $contract->products()->sync($data['product_ids']);
+            }
+
+            if ($contract->agreement) {
+                $contract->agreement->update(['content' => $data['agreement_content']]);
+            } else {
+                $agreement = Agreement::create([
+                    'user_id' => $contract->user_id,
+                    'content' => $data['agreement_content'],
+                    'is_active' => true,
+                    'is_kol' => true,
+                ]);
+                $contract->update(['agreement_id' => $agreement->id]);
             }
 
             return $contract;

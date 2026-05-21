@@ -24,6 +24,7 @@ class UserManagementRequest extends FormRequest
                 'required_video_count' => 'required|integer',
                 'product_ids'          => 'required|array',
                 'product_ids.*'        => 'exists:products,id',
+                'agreement_content'    => 'required|string',
             ];
         }
 
@@ -82,6 +83,8 @@ class UserManagementRequest extends FormRequest
             'id.exists'                     => 'Data tidak ditemukan di sistem.',
             'violation_reason.required'     => 'Alasan pelanggaran wajib diisi.',
             'violation_reason.max'          => 'Alasan maksimal 1000 karakter.',
+            'agreement_content.required'    => 'Isi perjanjian kontrak (agreement) wajib diisi.',
+            'agreement_content.string'      => 'Isi perjanjian harus berupa teks yang valid.',
         ];
     }
 }

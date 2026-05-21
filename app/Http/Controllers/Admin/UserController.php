@@ -117,6 +117,7 @@ class UserController extends Controller
             'notes' => 'nullable|string',
             'product_ids' => 'nullable|array',
             'product_ids.*' => 'exists:products,id',
+            'agreement_content' => 'required|string', 
         ]);
 
         try {
@@ -150,15 +151,17 @@ class UserController extends Controller
         try {
             $accessRequest = SystemAccessRequest::find($request->id);
 
-            $this->userService->approveAccess($request, $request->has('is_kol'));
+            $newUser = $this->userService->approveAccess($request, $request->has('is_kol'));
             
-            if ($accessRequest) {
+            if ($newUser) {
                 $user = User::where('email', $accessRequest->email)->first();
                 if ($user) {
                     $user->notify(new AccessRequestNotification('APPROVED'));
                 }
             }
-            return redirect()->back()->with('success', 'Akses berhasil disetujui. Akun affiliator otomatis terbuat dengan password bawaan: password123');
+            
+            return redirect()->to(route('admin-dashboard.users.index') . '?tab=active&open_user=' . $newUser->id)
+                ->with('success', 'Akses berhasil disetujui. Akun affiliator otomatis terbuat dengan password bawaan: password123');
         } catch (Exception $e) {
             return redirect()->back()->with('error', 'Gagal menyetujui akses: ' . $e->getMessage());
         }

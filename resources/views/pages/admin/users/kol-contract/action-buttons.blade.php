@@ -10,6 +10,7 @@
             'end'       => $c->end_date?->format('Y-m-d') ?? '-',
             'status'    => $c->status,
             'products'  => $c->products->map(fn($p) => ['id' => $p->id, 'name' => $p->name])->toArray(),
+            'agreement_content' => $c->agreement ? $c->agreement->content : '',
         ])->toJson() }}"
         title="Detail Kontrak">
         Detail

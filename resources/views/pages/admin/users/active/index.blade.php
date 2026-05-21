@@ -132,9 +132,14 @@
             </div>
         </x-organisms.grid-layout>
 
-        <div style="margin-bottom: 24px;">
+        <div style="margin-bottom: 16px;">
             <x-atoms.label value="Target Wajib Video" />
             <x-atoms.input type="number" name="required_video_count" placeholder="Contoh: 5" required />
+        </div>
+
+        <div style="margin-bottom: 24px;">
+            <x-atoms.label value="Isi Perjanjian Kontrak (Agreement)" />
+            <textarea name="agreement_content" class="form-control" rows="5" placeholder="Tuliskan syarat dan ketentuan perjanjian kontrak..." required style="height: auto; resize: vertical; padding: 12px; width: 100%; border-radius: 8px; border: 1px solid var(--glass-border); background: white; color: var(--text-primary); font-family: inherit; font-size: 13px; box-sizing: border-box; margin-top: 4px;"></textarea>
         </div>
 
         <x-atoms.button type="submit" variant="primary" style="width: 100%; background: var(--primary-blue);">
@@ -285,6 +290,27 @@
 
             openOffcanvas('detailUserOffcanvas');
         });
+    });
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const openUserId = urlParams.get('open_user');
+        
+        if (openUserId) {
+            $('#requestTable').on('draw.dt', function() {
+                const btn = $('.btn-detail[data-id="' + openUserId + '"]');
+                if (btn.length > 0 && !btn.data('auto-clicked')) {
+                    btn.data('auto-clicked', true);
+                    setTimeout(() => {
+                        btn.click();
+                        
+                        urlParams.delete('open_user');
+                        const newUrl = urlParams.toString() ? window.location.pathname + '?' + urlParams.toString() : window.location.pathname;
+                        window.history.replaceState({}, document.title, newUrl);
+                        
+                    }, 500);
+                }
+            });
+        }
     });
 </script>
 @endpush
