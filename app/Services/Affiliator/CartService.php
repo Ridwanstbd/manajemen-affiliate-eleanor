@@ -18,16 +18,13 @@ class CartService
     {
         return Session::get($this->sessionKey, []);
     }
+
     public function addToCart(Product $product): array
     {
         $cart = $this->getCart();
 
         if (array_key_exists($product->id, $cart)) {
             throw new Exception('Produk ini sudah ada di dalam keranjang Anda.');
-        }
-
-        if ($product->stock <= 0) {
-            throw new Exception('Gagal menambahkan, stok produk habis.');
         }
 
         $cart[$product->id] = [
@@ -37,7 +34,6 @@ class CartService
             'image_path' => $product->image_path,
             'category' => $product->category,
             'quantity' => 1,
-            'mandatory_video_count' => $product->mandatory_video_count 
         ];
 
         Session::put($this->sessionKey, $cart);
@@ -81,6 +77,7 @@ class CartService
                     'sample_request_id' => $sampleRequest->id,
                     'product_id'        => $item['id'],
                     'quantity'          => $item['quantity'] ?? 1,
+                    'status'            => 'PENDING',
                 ]);
             }
 

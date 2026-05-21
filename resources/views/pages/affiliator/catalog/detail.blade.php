@@ -1,64 +1,57 @@
 @extends('layouts.app')
-
 @section('title', 'Detail Produk')
-@section('is_subpage', true)
-@section('back_url', route('affiliator.catalog.index'))
 
 @section('content')
-    @php
-        $fallbackImage = 'https://placehold.co/400x400?text=No+Image';
-        $imageUrl = !empty($product->image_path) 
-                    ? (filter_var($product->image_path, FILTER_VALIDATE_URL) ? $product->image_path : asset('storage/' . $product->image_path)) 
-                    : $fallbackImage;
-    @endphp
+<div style="display: flex; flex-direction: column; gap: 24px;">
+    <div style="display: flex; align-items: center; gap: 8px;">
+        <a href="{{ route('affiliator.catalog.index') }}" style="text-decoration: none; color: var(--text-secondary); display: flex; align-items: center; gap: 4px;">
+            <x-atoms.icon name="chevron-left" style="width: 16px; height: 16px;" /> Kembali ke Katalog
+        </a>
+    </div>
 
-    <x-molecules.card style="padding: 20px;">
-        
-        <div style="width: 100%; border-radius: var(--radius-xl); overflow: hidden; margin-bottom: 24px; background: #eee; aspect-ratio: 1/1;">
-            <img src="{{ $imageUrl }}" alt="{{ $product->name }}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.onerror=null; this.src='{{ $fallbackImage }}';">
-        </div>
-        
-        <div class="card-info">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
-                
-                <x-atoms.badge status="pending" style="background: var(--primary-blue-soft); color: var(--primary-blue); border: none;">
-                    {{ $product->category ?? 'Umum' }}
-                </x-atoms.badge>
-                
-                <div class="stock-info">
-                    @if($product->stock > 0)
-                        <x-atoms.badge status="paid">Tersedia: {{ $product->stock }}</x-atoms.badge>
-                    @else
-                        <x-atoms.badge status="overdue">Stok Habis</x-atoms.badge>
-                    @endif
-                </div>
+    <x-molecules.card>
+        <div style="display: flex; flex-direction: column; gap: 32px;">
+            <div style="flex: 1; max-width: 400px; width: 100%; height: 400px; border-radius: 12px; overflow: hidden; background: #f1f5f9; border: 1px solid var(--glass-border);">
+                <img src="{{ $product->image_path ? (Str::startsWith($product->image_path, ['http://', 'https://']) ? $product->image_path : asset('storage/' . $product->image_path)) : '' }}" alt="{{ $product->name }}" style="width: 100%; height: 100%; object-fit: cover;">
             </div>
             
-            <x-atoms.typography variant="card-title" style="font-size: 22px; margin-bottom: 12px;">
-                {{ $product->name }}
-            </x-atoms.typography>
-            
-            <x-atoms.typography variant="stat-value" style="font-size: 24px; font-weight: 800; color: var(--primary-blue); margin-bottom: 20px;">
-                Rp {{ number_format($product->price ?? 0, 0, ',', '.') }}
-            </x-atoms.typography>
-            
-            <x-atoms.typography variant="card-title" style="font-size: 15px; margin-bottom: 8px;">
-                Deskripsi Produk
-            </x-atoms.typography>
-            
-            <x-atoms.typography variant="body" style="color: var(--text-secondary); line-height: 1.6; font-size: 14px; margin-bottom: 30px;">
-                {{ $product->description ?? 'Tidak ada deskripsi detail untuk produk ini.' }}
-            </x-atoms.typography>
+            <div style="flex: 1.5; display: flex; flex-direction: column; gap: 16px;">
+                <div>
+                    <span style="font-size: 12px; color: var(--text-secondary); text-transform: uppercase; font-weight: 600; display: block; margin-bottom: 4px;">{{ $product->category }}</span>
+                    <x-atoms.typography variant="h2" style="font-weight: 700; color: var(--text-primary); margin: 0; line-height: 1.3;">
+                        {{ $product->name }}
+                    </x-atoms.typography>
+                </div>
 
-            <div style="display: flex; gap: 12px; margin-top: 20px; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 20px;">
-                <form action="{{ route('affiliator.cart.store', $product->id) }}" method="POST" style="width: 100%;">
-                    @csrf
-                    <x-atoms.button type="submit" variant="primary" style="width: 100%; display: flex; align-items: center; justify-content: center;" :disabled="$product->stock <= 0">
-                        <x-atoms.icon name="cart" style="width: 18px; height: 18px; margin-right: 8px;"/>
-                        Minta Sampel
-                    </x-atoms.button>
-                </form>
+                <div style="padding: 16px; background: rgba(59, 130, 246, 0.05); border-radius: 8px; border: 1px solid rgba(59, 130, 246, 0.1);">
+                    <span style="font-size: 12px; color: var(--text-secondary); display: block; margin-bottom: 2px;">Harga Retail</span>
+                    <x-atoms.typography variant="h3" style="color: var(--primary-blue); font-weight: 700; margin: 0;">
+                        Rp {{ number_format($product->price, 0, ',', '.') }}
+                    </x-atoms.typography>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <x-atoms.typography variant="body" style="font-weight: 600; color: var(--text-primary); margin: 0;">SKU Penjual</x-atoms.typography>
+                    <div style="font-size: 14px; color: var(--text-secondary);">{{ $product->seller_sku ?? '-' }}</div>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 8px; border-top: 1px solid var(--glass-border); padding-top: 16px;">
+                    <x-atoms.typography variant="body" style="font-weight: 600; color: var(--text-primary); margin: 0;">Deskripsi & Detail Produk</x-atoms.typography>
+                    <div style="font-size: 14px; color: var(--text-secondary); line-height: 1.6;">
+                        {!! $product->product_detail ?? '' !!}
+                    </div>
+                </div>
+
+                <div style="margin-top: auto; padding-top: 24px; border-top: 1px solid var(--glass-border);">
+                    <form action="{{ route('affiliator.cart.store', $product->id) }}" method="POST">
+                        @csrf
+                        <x-atoms.button type="submit" variant="primary" style="padding: 12px 32px; font-size: 14px; font-weight: 600;">
+                            Tambahkan ke Pengajuan Sampel
+                        </x-atoms.button>
+                    </form>
+                </div>
             </div>
         </div>
     </x-molecules.card>
+</div>
 @endsection

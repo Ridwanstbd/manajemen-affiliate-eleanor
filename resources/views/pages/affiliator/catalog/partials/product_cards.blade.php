@@ -1,40 +1,25 @@
 @foreach($products as $product)
-    @php
-        $fallbackImage = 'https://placehold.co/400x400?text=No+Image';
-        $imageUrl = $fallbackImage;
-        if (!empty($product->image_path)) {
-            $imageUrl = filter_var($product->image_path, FILTER_VALIDATE_URL) 
-                        ? $product->image_path 
-                        : asset('storage/' . $product->image_path);
-        }
-    @endphp
-
-    <x-molecules.card style="padding: 0; border: 1px solid #c8cbf1; border-radius: 4px; box-shadow: none;">
-        <a href="{{ route('affiliator.catalog.show', $product->id) }}" style="text-decoration: none; color: inherit;">
-            <div class="card-img-container">
-                <img src="{{ $imageUrl }}" 
-                     alt="{{ $product->name }}" 
-                     loading="lazy"
-                     onerror="this.onerror=null; this.src='{{ $fallbackImage }}';">
-            </div>
-            
-            <div class="card-info">
-                <span class="category-label">
-                    <x-atoms.badge status="pending" style="background: #f0f0f0; color: #666; border: none; font-size: 11px;">
-                        {{ $product->category ?? 'Umum' }}
-                    </x-atoms.badge>
-                </span>
-                
-                <x-atoms.typography variant="h3">{{ $product->name }}</x-atoms.typography>
-                
-                <div class="stock-info">
-                    @if($product->stock > 0)
-                        Stok Tersedia: {{ $product->stock }}
-                    @else
-                        <span class="stock-out">Stok Habis</span>
-                    @endif
-                </div>
-            </div>
-        </a>
-    </x-molecules.card>
+    <div class="product-card" style="background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 12px; box-shadow: var(--glass-shadow);">
+        <div style="position: relative; width: 100%; height: 160px; border-radius: 8px; overflow: hidden; background: #f1f5f9;">
+            <img src="{{ $product->image_path ? (Str::startsWith($product->image_path, ['http://', 'https://']) ? $product->image_path : asset('storage/' . $product->image_path)) : '' }}" alt="{{ $product->name }}" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
+            <span style="font-size: 11px; color: var(--text-secondary); text-transform: uppercase; font-weight: 600;">{{ $product->category }}</span>
+            <x-atoms.typography variant="body" style="font-weight: 600; color: var(--text-primary); margin: 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 40px; line-height: 1.4;">
+                {{ $product->name }}
+            </x-atoms.typography>
+            <x-atoms.typography variant="h4" style="color: var(--primary-blue); font-weight: 700; margin-top: 4px;">
+                Rp {{ number_format($product->price, 0, ',', '.') }}
+            </x-atoms.typography>
+        </div>
+        <div style="display: flex; gap: 8px; margin-top: auto;">
+            <a href="{{ route('affiliator.catalog.show', $product->id) }}" style="flex: 1; text-decoration: none;">
+                <x-atoms.button variant="outline" style="width: 100%; padding: 8px;">Detail</x-atoms.button>
+            </a>
+            <form action="{{ route('affiliator.cart.store', $product->id) }}" method="POST" style="flex: 1;">
+                @csrf
+                <x-atoms.button type="submit" variant="primary" style="width: 100%; padding: 8px;">Ambil</x-atoms.button>
+            </form>
+        </div>
+    </div>
 @endforeach

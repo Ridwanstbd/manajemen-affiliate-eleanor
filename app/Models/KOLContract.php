@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class KOLContract extends Model
 {
@@ -13,7 +14,7 @@ class KOLContract extends Model
 
     protected $fillable = [
         'user_id', 'start_date', 'end_date', 
-        'contract_fee', 'required_video_count', 'status', 'notes'
+        'contract_fee', 'required_video_count', 'status', 'notes', 'agreement_id'
     ];
 
     protected $casts = [
@@ -39,5 +40,10 @@ class KOLContract extends Model
             ->sum('video_count');
 
         return $actualVideos >= $this->required_video_count;
+    }
+
+    public function agreement(): BelongsTo
+    {
+        return $this->belongsTo(Agreement::class, 'agreement_id', 'id');
     }
 }

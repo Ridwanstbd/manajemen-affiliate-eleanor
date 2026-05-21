@@ -1,141 +1,72 @@
 @extends('layouts.app')
-@section('title', 'Keranjang')
-@section('is_subpage', true)
-@section('back_url', route('affiliator.catalog.index'))
+@section('title', 'Keranjang Pengajuan')
 
 @section('content')
-<x-organisms.mobile-page-wrapper title="Keranjang Sampel" subtitle="Tinjau produk sebelum melanjutkan pengajuan.">
+<div style="display: flex; flex-direction: column; gap: 24px;">
+    <x-molecules.card title="Keranjang Pengajuan Sampel" description="Periksa kembali produk yang ingin Anda ajukan sebelum memproses checkout.">
+        @if(empty($cartItems))
+            <div style="text-align: center; padding: 48px 0; color: var(--text-tertiary);">
+                <x-atoms.icon name="cart" style="width: 48px; height: 48px; margin-bottom: 16px; opacity: 0.5;" />
+                <x-atoms.typography variant="body" style="font-size: 14px;">Keranjang pengajuan Anda masih kosong.</x-atoms.typography>
+                <a href="{{ route('affiliator.catalog.index') }}" style="text-decoration: none; display: inline-block; margin-top: 16px;">
+                    <x-atoms.button variant="primary">Lihat Katalog</x-atoms.button>
+                </a>
+            </div>
+        @else
+            <div style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 32px;">
+                @foreach($cartItems as $item)
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 12px; box-shadow: var(--glass-shadow);">
+                        <div style="display: flex; align-items: center; gap: 16px;">
+                            <div style="width: 64px; height: 64px; border-radius: 8px; overflow: hidden; background: #f1f5f9; border: 1px solid var(--glass-border); flex-shrink: 0;">
+                                <img src="{{ $item['image_path'] ? (Str::startsWith($item['image_path'], ['http://', 'https://']) ? $item['image_path'] : asset('storage/' . $item['image_path'])) : '' }}" alt="{{ $item['name'] }}" style="width: 100%; height: 100%; object-fit: cover;">
+                            </div>
+                            <div>
+                                <span style="font-size: 11px; color: var(--text-secondary); text-transform: uppercase; font-weight: 600;">{{ $item['category'] }}</span>
+                                <x-atoms.typography variant="body" style="font-weight: 600; color: var(--text-primary); margin: 0;">
+                                    {{ $item['name'] }}
+                                </x-atoms.typography>
+                                <div style="font-size: 13px; color: var(--primary-blue); font-weight: 600; margin-top: 2px;">
+                                    Rp {{ number_format($item['price'], 0, ',', '.') }}
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <form action="{{ route('affiliator.cart.destroy', $item['id']) }}" method="POST">
+                                @csrf
+                                @method('DELETE')
+                                <x-atoms.button type="submit" variant="outline" style="border-color: var(--rose); color: var(--rose); padding: 8px;">
+                                    <x-atoms.icon name="trash" style="width: 16px; height: 16px;" />
+                                </x-atoms.button>
+                            </form>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
 
-    <div class="cart-items-container" style="margin-top: 24px;">
-        @forelse($cartItems ?? [] as $item)
-            <div class="cart-item">
-                <div class="cart-item-img">
-                    @if(!empty($item['image_path']))
-                        <img src="{{ filter_var($item['image_path'], FILTER_VALIDATE_URL) ? $item['image_path'] : asset('storage/' . $item['image_path']) }}" alt="{{ $item['name'] }}" style="width: 100%; height: 100%; object-fit: cover;">
-                    @else
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8">
-                            <rect x="2" y="2" width="20" height="20"></rect>
-                            <path d="M2 2l20 20M2 22L22 2"></path>
-                        </svg>
-                    @endif
-                </div>
-                
-                <div class="cart-item-info">
-                    <div class="cart-item-title">{{ $item['name'] }}</div>
-                    <div class="cart-item-meta">Wajib: {{ $item['mandatory_video_count'] ?? 1 }} Video</div>
-                    <div class="cart-item-meta" style="font-weight: 800; color: var(--text-primary);">Qty: {{ $item['quantity'] ?? 1 }}</div>
-                </div>
-
-                <form action="{{ route('affiliator.cart.destroy', $item['id']) }}" method="POST" style="margin: 0;">
+            <div style="border-top: 1px solid var(--glass-border); padding-top: 24px; max-width: 600px;">
+                <x-atoms.typography variant="h3" style="font-weight: 700; color: var(--text-primary); margin-bottom: 16px;">Konfirmasi Pengiriman</x-atoms.typography>
+                <form action="{{ route('affiliator.cart.checkout') }}" method="POST">
                     @csrf
-                    @method('DELETE')
-                    <button type="submit" class="cart-item-remove" aria-label="Hapus Item">
-                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                    </button>
+                    <div style="margin-bottom: 20px;">
+                        <x-atoms.label value="Alamat Lengkap Pengiriman Sampel" for="address" style="margin-bottom: 8px; display: block;" />
+                        <textarea name="address" id="address" required placeholder="Tuliskan alamat lengkap pengiriman paket beserta nomor HP alternatif jika ada..." style="width: 100%; border-radius: 8px; border: 1px solid var(--glass-border); padding: 12px; font-size: 13px; background: white; min-height: 100px; box-sizing: border-box; color: var(--text-primary); font-family: inherit; resize: vertical;"></textarea>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; padding: 16px; background: #fffbeb; border-radius: 8px; border: 1px solid #fef3c7;">
+                        <x-atoms.typography variant="body" style="font-weight: 700; color: #b45309; margin: 0;">Syarat & Ketentuan Pengajuan:</x-atoms.typography>
+                        <ul style="margin: 0; padding-left: 20px; font-size: 13px; color: #78350f; line-height: 1.5;">
+                            <li>Setiap produk sampel yang Anda minta akan ditinjau secara mandiri oleh admin toko.</li>
+                            <li>Admin berhak menentukan jumlah target video wajib yang harus Anda buat atau menolak pengajuan produk tertentu.</li>
+                            <li>Tugas video wajib akan otomatis diterbitkan di sistem setelah paket logistik sampai di lokasi Anda.</li>
+                        </ul>
+                    </div>
+
+                    <x-atoms.button type="submit" variant="primary" style="padding: 12px 32px; font-size: 14px; font-weight: 600;">
+                        Kirim Pengajuan Sampel Gratis
+                    </x-atoms.button>
                 </form>
             </div>
-        @empty
-            <div style="text-align: center; padding: 40px 0; color: var(--text-secondary);">
-                <x-atoms.icon name="cart" style="width: 48px; height: 48px; color: var(--text-tertiary); margin-bottom: 12px;"/>
-                <p>Keranjang Anda masih kosong.</p>
-                <x-atoms.button href="{{ route('affiliator.catalog.index') }}" variant="outline" style="margin-top: 16px;">Jelajahi Katalog</x-atoms.button>
-            </div>
-        @endforelse
-    </div>
-
-    @if(count($cartItems ?? []) > 0)
-        <div class="cart-divider"></div>
-
-        <div class="cart-summary">
-            <div class="cart-summary-title">Total Produk: {{ count($cartItems) }}</div>
-            @php
-                $totalVideos = collect($cartItems)->sum(fn($item) => $item['mandatory_video_count'] ?? 1);
-            @endphp
-            <div class="cart-summary-subtitle">Total Kewajiban Video: {{ $totalVideos }} Video</div>
-        </div>
-
-        <div style="height: 120px;"></div>
-        <div>
-            <x-atoms.button type="button" onclick="openModal('agreementModal')"  type="submit" variant="primary" style="width: 100%; display: flex; align-items: center; justify-content: center;" >
-                <x-atoms.icon name="cart" style="width: 18px; height: 18px; margin-right: 8px;"/>
-                Checkout & Ajukan Sampel
-            </x-atoms.button>
-        </div>
-    @endif
-
-</x-organisms.mobile-page-wrapper>
-<x-organisms.modal id="agreementModal" title="Persetujuan Kerja Sama">
-    <form action="{{ route('affiliator.cart.checkout') }}" method="POST" id="checkoutForm">
-        @csrf
-        <div class="form-group" style="margin-bottom: 20px;">
-            <label class="form-label">Alamat Pengiriman</label>
-            <x-atoms.input type="text" name="address" placeholder="Tulis alamat pengiriman lengkap..." required />
-        </div>
-
-        <p style="font-size: 13px; color: var(--text-secondary);">Baca dan centang seluruh poin di bawah ini.</p>
-
-        <div class="agreement-list">
-            @foreach($agreements as $index => $agree)
-                <label class="agreement-item">
-                    <input type="checkbox" class="agreement-checkbox agreement-tick" onchange="checkAgreements()">
-                    <div class="agreement-content">
-                        {!! nl2br(e($agree->content)) !!}
-                    </div>
-                </label>
-            @endforeach
-        </div>
-
-        <div class="agreement-instruction">
-            Anda harus menyetujui seluruh poin (mencentang kotak) untuk dapat melanjutkan proses pengajuan.
-        </div>
-
-        <x-slot name="footer">
-            <button type="button" class="btn btn-ghost" onclick="closeModal('agreementModal')">Batal</button>
-            <x-atoms.button type="submit" id="btnSubmitCheckout" variant="primary" form="checkoutForm" disabled style="opacity: 0.5;">
-                Saya Mengerti & Ajukan Sampel
-            </x-atoms.button>
-        </x-slot>
-    </form>
-</x-organisms.modal>
-<x-organisms.modal id="addressModal" title="Logistik">
-    <div class="form-group" style="margin-bottom: 20px;">
-        <label class="form-label">Alamat Pengiriman</label>
-        <x-atoms.input type="text" name="address" placeholder="Tulis alamat pengiriman lengkap..." required />
-    </div>
-    {{-- tambah input kota dan kecamatan, provinsi menggunakan rajaongkir --}}
-</x-organisms.modal>
-
+        @endif
+    </x-molecules.card>
+</div>
 @endsection
-
-@push('scripts')
-<script>
-    function openModal(id) {
-        const modal = document.getElementById(id);
-        if(modal) modal.classList.add('active');
-        document.body.style.overflow = 'hidden';
-    }
-
-    function closeModal(id) {
-        const modal = document.getElementById(id);
-        if(modal) modal.classList.remove('active');
-        document.body.style.overflow = '';
-    }
-
-    function checkAgreements() {
-        const checkboxes = document.querySelectorAll('.agreement-tick');
-        const submitBtn = document.getElementById('btnSubmitCheckout');
-        
-        const allChecked = Array.from(checkboxes).every(cb => cb.checked);
-
-        if (allChecked) {
-            submitBtn.disabled = false;
-            submitBtn.style.opacity = "1";
-        } else {
-            submitBtn.disabled = true;
-            submitBtn.style.opacity = "0.5";
-        }
-    }
-</script>
-@endpush
