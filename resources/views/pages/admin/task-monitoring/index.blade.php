@@ -58,7 +58,7 @@
     </form>
 </x-organisms.modal>
 
-<x-organisms.offcanvas id="detailTaskOffcanvas" title="Detail Tugas">
+<x-organisms.offcanvas id="detailTaskOffcanvas" title="Detail Penugasan">
     <div style="padding: 24px; padding-top: 0;">
         
         <div style="margin-bottom: 24px;">
@@ -66,15 +66,9 @@
             <div id="tm-username" style="font-size: 14px; color: var(--text-primary); font-weight: 500;"></div>
         </div>
 
-        <div style="margin-bottom: 24px;">
-            <x-atoms.typography variant="card-title" as="h4" style="font-size: 13px; color: var(--text-secondary); margin-bottom: 12px;">Ringkasan Kewajiban Laporan</x-atoms.typography>
-            <div id="tm-ringkasan-kewajiban"></div>
-        </div>
-
-        <div style="margin-bottom: 32px; border-top: 1px dashed var(--glass-border); padding-top: 24px;">
-            <x-atoms.typography variant="card-title" as="h4" style="font-size: 13px; color: var(--text-secondary); margin-bottom: 4px;">Laporan Tautan Video (TikTok)</x-atoms.typography>
-            <div style="font-size: 12px; color: var(--text-tertiary); margin-bottom: 16px;">Daftar konten yang telah diunggah oleh affiliator.</div>
-            <div id="tm-laporan-tautan"></div>
+        <div style="margin-bottom: 32px;">
+            <x-atoms.typography variant="card-title" as="h4" style="font-size: 13px; color: var(--text-secondary); margin-bottom: 12px;">Data Penugasan Berdasarkan Paket</x-atoms.typography>
+            <div id="tm-detail-tugas"></div>
         </div>
 
         <x-atoms.button type="button" variant="primary" style="width: 100%; background-color: #000; border-color: #000; color: white;" onclick="toggleOffcanvas('detailTaskOffcanvas')">
@@ -101,6 +95,7 @@
             document.body.style.overflow = '';
         }
     }
+    
     function openOffcanvas(offcanvasId) {
         const offcanvas = document.getElementById(offcanvasId);
         const backdrop = document.getElementById(offcanvasId + '-backdrop');
@@ -119,6 +114,13 @@
         document.body.style.overflow = '';
     }
 
+    const courierNames = {
+        'jne': 'JNE', 'jnt': 'J&T Express', 'ninja': 'Ninja Xpress', 'tiki': 'TIKI',
+        'pos': 'POS Indonesia', 'anteraja': 'AnterAja', 'sicepat': 'SiCepat',
+        'sap': 'SAP Express', 'lion': 'Lion Parcel', 'wahana': 'Wahana',
+        'first': 'First Logistics', 'ide': 'ID Express'
+    };
+
     document.addEventListener('DOMContentLoaded', function() {
         $('#taskMonitorTable').on('click', '.btn-detail', function(e) {
             e.preventDefault();
@@ -127,90 +129,211 @@
             if(!rowDataStr) return;
             const d = JSON.parse(atob(rowDataStr));
 
-            $('#tm-username').text('@' + d.username);
+            $('#tm-username').text('@' + (d.username || 'Tidak diketahui'));
 
-            const tasks = d.task_reports || [];
-            let ringkasanHtml = '';
-            let laporanHtml = '';
+            let packages = [];
+            let manualTasks = [];
 
-            if (tasks.length === 0) {
-                const emptyState = `<div style="padding: 16px; border: 1px dashed #cbd5e1; border-radius: 8px; text-align: center; font-size: 12px; color: var(--text-tertiary);">Belum ada tugas yang dibuat untuk kreator ini.</div>`;
-                ringkasanHtml = emptyState;
-                laporanHtml = emptyState;
-            } else {
-                tasks.forEach(task => {
-                    const taskTitle = `TASK-${task.id}`;
-                    
-                    const products = task.products || [];
-                    const productNames = products.length > 0 
-                        ? products.map(p => p.name).join(', ') 
-                        : 'Produk Tidak Terdaftar';
-
-                    let statusBadge = '';
-                    if (task.task_status === 'COMPLETED') {
-                        statusBadge = `<span style="padding: 4px 8px; background: #dcfce7; color: #16a34a; border-radius: 4px; font-size: 10px; font-weight: 700;">SELESAI</span>`;
-                    } else if (task.task_status === 'OVERDUE') {
-                        statusBadge = `<span style="padding: 4px 8px; background: #fee2e2; color: #dc2626; border-radius: 4px; font-size: 10px; font-weight: 700;">TERLAMBAT</span>`;
-                    } else {
-                        statusBadge = `<span style="padding: 4px 8px; background: #f1f5f9; color: #64748b; border-radius: 4px; font-size: 10px; font-weight: 700;">PENDING</span>`;
-                    }
-
-                    const dueDateRaw = task.due_date ? new Date(task.due_date) : null;
-                    const dueDate = dueDateRaw ? dueDateRaw.toLocaleDateString('id-ID', {day: 'numeric', month: 'long', year: 'numeric'}) : '-';
-
-                    ringkasanHtml += `
-                        <div style="padding: 16px; background: rgba(255,255,255,0.7); border: 1px solid rgba(0,0,0,0.05); border-radius: 8px; margin-bottom: 8px;">
-                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-                                <div style="font-size: 12px; font-weight: 700; color: var(--primary-blue);">${taskTitle}</div>
-                                ${statusBadge}
-                            </div>
-                            <div style="font-size: 11px; color: var(--text-tertiary); margin-bottom: 4px;">Produk:</div>
-                            <div style="font-size: 13.5px; font-weight: 600; color: var(--text-primary); margin-bottom: 12px; line-height: 1.4;">${productNames}</div>
-                            
-                            <div style="display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--text-secondary);">
-                                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                Batas Waktu: <span style="font-weight: 500; ${task.task_status === 'OVERDUE' ? 'color: #dc2626;' : ''}">${dueDate}</span>
-                            </div>
-                        </div>
-                    `;
-
-                    if (task.task_status === 'COMPLETED' && task.tiktok_video_link) {
-                        const reportDateRaw = new Date(task.updated_at);
-                        const reportDate = reportDateRaw.toLocaleDateString('id-ID', {day: 'numeric', month: 'long', year: 'numeric'});
-
-                        laporanHtml += `
-                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px; border: 1px solid rgba(0,0,0,0.08); border-radius: 8px; margin-bottom: 12px; background: white; flex-wrap: wrap; gap: 12px;">
-                                <div style="display: flex; gap: 16px; align-items: center; max-width: 100%;">
-                                    <div style="width: 48px; height: 48px; min-width: 48px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--primary-blue);">
-                                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                    </div>
-                                    <div style="overflow: hidden;"> 
-                                        <div style="font-size: 13.5px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px;">${taskTitle}</div>
-                                        <div style="font-size: 12px; color: var(--primary-blue); text-overflow: ellipsis; overflow: hidden; white-space: nowrap; max-width: 250px;" title="${task.tiktok_video_link}">${task.tiktok_video_link.length > 45 ? task.tiktok_video_link.substring(0, 30) + '...' : task.tiktok_video_link}</div>
-                                        <div style="font-size: 11px; color: var(--text-tertiary); margin-top: 4px;">Dilaporkan pada: ${reportDate}</div>
-                                    </div>
-                                </div>
-                                <a href="${task.tiktok_video_link}" target="_blank" style="padding: 6px 16px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12px; font-weight: 600; color: var(--text-primary); text-decoration: none; display: flex; align-items: center; background: white; transition: 0.2s;">
-                                    Buka ↗
-                                </a>
-                            </div>
-                        `;
-                    } else {
-                        laporanHtml += `
-                            <div style="padding: 16px; border: 1px dashed #cbd5e1; border-radius: 8px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; background: rgba(248, 250, 252, 0.5);">
-                                <div>
-                                    <div style="font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 2px;">${taskTitle}</div>
-                                    <div style="font-size: 11px; color: var(--text-tertiary);">Belum ada tautan yang dilaporkan.</div>
-                                </div>
-                                ${statusBadge}
-                            </div>
-                        `;
+            if (d.sample_requests) {
+                d.sample_requests.forEach(req => {
+                    if (['SHIPPED', 'DELIVERED', 'COMPLETED', 'APPROVED'].includes(req.status)) {
+                        let pkg = {
+                            id: req.id,
+                            courier: req.courier || 'Kurir',
+                            tracking_number: req.tracking_number || 'Menunggu Resi',
+                            products: []
+                        };
+                        
+                        if (req.details) {
+                            req.details.forEach(detail => {
+                                if (detail.product) {
+                                    pkg.products.push({
+                                        id: detail.product.id,
+                                        name: detail.product.name,
+                                        mandatory_count: detail.mandatory_video_count || detail.product.mandatory_video_count || 1,
+                                        tasks: []
+                                    });
+                                }
+                            });
+                        }
+                        if(pkg.products.length > 0) packages.push(pkg);
                     }
                 });
             }
 
-            $('#tm-ringkasan-kewajiban').html(ringkasanHtml);
-            $('#tm-laporan-tautan').html(laporanHtml);
+            const tasks = d.task_reports || [];
+            tasks.forEach(task => {
+                let matched = false;
+                if (task.products && task.products.length > 0) {
+                    let pIds = task.products.map(p => p.id);
+                    packages.forEach(pkg => {
+                        pkg.products.forEach(prod => {
+                            if (pIds.includes(prod.id)) {
+                                prod.tasks.push(task);
+                                matched = true;
+                            }
+                        });
+                    });
+                }
+                
+                if (!matched) {
+                    manualTasks.push(task);
+                }
+            });
+
+            let resultHtml = '';
+
+            if (packages.length === 0 && manualTasks.length === 0) {
+                resultHtml = `<div style="padding: 16px; border: 1px dashed #cbd5e1; border-radius: 8px; text-align: center; font-size: 12px; color: var(--text-tertiary);">Belum ada data paket atau penugasan video untuk kreator ini.</div>`;
+            }
+
+            packages.forEach(pkg => {
+                let displayCourier = pkg.courier !== 'Kurir' ? (courierNames[pkg.courier.toLowerCase()] || pkg.courier.toUpperCase()) : pkg.courier;
+                
+                resultHtml += `
+                    <div style="background: white; border: 1px solid var(--glass-border); border-radius: 8px; margin-bottom: 16px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
+                        <div style="background: #f8fafc; padding: 12px 16px; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color: var(--primary-blue);"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                                <span style="font-size: 13px; font-weight: 700; color: var(--text-primary);">Paket ${displayCourier}</span>
+                            </div>
+                            <span style="font-size: 11px; font-weight: 600; color: var(--text-secondary); background: #e2e8f0; padding: 4px 8px; border-radius: 4px; letter-spacing: 0.5px;">RESI: ${pkg.tracking_number}</span>
+                        </div>
+                        <div style="padding: 16px;">
+                `;
+                
+                if (pkg.products.length === 0) {
+                    resultHtml += `<div style="font-size: 12px; color: var(--text-tertiary);">Tidak ada data produk.</div>`;
+                }
+
+                pkg.products.forEach((prod, pIdx) => {
+                    const isLastProduct = pIdx === pkg.products.length - 1;
+                    
+                    resultHtml += `
+                        <div style="margin-bottom: ${isLastProduct ? '0' : '20px'};">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px; border-bottom: 1px dashed #e2e8f0; padding-bottom: 8px;">
+                                <div>
+                                    <div style="font-size: 11px; color: var(--text-tertiary); margin-bottom: 4px;">Nama Produk:</div>
+                                    <div style="font-size: 13.5px; font-weight: 700; color: var(--text-primary); line-height: 1.3;">${prod.name}</div>
+                                </div>
+                                <div style="font-size: 11px; font-weight: 600; color: var(--primary-blue); background: rgba(59, 130, 246, 0.1); padding: 4px 8px; border-radius: 4px; white-space: nowrap;">
+                                    Wajib ${prod.mandatory_count} Video
+                                </div>
+                            </div>
+                    `;
+                    
+                    if (prod.tasks.length === 0) {
+                        resultHtml += `<div style="padding: 12px; border: 1px dashed #cbd5e1; border-radius: 6px; font-size: 11px; color: var(--text-tertiary); text-align: center; background: #f8fafc;">Tugas belum digenerate oleh sistem.</div>`;
+                    } else {
+                        prod.tasks.forEach((task) => {
+                            const taskTitle = `TASK-${task.id}`;
+                            let statusBadge = '';
+                            if (task.task_status === 'COMPLETED') {
+                                statusBadge = `<span style="padding: 3px 6px; background: #dcfce7; color: #16a34a; border-radius: 4px; font-size: 10px; font-weight: 700;">SELESAI</span>`;
+                            } else if (task.task_status === 'OVERDUE') {
+                                statusBadge = `<span style="padding: 3px 6px; background: #fee2e2; color: #dc2626; border-radius: 4px; font-size: 10px; font-weight: 700;">TERLAMBAT</span>`;
+                            } else {
+                                statusBadge = `<span style="padding: 3px 6px; background: #f1f5f9; color: #64748b; border-radius: 4px; font-size: 10px; font-weight: 700;">PENDING</span>`;
+                            }
+                            
+                            const dueDateRaw = task.due_date ? new Date(task.due_date) : null;
+                            const dueDate = dueDateRaw ? dueDateRaw.toLocaleDateString('id-ID', {day: 'numeric', month: 'short', year: 'numeric'}) : '-';
+
+                            if (task.task_status === 'COMPLETED' && task.tiktok_video_link) {
+                                const reportDateRaw = new Date(task.updated_at);
+                                const reportDate = reportDateRaw.toLocaleDateString('id-ID', {day: 'numeric', month: 'short', year: 'numeric'});
+
+                                resultHtml += `
+                                    <div style="display: flex; justify-content: space-between; align-items: flex-start; padding: 12px; border: 1px solid rgba(0,0,0,0.06); border-radius: 6px; margin-bottom: 8px; background: #fff; flex-wrap: wrap; gap: 12px; border-left: 3px solid #10b981;">
+                                        <div style="flex: 1; min-width: 200px;">
+                                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                                <div style="font-size: 12px; font-weight: 700; color: var(--text-primary);">${taskTitle}</div>
+                                                ${statusBadge}
+                                            </div>
+                                            <div style="font-size: 11px; color: var(--text-secondary); margin-bottom: 4px;">Dilaporkan: ${reportDate}</div>
+                                            <div style="font-size: 11px; color: var(--primary-blue); text-overflow: ellipsis; overflow: hidden; white-space: nowrap; max-width: 100%;" title="${task.tiktok_video_link}">${task.tiktok_video_link}</div>
+                                        </div>
+                                        <div>
+                                            <a href="${task.tiktok_video_link}" target="_blank" style="padding: 6px 12px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11px; font-weight: 600; color: var(--text-primary); text-decoration: none; display: inline-block; background: #f8fafc; transition: all 0.2s;">
+                                                Buka Link
+                                            </a>
+                                        </div>
+                                    </div>
+                                `;
+                            } else {
+                                resultHtml += `
+                                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; border: 1px solid rgba(0,0,0,0.06); border-radius: 6px; margin-bottom: 8px; background: #fff; border-left: 3px solid ${task.task_status === 'OVERDUE' ? '#ef4444' : '#e2e8f0'};">
+                                        <div>
+                                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                                                <div style="font-size: 12px; font-weight: 700; color: var(--text-primary);">${taskTitle}</div>
+                                                ${statusBadge}
+                                            </div>
+                                            <div style="font-size: 11px; color: var(--text-secondary);">Tenggat: <span style="${task.task_status === 'OVERDUE' ? 'color: #dc2626; font-weight: 600;' : 'font-weight: 500;'}">${dueDate}</span></div>
+                                        </div>
+                                    </div>
+                                `;
+                            }
+                        });
+                    }
+                    resultHtml += `</div>`;
+                });
+                resultHtml += `
+                        </div>
+                    </div>
+                `;
+            });
+
+            if (manualTasks.length > 0) {
+                resultHtml += `
+                    <div style="background: white; border: 1px solid var(--glass-border); border-radius: 8px; margin-bottom: 16px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
+                        <div style="background: #fffbeb; padding: 12px 16px; border-bottom: 1px solid #fef3c7; display: flex; justify-content: space-between; align-items: center;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color: #b45309;"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                <span style="font-size: 13px; font-weight: 700; color: #92400e;">Penugasan Tanpa Paket (Lainnya)</span>
+                            </div>
+                        </div>
+                        <div style="padding: 16px;">
+                `;
+                
+                manualTasks.forEach((task) => {
+                    const taskTitle = `TASK-${task.id}`;
+                    const products = task.products || [];
+                    const productNames = products.length > 0 ? products.map(p => p.name).join(', ') : 'Produk Tidak Terdaftar';
+                    
+                    let statusBadge = '';
+                    if (task.task_status === 'COMPLETED') {
+                        statusBadge = `<span style="padding: 3px 6px; background: #dcfce7; color: #16a34a; border-radius: 4px; font-size: 10px; font-weight: 700;">SELESAI</span>`;
+                    } else if (task.task_status === 'OVERDUE') {
+                        statusBadge = `<span style="padding: 3px 6px; background: #fee2e2; color: #dc2626; border-radius: 4px; font-size: 10px; font-weight: 700;">TERLAMBAT</span>`;
+                    } else {
+                        statusBadge = `<span style="padding: 3px 6px; background: #f1f5f9; color: #64748b; border-radius: 4px; font-size: 10px; font-weight: 700;">PENDING</span>`;
+                    }
+
+                    const dueDateRaw = task.due_date ? new Date(task.due_date) : null;
+                    const dueDate = dueDateRaw ? dueDateRaw.toLocaleDateString('id-ID', {day: 'numeric', month: 'short', year: 'numeric'}) : '-';
+
+                    resultHtml += `
+                        <div style="margin-bottom: 8px; padding: 12px; border: 1px solid rgba(0,0,0,0.06); border-radius: 6px; background: #fff; border-left: 3px solid ${task.task_status === 'COMPLETED' ? '#10b981' : (task.task_status === 'OVERDUE' ? '#ef4444' : '#e2e8f0')};">
+                            <div style="font-size: 13px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; line-height: 1.3;">${productNames}</div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <div style="font-size: 11px; font-weight: 700; color: var(--text-secondary);">${taskTitle}</div>
+                                    ${statusBadge}
+                                </div>
+                            </div>
+                            <div style="font-size: 11px; color: var(--text-secondary); margin-bottom: 4px;">Tenggat: <span style="font-weight: 500;">${dueDate}</span></div>
+                            ${task.tiktok_video_link ? `<div style="font-size: 11px; color: var(--primary-blue); text-overflow: ellipsis; overflow: hidden; white-space: nowrap; max-width: 100%; margin-top: 6px;"><a href="${task.tiktok_video_link}" target="_blank" style="color: inherit; text-decoration: none;">${task.tiktok_video_link}</a></div>` : ''}
+                        </div>
+                    `;
+                });
+                
+                resultHtml += `
+                        </div>
+                    </div>
+                `;
+            }
+
+            $('#tm-detail-tugas').html(resultHtml);
 
             openOffcanvas('detailTaskOffcanvas');
         });
