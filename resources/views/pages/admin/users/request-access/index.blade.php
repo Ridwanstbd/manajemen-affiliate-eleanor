@@ -37,35 +37,81 @@
         </div>
 </x-molecules.card>
 
-<x-organisms.modal id="detailRequestModal" title="Detail Permintaan Akses">
-    <form id="formApproveRequest" method="POST">
+<x-organisms.modal id="detailRequestModal" title="Validasi Pengajuan Akses">
+    
+    <div style="margin-bottom: 24px;">
+        <x-atoms.badge status="pending">
+            Menunggu
+        </x-atoms.badge>
+    </div>
+
+    <h4 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 16px;">
+        Data Identitas Pendaftar
+    </h4>
+
+    <div style="display: grid; grid-template-columns: 1fr; gap: 16px; margin-bottom: 16px;">
+        <div>
+            <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 4px;">Username TikTok</div>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <span id="detail-username" style="font-size: 15px; font-weight: 700; color: var(--text-primary);"></span>
+                <a id="detail-tiktok-link" href="#" target="_blank" style="font-size: 11px; color: var(--primary-blue, #3b82f6); text-decoration: none; padding: 4px 8px; background: rgba(59, 130, 246, 0.1); border-radius: 4px; display: inline-flex; align-items: center; gap: 4px; font-weight: 600;">
+                    Buka Profil TikTok 
+                    <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;">
+        <div>
+            <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 4px;">Alamat Email</div>
+            <div id="detail-email" style="font-size: 14px; font-weight: 500; color: var(--text-primary);"></div>
+        </div>
+        <div>
+            <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 4px;">No. Telepon</div>
+            <div id="detail-phone" style="font-size: 14px; font-weight: 500; color: var(--text-primary); margin-bottom: 8px;"></div>
+            <a id="detail-wa-link" href="#" target="_blank" style="font-size: 11px; color: var(--primary-blue, #3b82f6); text-decoration: none; padding: 4px 8px; background: rgba(59, 130, 246, 0.1); border-radius: 4px; display: inline-flex; align-items: center; gap: 4px; font-weight: 600;">
+                Hubungi Whatsapp
+                <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+            </a>
+        </div>
+    </div>
+
+    <form action="{{ route('admin-dashboard.users.approve-access') }}" method="POST" id="formApproveRequest">
         @csrf
-        @method('PUT')
-        <input type="hidden" id="request_id" name="id">
-        <div class="form-group mb-3">
-            <x-atoms.label value="Nama Pengguna" for="request_username" />
-            <x-atoms.input type="text" id="request_username" name="username" disabled />
-        </div>
-        <div class="form-group mb-3">
-            <x-atoms.label value="Email" for="request_email" />
-            <x-atoms.input type="email" id="request_email" name="email" disabled />
-        </div>
-        <div class="form-group" style="display: flex; justify-content: space-between; align-items: center; padding-top: 12px; margin-bottom: 16px;">
+        <input type="hidden" name="id" id="approve-id">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px; background: rgba(0,0,0,0.02); border: 1px solid rgba(0,0,0,0.06); border-radius: 6px; margin-bottom: 16px;">
             <div>
                 <x-atoms.typography variant="body" style="font-weight: 600; color: var(--text-primary); margin: 0; font-size: 14px;">Terima sebagai Kontak KOL</x-atoms.typography>
                 <div style="color: var(--text-secondary); font-size: 12px; margin-top: 2px;">Akun otomatis memiliki status is_kol = true saat disetujui.</div>
             </div>
             <x-molecules.toggle id="requestIsKol" name="is_kol" />
         </div>
-        <x-slot name="footer">
-            <x-atoms.button variant="secondary" type="button" onclick="closeModal('detailRequestModal')">
-                Batal
-            </x-atoms.button>
-            <x-atoms.button variant="primary" type="submit" form="formApproveRequest">
-                Setujui Akses
-            </x-atoms.button>
-        </x-slot>
     </form>
+
+    <div style="background: rgba(0,0,0,0.02); border: 1px solid rgba(0,0,0,0.06); padding: 16px; border-radius: 6px; font-size: 13px; color: var(--text-secondary);">
+        Jika disetujui, akun baru akan dibuatkan secara otomatis.
+    </div>
+
+    <x-slot:footer>
+        <div style="display: flex; gap: 16px; width: 100%;">
+            
+            <form action="{{ route('admin-dashboard.users.reject-access') }}" method="POST" style="flex: 1;" onsubmit="return confirm('Apakah Anda yakin ingin menolak pengajuan ini?')">
+                @csrf
+                <input type="hidden" name="id" id="reject-id">
+                <button type="submit" style="width: 100%; padding: 10px; background: transparent; border: 1px solid var(--glass-border, #cbd5e1); border-radius: 6px; color: var(--text-primary); font-weight: 600; cursor: pointer;">
+                    Tolak Pengajuan
+                </button>
+            </form>
+
+            <div style="flex: 1;">
+                <button type="submit" form="formApproveRequest" style="width: 100%; padding: 10px; background: #64748b; border: 1px solid #64748b; border-radius: 6px; color: white; font-weight: 600; cursor: pointer;">
+                    Setujui & Buat Akun
+                </button>
+            </div>
+
+        </div>
+    </x-slot:footer>
 </x-organisms.modal>
 
 @push('scripts')
@@ -106,6 +152,7 @@
             
             document.getElementById('detail-email').innerText = email;
             document.getElementById('detail-phone').innerText = phone;
+            
             const waLink = document.getElementById('detail-wa-link');
             if (phone !== '-' && phone !== '') {
                 const waNumber = phone.replace(/^0/, '62');
@@ -117,10 +164,12 @@
 
             document.getElementById('reject-id').value = id;
             document.getElementById('approve-id').value = id;
+            
             const toggleKol = document.getElementById('requestIsKol');
             if(toggleKol) {
                 toggleKol.checked = false;
             }
+
             openModal('detailRequestModal');
         });
     });
