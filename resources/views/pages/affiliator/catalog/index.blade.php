@@ -3,7 +3,7 @@
 
 @section('content')
 <x-organisms.mobile-page-wrapper title="Katalog Produk" subtitle="Pilih produk sampel gratis yang ingin Anda ajukan untuk direview.">
-    <div style="margin-bottom: 24px; display: flex; gap: 16px; max-width: 480px;">
+    <div style="margin-bottom: 24px; display: flex; gap: 16px;">
         <form action="{{ route('affiliator.catalog.index') }}" method="GET" style="display: flex; gap: 12px; width: 100%;">
             <x-atoms.input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama produk..." style="flex: 1;" />
             <x-atoms.button type="submit" variant="primary">Cari</x-atoms.button>

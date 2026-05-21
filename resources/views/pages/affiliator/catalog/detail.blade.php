@@ -6,7 +6,7 @@
 @section('content')
 <x-organisms.mobile-page-wrapper>
     <div style="display: flex; flex-direction: column; gap: 32px;">
-        <div style="flex: 1; max-width: 400px; width: 100%; height: 400px; border-radius: 12px; overflow: hidden; background: #f1f5f9; border: 1px solid var(--glass-border);">
+        <div class="card-img-container">
             <img src="{{ $product->image_path ? (Str::startsWith($product->image_path, ['http://', 'https://']) ? $product->image_path : asset('storage/' . $product->image_path)) : '' }}" alt="{{ $product->name }}" style="width: 100%; height: 100%; object-fit: cover;">
         </div>
         
@@ -40,7 +40,7 @@
             <div style="margin-top: auto; padding-top: 24px; border-top: 1px solid var(--glass-border);">
                 <form action="{{ route('affiliator.cart.store', $product->id) }}" method="POST">
                     @csrf
-                    <x-atoms.button type="submit" variant="primary" style="padding: 12px 32px; font-size: 14px; font-weight: 600;">
+                    <x-atoms.button type="submit" variant="primary" style="width: 100%; padding: 12px 32px; font-size: 14px; font-weight: 600;">
                         Tambahkan ke Pengajuan Sampel
                     </x-atoms.button>
                 </form>
