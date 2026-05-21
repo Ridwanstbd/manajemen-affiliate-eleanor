@@ -20,7 +20,7 @@ class MainController extends Controller
     {
         $dashboardData = $this->dashboardService->getDashboardStats();
 
-        $isKol = Agreement::where('user_id', Auth::id())->value('is_kol');
+        $isKol = Auth::user()->is_kol;
 
         if ($isKol) {
             $dashboardData['activeChallenges'] = collect();
