@@ -228,6 +228,23 @@
 @push('scripts')
 <script>
     let currentRequestData = null;
+
+    function openModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    function closeModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    }
+
     function openOffcanvas(offcanvasId) {
         const offcanvas = document.getElementById(offcanvasId);
         const backdrop = document.getElementById(offcanvasId + '-backdrop');

@@ -42,8 +42,9 @@ class RequestSampleController extends Controller
                         $statusIndo = [
                             'PENDING'  => 'Menunggu',
                             'APPROVED' => 'Disetujui',
-                            'SHIPPED'  => 'Terkirim',
+                            'SHIPPED'  => 'Dalam Perjalanan',
                             'REJECTED' => 'Ditolak',
+                            'DELIVERED' => 'Terkirim',
                         ];
 
                         $displayStatus = $statusIndo[$row->status] ?? $row->status;
