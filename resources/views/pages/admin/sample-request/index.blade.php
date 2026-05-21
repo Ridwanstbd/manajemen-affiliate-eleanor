@@ -25,8 +25,6 @@
     </div>
 </x-molecules.card>
 
-{{-- Sisa konten HTML modal dan offcanvas Anda SAMA PERSIS seperti sebelumnya --}}
-{{-- ... --}}
 <x-organisms.offcanvas id="detailRequestsampleOffcanvas" title="Detail Pengajuan Sampel Gratis">
     <form id="approveForm" action="{{ route('admin-dashboard.request-samples.approve') }}" method="POST">
         @csrf
@@ -131,6 +129,12 @@
                 <x-atoms.label value="Biaya Ongkos Kirim (Rp)" style="font-size: 12px; margin-bottom: 4px; display: block;" />
                 <x-atoms.input type="number" name="shipping_cost" id="off-shipping-cost" placeholder="0" />
             </div>
+            
+            <div style="border-top: 1px solid var(--glass-border, #cbd5e1); padding-top: 24px; margin-top: 24px;">
+                <x-atoms.button type="submit" variant="primary" style="width: 100%;">
+                    Simpan & Kirim
+                </x-atoms.button>
+            </div>
         </div>
     </form>
 </x-organisms.offcanvas>
@@ -146,7 +150,7 @@
         </div>
         <x-slot name="footer">
             <x-atoms.button variant="secondary" type="button" onclick="closeModal('approveProdukModal')">Batal</x-atoms.button>
-            <x-atoms.button variant="primary" type="submit">Setujui Produk</x-atoms.button>
+            <x-atoms.button variant="primary" type="submit" form="formApproveProduct">Setujui Produk</x-atoms.button>
         </x-slot>
     </form>
 </x-organisms.modal>
@@ -168,13 +172,13 @@
         </div>
         <x-slot name="footer">
             <x-atoms.button variant="secondary" type="button" onclick="closeModal('rejectProdukModal')">Batal</x-atoms.button>
-            <x-atoms.button variant="primary" type="submit" style="background-color: var(--rose); border-color: var(--rose);">Tolak Produk</x-atoms.button>
+            <x-atoms.button variant="primary" type="submit" form="formRejectProduct" style="background-color: var(--rose); border-color: var(--rose);">Tolak Produk</x-atoms.button>
         </x-slot>
     </form>
 </x-organisms.modal>
 
 <x-organisms.offcanvas id="rejectRequestsampleOffcanvas" title="Tolak Pengajuan">
-    <form action="{{ route('admin-dashboard.request-samples.reject') }}" method="POST">
+    <form action="{{ route('admin-dashboard.request-samples.reject') }}" method="POST" id="formRejectRequest">
         @csrf
         <input type="hidden" name="sample_request_id" id="rej-request-id">
 
@@ -218,7 +222,7 @@
                 </x-atoms.button>
             </div>
             <div style="flex: 1;">
-                <x-atoms.button type="submit" variant="primary" style="width: 100%; background-color: #57534e; border-color: #57534e; color: white;">
+                <x-atoms.button type="submit" form="formRejectRequest" variant="primary" style="width: 100%; background-color: #57534e; border-color: #57534e; color: white;">
                     Konfirmasi Tolak Pengajuan
                 </x-atoms.button>
             </div>
@@ -245,11 +249,10 @@
             modal.classList.remove('active');
             document.body.style.overflow = '';
             
-            // Re-open offcanvas jika modal approve/reject dibatalkan
             if ((modalId === 'approveProdukModal' || modalId === 'rejectProdukModal') && currentRequestData) {
                 setTimeout(() => {
                     openOffcanvas('detailRequestsampleOffcanvas');
-                }, 350); // Jeda agar animasi modal tertutup selesai
+                }, 350); 
             }
         }
     }
@@ -275,7 +278,7 @@
 
     function openApproveProductModal(detailId) {
         document.getElementById('approve-detail-id').value = detailId;
-        toggleOffcanvas('detailRequestsampleOffcanvas');
+        toggleOffcanvas('detailRequestsampleOffcanvas'); 
         setTimeout(() => {
             openModal('approveProdukModal'); 
         }, 350);
@@ -311,6 +314,7 @@
     function formatRupiah(number) {
         return new Intl.NumberFormat('id-ID').format(number);
     }
+    
     const courierNames = {
         'jne': 'JNE', 'jnt': 'J&T Express', 'ninja': 'Ninja Xpress', 'tiki': 'TIKI',
         'pos': 'POS Indonesia', 'anteraja': 'AnterAja', 'sicepat': 'SiCepat',
