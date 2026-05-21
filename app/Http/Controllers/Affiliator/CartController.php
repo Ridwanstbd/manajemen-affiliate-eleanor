@@ -21,6 +21,11 @@ class CartController extends Controller
         
         $agreement = Agreement::where('is_active', true)
             ->where('is_kol', auth()->user()->is_kol)
+            ->where(function($query) {
+                $query->where('user_id', auth()->id())
+                      ->orWhereNull('user_id');
+            })
+            ->orderByRaw('user_id DESC')
             ->first();
         
         return view('pages.affiliator.cart.index', compact('cartItems', 'agreement'));

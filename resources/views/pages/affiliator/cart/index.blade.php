@@ -1,9 +1,10 @@
 @extends('layouts.app')
-@section('title', 'Keranjang Pengajuan')
+@section('title', 'Keranjang')
+@section('is_subpage', true)
+@section('back_url', route('affiliator.catalog.index'))
 
 @section('content')
-<div style="display: flex; flex-direction: column; gap: 24px;">
-    <x-molecules.card title="Keranjang Pengajuan Sampel" description="Periksa kembali produk yang ingin Anda ajukan sebelum memproses checkout.">
+<x-molecules.card title="Keranjang Pengajuan Sampel" description="Periksa kembali produk yang ingin Anda ajukan sebelum memproses checkout.">
         @if(empty($cartItems))
             <div style="text-align: center; padding: 48px 0; color: var(--text-tertiary);">
                 <x-atoms.icon name="cart" style="width: 48px; height: 48px; margin-bottom: 16px; opacity: 0.5;" />
@@ -75,5 +76,4 @@
             </div>
         @endif
     </x-molecules.card>
-</div>
 @endsection

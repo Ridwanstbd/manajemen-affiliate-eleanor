@@ -52,4 +52,5 @@ class User extends Authenticatable
     public function activeContract() { return $this->hasOne(KOLContract::class)->where('status', 'ACTIVE')->latest(); }
 
     public function taskReports() { return $this->hasMany(TaskReport::class); }
+    public function agreements(){return $this->hasMany(Agreement::class, 'user_id', 'id');}
 }
