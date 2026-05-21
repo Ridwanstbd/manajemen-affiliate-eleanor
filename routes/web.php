@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\TaskMonitoringController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Affiliator\CartController;
 use App\Http\Controllers\Affiliator\CatalogController;
+use App\Http\Controllers\Affiliator\ContractController;
 use App\Http\Controllers\Affiliator\ProfileController;
 use App\Http\Controllers\Affiliator\ChallengeController as AffiliatorChallengeController;
 use App\Http\Controllers\Affiliator\AgreementController as AffiliatorAgreementController;
@@ -188,6 +189,10 @@ Route::middleware(['auth'])->group(function () {
         Route::prefix('agreement')->name('agreement')->group(function() {
             Route::get('/', [AffiliatorAgreementController::class, 'index'])->name('affiliator.agreement.index');
         });
+
+        Route::prefix('contract-kol')->name('contract-kol.')->group(function () {
+        Route::get('/', [ContractController::class, 'index'])->name('index');
+    });
     });
 
 });
