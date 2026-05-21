@@ -4,7 +4,7 @@
 @section('back_url', route('affiliator.catalog.index'))
 
 @section('content')
-<x-molecules.card title="Keranjang Pengajuan Sampel" description="Periksa kembali produk yang ingin Anda ajukan sebelum memproses checkout.">
+<x-organisms.mobile-page-wrapper title="Keranjang Pengajuan Sampel" subtitle="Periksa kembali produk yang ingin Anda ajukan sebelum memproses checkout.">
         @if(empty($cartItems))
             <div style="text-align: center; padding: 48px 0; color: var(--text-tertiary);">
                 <x-atoms.icon name="cart" style="width: 48px; height: 48px; margin-bottom: 16px; opacity: 0.5;" />
@@ -69,11 +69,11 @@
                         </label>
                     </div>
 
-                    <x-atoms.button type="submit" id="btnSubmitCheckout" disabled variant="primary" style="padding: 12px 32px; font-size: 14px; font-weight: 600;">
+                    <x-atoms.button type="submit" id="btnSubmitCheckout" disabled variant="primary" style="width:100%; padding: 12px 32px; font-size: 14px; font-weight: 600;">
                         Kirim Pengajuan Sampel Gratis
                     </x-atoms.button>
                 </form>
             </div>
         @endif
-    </x-molecules.card>
+    </x-organisms.mobile-page-wrapper>
 @endsection

@@ -31,7 +31,7 @@
             </a>
             <form action="{{ route('affiliator.cart.store', $product->id) }}" method="POST" style="flex: 1;">
                 @csrf
-                <x-atoms.button type="submit" variant="primary" style="width: 100%; padding: 8px;">Ambil</x-atoms.button>
+                <x-atoms.button type="submit" variant="primary" style="width: 100%; padding: 8px;">Minta Sampel</x-atoms.button>
             </form>
         </div>
     </div>
