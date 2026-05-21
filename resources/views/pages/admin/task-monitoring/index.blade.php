@@ -10,7 +10,7 @@
         </x-atoms.button>
     </x-slot>
     <div class="tab-content">
-        <x-organisms.datatables id="taskMonitorTable" url="{{ route('admin-dashboard.monitoring.data') }}"
+        <x-organisms.datatables id="taskMonitorTable" url="{{ route('admin-dashboard.task-monitoring.data') }}"
         :columns="[
             ['data' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'width' => '50px'],
             ['data' => 'username', 'name' => 'username', 'title' => 'AFFILIATOR'],
