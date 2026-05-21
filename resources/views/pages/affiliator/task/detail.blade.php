@@ -21,7 +21,7 @@
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px;">
             <div>
                 <x-atoms.typography variant="body" style="font-weight: 800; color: var(--text-primary); font-size: 15px;">
-                    TASK-#{{ $task->id }}
+                    TUGAS-{{ $task->id }}
                 </x-atoms.typography>
             </div>
             <div>
@@ -94,7 +94,7 @@
                     Terima kasih telah menyelesaikan dan mengunggah video sampel produk ini.
                 </x-atoms.typography>
                 
-                <div style="background: white; padding: 12px; border-radius: 6px; border: 1px dashed #cbd5e1; word-break: break-all; font-size: 13px;">
+                <div style="background: #f8fafc; border: 1px dashed #cbd5e1; padding: 12px; border-radius: 8px; margin-bottom: 13px;">
                     <a href="{{ $task->tiktok_video_link }}" target="_blank" style="color: var(--primary-blue); font-weight: 600; text-decoration: none;">
                         {{ $task->tiktok_video_link }}
                     </a>
@@ -108,7 +108,7 @@
             </div>
 
             <x-atoms.button href="{{ route('affiliator.task.report', $task->id) }}" variant="primary" style="width: 100%; display: flex; align-items: center; justify-content: center;" >
-                    Lapor Sisa Tugas Sekarang
+                    Lapor Tugas 
             </x-atoms.button>
         @endif
     </x-molecules.card>

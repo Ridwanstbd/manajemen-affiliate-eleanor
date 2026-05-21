@@ -9,7 +9,24 @@ class AgreementService
 {
     public function getActiveAgreements()
     {
-        return Agreement::where('is_active', true)->get();
+        $user = Auth::user();
+
+        return Agreement::where('is_active', true)
+            ->where(function ($query) use ($user) {
+                $query->where('user_id', $user->id)
+                     ->orWhere(function ($q) {
+                          $q->whereNull('user_id')->where('is_kol', false);
+                      });
+
+                if ($user->is_kol) {
+                    $query->orWhere(function ($q) {
+                        $q->whereNull('user_id')->where('is_kol', true);
+                    });
+                }
+            })
+            ->orderBy('is_kol', 'asc') 
+            ->latest()
+            ->get();
     }
 
     public function getAgreementStatus()
@@ -18,7 +35,7 @@ class AgreementService
         
         $blacklist = $user->blacklists()->latest('blacklist_date')->first();
 
-        if ($blacklist || $user->account_status === 'BLACKLISTED') {
+        if ($blacklist || $user->account_status === 'BANNED') {
             return [
                 'is_agreed'      => false,
                 'status_text'    => 'Tidak Disetujui',

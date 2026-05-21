@@ -14,7 +14,7 @@
         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px;">
             <div>
                 <x-atoms.typography variant="body" style="font-weight: 700; color: var(--text-primary);">
-                    TASK-#{{ $task->id }}
+                    TUGAS-{{ $task->id }}
                 </x-atoms.typography>
                 <div style="display: flex; align-items: center; gap: 4px; margin-top: 2px;">
                     <x-atoms.icon name="clock" style="width: 13px; height: 13px; color: {{ $isOverdue ? 'var(--rose)' : 'var(--text-secondary)' }};" />
@@ -48,7 +48,7 @@
 
         <div style="display: flex; justify-content: flex-end; margin-top: 14px; padding-top: 10px; border-top: 1px solid #f1f5f9;">
             <x-atoms.button href="{{ route('affiliator.task.show', $task->id) }}" variant="primary" size="sm" style="border-radius: 6px; font-weight: 700;">
-                Laporkan Tugas
+                Detail
             </x-atoms.button>
         </div>
 
