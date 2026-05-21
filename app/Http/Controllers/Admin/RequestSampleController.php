@@ -30,43 +30,66 @@ class RequestSampleController extends Controller
         if ($request->ajax()) {
             $query = SampleRequest::with(['user', 'details.product'])
                 ->withSum('details','quantity');
-                    return DataTables::of($query)
-                    ->addIndexColumn()
-                    ->addColumn('username', function ($row) {
-                        if ($row->user && $row->user->username) {
-                            return '@' . $row->user->username; 
-                        }
-                        return 'Tidak Diketahui'; 
-                    })
-                    ->addColumn('status', function($row) {
-                        $statusIndo = [
-                            'PENDING'  => 'Menunggu',
-                            'APPROVED' => 'Disetujui',
-                            'SHIPPED'  => 'Dalam Perjalanan',
-                            'REJECTED' => 'Ditolak',
-                            'DELIVERED' => 'Terkirim',
-                        ];
+                
+            return DataTables::of($query)
+                ->addIndexColumn()
+                ->addColumn('username', function ($row) {
+                    if ($row->user && $row->user->username) {
+                        return '@' . $row->user->username; 
+                    }
+                    return 'Tidak Diketahui'; 
+                })
+                ->addColumn('status', function($row) {
+                    $statusIndo = [
+                        'PENDING'  => 'Menunggu',
+                        'APPROVED' => 'Disetujui',
+                        'SHIPPED'  => 'Dalam Perjalanan',
+                        'REJECTED' => 'Ditolak',
+                        'DELIVERED' => 'Terkirim',
+                    ];
 
-                        $displayStatus = $statusIndo[$row->status] ?? $row->status;
-                        return view('components.atoms.badge', [
-                            'slot' => $displayStatus,
-                            'status' => strtolower($row->status) 
-                        ])->render();
-                    })
-                    ->editColumn('details_sum_quantity', function ($row) {
-                        return $row->details_sum_quantity . ' Produk' ?? 0; 
-                    })
-                    ->editColumn('created_at', function($row) {
-                        return Carbon::parse($row->created_at)->format('d M Y');
-                    })
-                    ->addColumn('action', function($row) {
-                        return view('pages.admin.sample-request.action-buttons', compact('row'))->render();
-                    })
-                    ->rawColumns(['action','status'])
-                    ->make(true);
+                    $displayStatus = $statusIndo[$row->status] ?? $row->status;
+                    return view('components.atoms.badge', [
+                        'slot' => $displayStatus,
+                        'status' => strtolower($row->status) 
+                    ])->render();
+                })
+                ->editColumn('details_sum_quantity', function ($row) {
+                    return $row->details_sum_quantity . ' Produk' ?? 0; 
+                })
+                ->editColumn('created_at', function($row) {
+                    return Carbon::parse($row->created_at)->format('d M Y');
+                })
+                ->addColumn('action', function($row) {
+                    return view('pages.admin.sample-request.action-buttons', compact('row'))->render();
+                })
+                ->filterColumn('status', function($query, $keyword) {
+                    $keyword = strtolower($keyword);
+                    $statusMap = [
+                        'menunggu' => 'PENDING',
+                        'disetujui' => 'APPROVED',
+                        'dalam perjalanan' => 'SHIPPED',
+                        'ditolak' => 'REJECTED',
+                        'terkirim' => 'DELIVERED',
+                    ];
+                    
+                    $matchedStatus = [];
+                    foreach ($statusMap as $id => $en) {
+                        if (str_contains($id, $keyword)) {
+                            $matchedStatus[] = $en;
+                        }
+                    }
+                    
+                    if (count($matchedStatus) > 0) {
+                        $query->whereIn('status', $matchedStatus);
+                    } else {
+                        $query->where('status', 'like', "%{$keyword}%");
+                    }
+                })
+                ->rawColumns(['action','status'])
+                ->make(true);
         }
     }
-
 
     public function approve(Request $request)
     {

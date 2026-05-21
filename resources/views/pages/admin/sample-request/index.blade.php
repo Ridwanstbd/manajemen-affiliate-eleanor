@@ -17,14 +17,16 @@
         :columns="[
             ['data' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'width' => '50px'],
             ['data' => 'username', 'name' => 'user.username', 'title' => 'Affiliator'],
-            ['data' => 'details_sum_quantity', 'name' => 'details_sum_quantity', 'title' => 'Total Item'],
-            ['data' =>'created_at', 'name' => 'created_at', 'title' => 'Tanggal'],
+            ['data' => 'details_sum_quantity', 'name' => 'details_sum_quantity', 'title' => 'Total Item', 'searchable' => false],
+            ['data' =>'created_at', 'name' => 'created_at', 'title' => 'Tanggal', 'searchable' => false],
             ['data' => 'status', 'name' => 'status', 'title' => 'Status'],
             ['data' => 'action', 'name' => 'action', 'title' => 'Aksi', 'orderable' => false, 'searchable' => false],
         ]" />
     </div>
 </x-molecules.card>
 
+{{-- Sisa konten HTML modal dan offcanvas Anda SAMA PERSIS seperti sebelumnya --}}
+{{-- ... --}}
 <x-organisms.offcanvas id="detailRequestsampleOffcanvas" title="Detail Pengajuan Sampel Gratis">
     <form id="approveForm" action="{{ route('admin-dashboard.request-samples.approve') }}" method="POST">
         @csrf
@@ -242,6 +244,13 @@
         if (modal) {
             modal.classList.remove('active');
             document.body.style.overflow = '';
+            
+            // Re-open offcanvas jika modal approve/reject dibatalkan
+            if ((modalId === 'approveProdukModal' || modalId === 'rejectProdukModal') && currentRequestData) {
+                setTimeout(() => {
+                    openOffcanvas('detailRequestsampleOffcanvas');
+                }, 350); // Jeda agar animasi modal tertutup selesai
+            }
         }
     }
 
@@ -264,16 +273,21 @@
         document.body.style.overflow = 'auto';
     }
 
-    // Modal helpers
     function openApproveProductModal(detailId) {
         document.getElementById('approve-detail-id').value = detailId;
-        openModal('approveProdukModal');
+        toggleOffcanvas('detailRequestsampleOffcanvas');
+        setTimeout(() => {
+            openModal('approveProdukModal'); 
+        }, 350);
     }
 
     function openRejectProductModal(detailId) {
         document.getElementById('reject-detail-id').value = detailId;
         document.getElementById('inp-reject-product-reason').value = '';
-        openModal('rejectProdukModal');
+        toggleOffcanvas('detailRequestsampleOffcanvas'); 
+        setTimeout(() => {
+            openModal('rejectProdukModal'); 
+        }, 350);
     }
 
     function copyResi() {
@@ -363,7 +377,6 @@
                     
                     let actionHtml = '';
                     
-                    // Render status atau tombol aksi berdasarkan status item detail
                     if (detailStatus === 'PENDING') {
                         if (d.status === 'PENDING') {
                             actionHtml = `
@@ -495,6 +508,7 @@
             openOffcanvas('detailRequestsampleOffcanvas');
         });
     });
+    
     document.addEventListener('DOMContentLoaded', function() {
         const urlParams = new URLSearchParams(window.location.search);
         const openSampleId = urlParams.get('open_sample');
