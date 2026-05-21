@@ -26,7 +26,7 @@
 </x-molecules.card>
 
 <x-organisms.offcanvas id="detailRequestsampleOffcanvas" title="Detail Pengajuan Sampel Gratis">
-    <form id="approveForm" action="{{ route('admin-dashboard.request-samples.approve') }}" method="POST">
+    <form id="mainOffcanvasForm" method="POST">
         @csrf
         <input type="hidden" name="sample_request_id" id="off-request-id">
 
@@ -44,62 +44,9 @@
             <div id="off-product-list" style="display: flex; flex-direction: column; gap: 8px;"></div>
         </div>
 
-        <div id="section-approved-info" style="display: none;">
-            <div style="margin-bottom: 24px;">
-                <x-atoms.typography variant="card-title" as="h4" style="margin-bottom: 12px; font-size: 14px; color: var(--text-secondary);">Informasi Pengiriman</x-atoms.typography>
-                <div class="shipping-info-box">
-                    <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 4px;">Kurir: <span id="lbl-courier"></span></div>
-                    <div style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px;">No. Resi: <span id="lbl-tracking-no"></span></div>
-                    <div style="font-size: 12px; color: var(--text-secondary);">Biaya Ongkir: Rp <span id="lbl-cost"></span></div>
-                    
-                    <button type="button" onclick="copyResi()" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); background: white; border: 1px solid #cbd5e1; padding: 6px 16px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer; color: var(--text-primary); transition: all 0.2s;">
-                        Salin Resi
-                    </button>
-                </div>
-            </div>
-
-            <div style="padding-bottom: 24px;">
-                <x-atoms.typography variant="card-title" as="h4" style="margin-bottom: 12px; font-size: 14px; color: var(--text-secondary);">Status Pelacakan</x-atoms.typography>
-                <div id="tracking-content">
-                    <div style="font-size: 13px; color: var(--text-secondary);">Memuat data pelacakan...</div>
-                </div>
-            </div>
-        </div>
-
-        <div id="section-rejected-info" style="display: none; padding-bottom: 24px;">
-            <x-atoms.typography variant="card-title" as="h4" style="margin-bottom: 12px; font-size: 14px; color: var(--rose);">Alasan Penolakan Keseluruhan</x-atoms.typography>
-            <div class="rejection-info-box">
-                <div id="lbl-reject-reason" style="font-size: 13.5px; color: var(--text-primary); line-height: 1.5; font-style: italic;"></div>
-            </div>
-        </div>
-        
-        <div id="footer-actions-form" style="display: flex; gap: 12px; border-top: 1px solid var(--glass-border, #cbd5e1); padding-top: 24px;">
-            <div style="flex: 1;">
-                <x-atoms.button type="button" variant="outline" style="width: 100%; border-color: var(--text-secondary); color: var(--text-primary); background: transparent;" onclick="openRejectForm()">
-                    Tolak Semua 
-                </x-atoms.button>
-            </div>
-            <div style="flex: 1;">
-                <x-atoms.button type="submit" variant="primary" style="width: 100%; background-color: #57534e; border-color: #57534e; color: white;">
-                    Selesaikan Peninjauan
-                </x-atoms.button>
-            </div>
-        </div>
-
-        <div id="footer-actions-approved" style="display: none; border-top: 1px solid var(--glass-border, #cbd5e1); padding-top: 24px;">
-            <x-atoms.button type="button" variant="outline" style="width: 100%; border-color: #cbd5e1; color: var(--text-primary); background: transparent; font-weight: 600;" onclick="toggleOffcanvas('detailRequestsampleOffcanvas')">
-                Tutup
-            </x-atoms.button>
-        </div>
-    </form>
-</x-organisms.offcanvas>
-
-<x-organisms.offcanvas id="shippingForm" title="Kirim Sampel">
-    <form action="{{ route('admin-dashboard.request-samples.ship') }}" method="POST">
-        @csrf
-        <div id="section-form-update" style="padding-bottom: 24px;">
+        <div id="section-approved-info" style="display: none; padding-bottom: 24px;">
             <x-atoms.typography variant="card-title" as="h4" style="margin-bottom: 4px; font-size: 14px; color: var(--text-secondary);">Pembaruan Status Pengiriman</x-atoms.typography>
-            <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 16px;">Masukkan detail logistik untuk memproses paket.</p>
+            <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 16px;">Masukkan detail logistik untuk memproses paket yang telah disetujui.</p>
             
             <div style="margin-bottom: 16px;">
                 <x-atoms.label value="Kurir Pengiriman" style="font-size: 12px; margin-bottom: 4px; display: block;" />
@@ -129,12 +76,60 @@
                 <x-atoms.label value="Biaya Ongkos Kirim (Rp)" style="font-size: 12px; margin-bottom: 4px; display: block;" />
                 <x-atoms.input type="number" name="shipping_cost" id="off-shipping-cost" placeholder="0" />
             </div>
-            
-            <div style="border-top: 1px solid var(--glass-border, #cbd5e1); padding-top: 24px; margin-top: 24px;">
-                <x-atoms.button type="submit" variant="primary" style="width: 100%;">
-                    Simpan & Kirim
+        </div>
+
+        <div id="section-shipped-info" style="display: none;">
+            <div style="margin-bottom: 24px;">
+                <x-atoms.typography variant="card-title" as="h4" style="margin-bottom: 12px; font-size: 14px; color: var(--text-secondary);">Informasi Pengiriman</x-atoms.typography>
+                <div class="shipping-info-box">
+                    <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 4px;">Kurir: <span id="lbl-courier"></span></div>
+                    <div style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px;">No. Resi: <span id="lbl-tracking-no"></span></div>
+                    <div style="font-size: 12px; color: var(--text-secondary);">Biaya Ongkir: Rp <span id="lbl-cost"></span></div>
+                    
+                    <button type="button" onclick="copyResi()" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); background: white; border: 1px solid #cbd5e1; padding: 6px 16px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer; color: var(--text-primary); transition: all 0.2s;">
+                        Salin Resi
+                    </button>
+                </div>
+            </div>
+
+            <div style="padding-bottom: 24px;">
+                <x-atoms.typography variant="card-title" as="h4" style="margin-bottom: 12px; font-size: 14px; color: var(--text-secondary);">Status Pelacakan</x-atoms.typography>
+                <div id="tracking-content">
+                    <div style="font-size: 13px; color: var(--text-secondary);">Memuat data pelacakan...</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="section-rejected-info" style="display: none; padding-bottom: 24px;">
+            <x-atoms.typography variant="card-title" as="h4" style="margin-bottom: 12px; font-size: 14px; color: var(--rose);">Alasan Penolakan Keseluruhan</x-atoms.typography>
+            <div class="rejection-info-box">
+                <div id="lbl-reject-reason" style="font-size: 13.5px; color: var(--text-primary); line-height: 1.5; font-style: italic;"></div>
+            </div>
+        </div>
+        
+        <div id="footer-actions-pending" style="display: none; gap: 12px; border-top: 1px solid var(--glass-border, #cbd5e1); padding-top: 24px;">
+            <div style="flex: 1;">
+                <x-atoms.button type="button" variant="outline" style="width: 100%; border-color: var(--text-secondary); color: var(--text-primary); background: transparent;" onclick="openRejectForm()">
+                    Tolak Semua 
                 </x-atoms.button>
             </div>
+            <div style="flex: 1;">
+                <x-atoms.button type="submit" variant="primary" style="width: 100%; background-color: #57534e; border-color: #57534e; color: white;">
+                    Selesaikan Peninjauan
+                </x-atoms.button>
+            </div>
+        </div>
+
+        <div id="footer-actions-approved" style="display: none; border-top: 1px solid var(--glass-border, #cbd5e1); padding-top: 24px;">
+            <x-atoms.button type="submit" variant="primary" style="width: 100%;">
+                Simpan & Kirim Paket
+            </x-atoms.button>
+        </div>
+
+        <div id="footer-actions-shipped" style="display: none; border-top: 1px solid var(--glass-border, #cbd5e1); padding-top: 24px;">
+            <x-atoms.button type="button" variant="outline" style="width: 100%; border-color: #cbd5e1; color: var(--text-primary); background: transparent; font-weight: 600;" onclick="toggleOffcanvas('detailRequestsampleOffcanvas')">
+                Tutup
+            </x-atoms.button>
         </div>
     </form>
 </x-organisms.offcanvas>
@@ -413,15 +408,32 @@
             } else {
                 productListHtml = `<div style="font-size: 13px; color: var(--text-secondary);">Tidak ada data produk.</div>`;
             }
+            
             $('#off-product-list').html(productListHtml);
             $('#off-total-products').text(totalProducts);
 
-            $('#section-form-update, #section-approved-info, #section-rejected-info').hide();
-            $('#footer-actions-form, #footer-actions-approved').hide();
+            $('#section-approved-info, #section-shipped-info, #section-rejected-info').hide();
+            $('#footer-actions-pending, #footer-actions-approved, #footer-actions-shipped').hide();
 
-            if (d.status === 'APPROVED' || d.status === 'SHIPPED') {
+            const mainForm = document.getElementById('mainOffcanvasForm');
+            $('#off-courier, #off-tracking').prop('required', false);
+
+            if (d.status === 'PENDING') {
+                mainForm.action = "{{ route('admin-dashboard.request-samples.approve') }}";
+                $('#footer-actions-pending').css('display', 'flex');
+                
+            } else if (d.status === 'APPROVED') {
+                mainForm.action = "{{ route('admin-dashboard.request-samples.ship') }}";
                 $('#section-approved-info').show();
-                $('#footer-actions-approved').show();
+                $('#footer-actions-approved').css('display', 'block');
+                
+                $('#off-courier').val(d.courier || '').prop('required', true);
+                $('#off-tracking').val(d.tracking_number || '').prop('required', true);
+                $('#off-shipping-cost').val(d.shipping_cost ? Math.floor(d.shipping_cost) : '');
+                
+            } else if (d.status === 'SHIPPED' || d.status === 'DELIVERED') {
+                $('#section-shipped-info').show();
+                $('#footer-actions-shipped').css('display', 'block');
 
                 const displayCourier = courierNames[d.courier] || (d.courier ? d.courier.toUpperCase() : 'Tidak diketahui');
                 $('#lbl-courier').text(displayCourier);
@@ -437,8 +449,8 @@
                             $('#requestSampleTable').DataTable().ajax.reload(null, false);
                             
                             let historyHtml = '<div class="tracking-timeline">';
-                            
                             let trackingDetails = [];
+                            
                             if (res && res.data && res.data.manifest) {
                                 trackingDetails = res.data.manifest.slice().reverse();
                             }
@@ -469,7 +481,7 @@
                                 
                                 let systemTimeline = res.internal_timeline.slice().reverse();
                                 
-                                systemTimeline.forEach((step, index) => {
+                                systemTimeline.forEach((step) => {
                                     let dotClass = step.is_completed ? 'completed' : 'pending';
                                     if (step.is_danger) dotClass = 'danger';
                                     
@@ -493,20 +505,11 @@
                         }
                     });
                 }
-
+                
             } else if (d.status === 'REJECTED') {
                 $('#section-rejected-info').show();
-                $('#footer-actions-approved').show();
-                
+                $('#footer-actions-shipped').css('display', 'block');
                 $('#lbl-reject-reason').text(d.reject_reason || 'Tidak ada alasan penolakan yang dicantumkan.');
-                
-            } else {
-                $('#section-form-update').show();
-                $('#footer-actions-form').show();
-                
-                $('#off-courier').val(d.courier || '');
-                $('#off-tracking').val(d.tracking_number || '');
-                $('#off-shipping-cost').val(d.shipping_cost ? Math.floor(d.shipping_cost) : '');
             }
 
             openOffcanvas('detailRequestsampleOffcanvas');

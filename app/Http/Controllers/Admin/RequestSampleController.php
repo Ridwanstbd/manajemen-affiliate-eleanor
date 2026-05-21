@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\SampleRequest;
+use App\Models\SampleRequestDetail;
 use App\Notifications\SampleStatusNotification;
 use App\Services\Admin\RequestSampleService;
 use Carbon\Carbon;
@@ -138,12 +139,15 @@ class RequestSampleController extends Controller
             'mandatory_video_count' => 'required|integer|min:1',
         ]);
 
+        $detail = SampleRequestDetail::findOrFail($request->detail_id);
+
         $this->requestSampleService->approveProduct(
             $request->detail_id,
             $request->mandatory_video_count
         );
 
-        return redirect()->back()->with('success', 'Produk berhasil disetujui dengan penugasan video.');
+        return redirect()->route('admin-dashboard.request-samples.index', ['open_sample' => $detail->sample_request_id])
+                         ->with('success', 'Produk berhasil disetujui dengan penugasan video.');
     }
 
     public function rejectProduct(Request $request)
@@ -153,14 +157,16 @@ class RequestSampleController extends Controller
             'reject_reason' => 'required|string|max:500',
         ]);
 
+        $detail = SampleRequestDetail::findOrFail($request->detail_id);
+
         $this->requestSampleService->rejectProduct(
             $request->detail_id,
             $request->reject_reason
         );
 
-        return redirect()->back()->with('success', 'Pengajuan produk berhasil ditolak.');
+        return redirect()->route('admin-dashboard.request-samples.index', ['open_sample' => $detail->sample_request_id])
+                         ->with('success', 'Pengajuan produk berhasil ditolak.');
     }
-
     public function syncStatus()
     {
         $sampleRequests = SampleRequest::whereIn('status', ['SHIPPED'])
