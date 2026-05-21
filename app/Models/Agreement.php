@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Agreement extends Model
 {
@@ -28,8 +28,8 @@ class Agreement extends Model
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
-    public function kolContract(): HasOne
+    public function kolContracts(): HasMany
     {
-        return $this->hasOne(KOLContract::class, 'agreement_id', 'id');
+        return $this->hasMany(KOLContract::class, 'agreement_id', 'id');
     }
 }

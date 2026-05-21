@@ -13,8 +13,14 @@ class KOLContract extends Model
     protected $table = 'kol_contracts';
 
     protected $fillable = [
-        'user_id', 'start_date', 'end_date', 
-        'contract_fee', 'required_video_count', 'status', 'notes', 'agreement_id'
+        'user_id', 
+        'agreement_id', 
+        'start_date', 
+        'end_date', 
+        'contract_fee', 
+        'required_video_count', 
+        'status', 
+        'notes'
     ];
 
     protected $casts = [
@@ -23,7 +29,7 @@ class KOLContract extends Model
         'contract_fee' => 'decimal:2',
     ];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
