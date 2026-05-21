@@ -147,16 +147,28 @@
                         if (req.details) {
                             req.details.forEach(detail => {
                                 if (detail.product) {
-                                    pkg.products.push({
-                                        id: detail.product.id,
-                                        name: detail.product.name,
-                                        mandatory_count: detail.mandatory_video_count || detail.product.mandatory_video_count || 1,
-                                        tasks: []
-                                    });
+                                    let mCount = 1;
+                                    if (detail.mandatory_video_count !== null && detail.mandatory_video_count !== undefined) {
+                                        mCount = parseInt(detail.mandatory_video_count);
+                                    } else if (detail.product.mandatory_video_count !== null && detail.product.mandatory_video_count !== undefined) {
+                                        mCount = parseInt(detail.product.mandatory_video_count);
+                                    }
+
+                                    if (mCount > 0) {
+                                        pkg.products.push({
+                                            id: detail.product.id,
+                                            name: detail.product.name,
+                                            mandatory_count: mCount,
+                                            tasks: []
+                                        });
+                                    }
                                 }
                             });
                         }
-                        if(pkg.products.length > 0) packages.push(pkg);
+                        
+                        if (pkg.products.length > 0) {
+                            packages.push(pkg);
+                        }
                     }
                 });
             }
@@ -192,20 +204,9 @@
                 
                 resultHtml += `
                     <div style="background: white; border: 1px solid var(--glass-border); border-radius: 8px; margin-bottom: 16px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
-                        <div style="background: #f8fafc; padding: 12px 16px; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center;">
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color: var(--primary-blue);"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
-                                <span style="font-size: 13px; font-weight: 700; color: var(--text-primary);">Paket ${displayCourier}</span>
-                            </div>
-                            <span style="font-size: 11px; font-weight: 600; color: var(--text-secondary); background: #e2e8f0; padding: 4px 8px; border-radius: 4px; letter-spacing: 0.5px;">RESI: ${pkg.tracking_number}</span>
-                        </div>
-                        <div style="padding: 16px;">
+                    <div style="padding: 16px;">
                 `;
                 
-                if (pkg.products.length === 0) {
-                    resultHtml += `<div style="font-size: 12px; color: var(--text-tertiary);">Tidak ada data produk.</div>`;
-                }
-
                 pkg.products.forEach((prod, pIdx) => {
                     const isLastProduct = pIdx === pkg.products.length - 1;
                     
