@@ -13,12 +13,11 @@ class Product extends Model
     protected $keyType = 'string';
     protected $fillable = [
         'id', 'name', 'category', 'sku_id', 'variation_value',
-        'product_detail', 'brand', 'price', 'stock', 'seller_sku',
+        'product_detail', 'brand', 'price', 'seller_sku',
         'minimum_order_quantity', 'parcel_weight', 'parcel_length',
         'parcel_width', 'parcel_height', 'is_cod_supported',
         'image_path', 'additional_images', 'size_chart', 
-        'tts_product_url', 'toko_product_url', 
-        'mandatory_video_count', 'is_visible'
+        'tts_product_url', 'toko_product_url', 'is_visible'
     ];
 
     protected function casts(): array

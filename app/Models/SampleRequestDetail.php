@@ -14,6 +14,9 @@ class SampleRequestDetail extends Model
         'sample_request_id',
         'product_id',
         'quantity',
+        'mandatory_video_count',
+        'status',
+        'reject_reason'
     ];
 
     public function sampleRequest(): BelongsTo

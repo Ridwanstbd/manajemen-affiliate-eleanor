@@ -20,6 +20,7 @@ class ProductController extends Controller
     {
         $this->importService = $importService;
     }
+    
     public function index()
     {
         return view('pages.admin.product-sample.index');
@@ -32,14 +33,13 @@ class ProductController extends Controller
                         'id', 
                         'name', 
                         'price', 
-                        'stock', 
                         'seller_sku', 
                         'category', 
-                        'mandatory_video_count', 
                         'product_detail', 
                         'is_visible', 
                         'image_path'
                     ]);
+                    
             return DataTables::of($query)
                 ->addIndexColumn()
                 ->addColumn('image', function($row) {
@@ -70,11 +70,12 @@ class ProductController extends Controller
             return redirect()->back()->with('error','Terjadi kesalahan saat import: ' . $e->getMessage());
         }
     }
+    
     public function update(ProductRequest $request, $id)
     {
         $product = Product::findOrFail($id);
         
-        $data = $request->only(['seller_sku', 'name', 'category', 'mandatory_video_count', 'stock', 'product_detail']);
+        $data = $request->only(['seller_sku', 'name', 'category', 'product_detail']);
         $data['is_visible'] = $request->has('is_visible');
 
         if ($request->hasFile('image')) {
@@ -86,26 +87,8 @@ class ProductController extends Controller
             $data['image'] = $imagePath;
         }
 
-        
         $product->update($data);
 
         return redirect()->back()->with('success', 'Produk berhasil diperbarui.');
-    }
-
-    public function massUpdate(ProductRequest $request)
-    {
-        $updateData = array_filter($request->validated(), function($value) {
-            return $value !== null;
-        });
-
-        if (!empty($updateData)) {
-            $count = Product::count(); 
-            
-            Product::query()->update($updateData); 
-            
-            return redirect()->back()->with('success', 'Seluruh (' . $count . ') produk berhasil diperbarui secara massal.');
-        }
-
-        return redirect()->back()->with('error', 'Tidak ada data yang diubah.');
     }
 }

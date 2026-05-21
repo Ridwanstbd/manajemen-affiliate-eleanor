@@ -1,14 +1,14 @@
 @extends('layouts.app')
-@section('title', 'Persetujuan & Pengiriman')
+@section('title', 'Permintaan Sampel')
 
 @section('content')
-<x-molecules.card title="Persetujuan & Pengiriman" description="Kelola permintaan sampel dari affiliator dan perbarui status logistik pengiriman.">
+<x-molecules.card title="Permintaan Sampel" description="Kelola permintaan sampel dari affiliator dan perbarui status logistik pengiriman.">
     <x-slot:headerAction>
         <form action="{{ route('admin-dashboard.request-samples.sync-status') }}" method="POST">
             @csrf
-                <x-atoms.button type="submit" variant="primary" onclick="this.innerHTML='Menyinkronkan...'; this.disabled=true; this.form.submit();">
-                    <x-atoms.icon name="refresh" style="width: 16px; height: 16px;" /> Sinkronkan Status
-                </x-atoms.button>
+            <x-atoms.button type="submit" variant="primary" onclick="this.innerHTML='Menyinkronkan...'; this.disabled=true; this.form.submit();">
+                <x-atoms.icon name="refresh" style="width: 16px; height: 16px;" /> Sinkronkan Status
+            </x-atoms.button>
         </form>
     </x-slot:headerAction>
     <div class="tab-content">
@@ -26,7 +26,7 @@
 </x-molecules.card>
 
 <x-organisms.offcanvas id="detailRequestsampleOffcanvas" title="Detail Pengajuan Sampel Gratis">
-    <form id="updateResiForm" action="{{ route('admin-dashboard.request-samples.update-resi') }}" method="POST">
+    <form id="approveForm" action="{{ route('admin-dashboard.request-samples.approve') }}" method="POST">
         @csrf
         <input type="hidden" name="sample_request_id" id="off-request-id">
 
@@ -44,6 +44,59 @@
             <div id="off-product-list" style="display: flex; flex-direction: column; gap: 8px;"></div>
         </div>
 
+        <div id="section-approved-info" style="display: none;">
+            <div style="margin-bottom: 24px;">
+                <x-atoms.typography variant="card-title" as="h4" style="margin-bottom: 12px; font-size: 14px; color: var(--text-secondary);">Informasi Pengiriman</x-atoms.typography>
+                <div class="shipping-info-box">
+                    <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 4px;">Kurir: <span id="lbl-courier"></span></div>
+                    <div style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px;">No. Resi: <span id="lbl-tracking-no"></span></div>
+                    <div style="font-size: 12px; color: var(--text-secondary);">Biaya Ongkir: Rp <span id="lbl-cost"></span></div>
+                    
+                    <button type="button" onclick="copyResi()" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); background: white; border: 1px solid #cbd5e1; padding: 6px 16px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer; color: var(--text-primary); transition: all 0.2s;">
+                        Salin Resi
+                    </button>
+                </div>
+            </div>
+
+            <div style="padding-bottom: 24px;">
+                <x-atoms.typography variant="card-title" as="h4" style="margin-bottom: 12px; font-size: 14px; color: var(--text-secondary);">Status Pelacakan</x-atoms.typography>
+                <div id="tracking-content">
+                    <div style="font-size: 13px; color: var(--text-secondary);">Memuat data pelacakan...</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="section-rejected-info" style="display: none; padding-bottom: 24px;">
+            <x-atoms.typography variant="card-title" as="h4" style="margin-bottom: 12px; font-size: 14px; color: var(--rose);">Alasan Penolakan Keseluruhan</x-atoms.typography>
+            <div class="rejection-info-box">
+                <div id="lbl-reject-reason" style="font-size: 13.5px; color: var(--text-primary); line-height: 1.5; font-style: italic;"></div>
+            </div>
+        </div>
+        
+        <div id="footer-actions-form" style="display: flex; gap: 12px; border-top: 1px solid var(--glass-border, #cbd5e1); padding-top: 24px;">
+            <div style="flex: 1;">
+                <x-atoms.button type="button" variant="outline" style="width: 100%; border-color: var(--text-secondary); color: var(--text-primary); background: transparent;" onclick="openRejectForm()">
+                    Tolak Semua 
+                </x-atoms.button>
+            </div>
+            <div style="flex: 1;">
+                <x-atoms.button type="submit" variant="primary" style="width: 100%; background-color: #57534e; border-color: #57534e; color: white;">
+                    Selesaikan Peninjauan
+                </x-atoms.button>
+            </div>
+        </div>
+
+        <div id="footer-actions-approved" style="display: none; border-top: 1px solid var(--glass-border, #cbd5e1); padding-top: 24px;">
+            <x-atoms.button type="button" variant="outline" style="width: 100%; border-color: #cbd5e1; color: var(--text-primary); background: transparent; font-weight: 600;" onclick="toggleOffcanvas('detailRequestsampleOffcanvas')">
+                Tutup
+            </x-atoms.button>
+        </div>
+    </form>
+</x-organisms.offcanvas>
+
+<x-organisms.offcanvas id="shippingForm" title="Kirim Sampel">
+    <form action="{{ route('admin-dashboard.request-samples.ship') }}" method="POST">
+        @csrf
         <div id="section-form-update" style="padding-bottom: 24px;">
             <x-atoms.typography variant="card-title" as="h4" style="margin-bottom: 4px; font-size: 14px; color: var(--text-secondary);">Pembaruan Status Pengiriman</x-atoms.typography>
             <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 16px;">Masukkan detail logistik untuk memproses paket.</p>
@@ -77,58 +130,46 @@
                 <x-atoms.input type="number" name="shipping_cost" id="off-shipping-cost" placeholder="0" />
             </div>
         </div>
-
-        <div id="section-approved-info" style="display: none;">
-            <div style="margin-bottom: 24px;">
-                <x-atoms.typography variant="card-title" as="h4" style="margin-bottom: 12px; font-size: 14px; color: var(--text-secondary);">Informasi Pengiriman</x-atoms.typography>
-                <div class="shipping-info-box">
-                    <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 4px;">Kurir: <span id="lbl-courier"></span></div>
-                    <div style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px;">No. Resi: <span id="lbl-tracking-no"></span></div>
-                    <div style="font-size: 12px; color: var(--text-secondary);">Biaya Ongkir: Rp <span id="lbl-cost"></span></div>
-                    
-                    <button type="button" onclick="copyResi()" style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); background: white; border: 1px solid #cbd5e1; padding: 6px 16px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer; color: var(--text-primary); transition: all 0.2s;">
-                        Salin Resi
-                    </button>
-                </div>
-            </div>
-
-            <div style="padding-bottom: 24px;">
-                <x-atoms.typography variant="card-title" as="h4" style="margin-bottom: 12px; font-size: 14px; color: var(--text-secondary);">Status Pelacakan</x-atoms.typography>
-                <div id="tracking-content">
-                    {{-- Timeline akan di-generate via JS --}}
-                    <div style="font-size: 13px; color: var(--text-secondary);">Memuat data pelacakan...</div>
-                </div>
-            </div>
-        </div>
-
-        <div id="section-rejected-info" style="display: none; padding-bottom: 24px;">
-            <x-atoms.typography variant="card-title" as="h4" style="margin-bottom: 12px; font-size: 14px; color: var(--rose);">Alasan Penolakan</x-atoms.typography>
-            <div class="rejection-info-box">
-                <div id="lbl-reject-reason" style="font-size: 13.5px; color: var(--text-primary); line-height: 1.5; font-style: italic;"></div>
-            </div>
-        </div>
-        
-        <div id="footer-actions-form" style="display: flex; gap: 12px; border-top: 1px solid var(--glass-border, #cbd5e1); padding-top: 24px;">
-            <div style="flex: 1;">
-                <x-atoms.button type="button" variant="outline" style="width: 100%; border-color: var(--text-secondary); color: var(--text-primary); background: transparent;" onclick="openRejectForm()">
-                    Tolak 
-                </x-atoms.button>
-            </div>
-            <div style="flex: 1;">
-                <x-atoms.button type="submit" variant="primary" style="width: 100%; background-color: #57534e; border-color: #57534e; color: white;">
-                    Kirim Produk (Update Resi)
-                </x-atoms.button>
-            </div>
-        </div>
-
-        <div id="footer-actions-approved" style="display: none; border-top: 1px solid var(--glass-border, #cbd5e1); padding-top: 24px;">
-            <x-atoms.button type="button" variant="outline" style="width: 100%; border-color: #cbd5e1; color: var(--text-primary); background: transparent; font-weight: 600;" onclick="toggleOffcanvas('detailRequestsampleOffcanvas')">
-                Tutup
-            </x-atoms.button>
-        </div>
-
     </form>
 </x-organisms.offcanvas>
+
+<x-organisms.modal id="approveProdukModal" title="Setujui Produk" description="Masukkan jumlah video yang diwajibkan untuk produk ini.">
+    <form action="{{ route('admin-dashboard.request-samples.approve-product') }}" method="POST" id="formApproveProduct">
+        @csrf
+        <input type="hidden" name="detail_id" id="approve-detail-id">
+        <div class="form-group" style="margin-bottom: 16px;">
+            <x-atoms.label value="Jumlah Wajib Video" for="inp-mandatory-video" />
+            <x-atoms.input type="number" name="mandatory_video_count" id="inp-mandatory-video" value="3" min="1" required />
+            <small style="font-size: 11px; color: var(--text-secondary); display: block; margin-top: 4px;">Minimal 1 video.</small>
+        </div>
+        <x-slot name="footer">
+            <x-atoms.button variant="secondary" type="button" onclick="closeModal('approveProdukModal')">Batal</x-atoms.button>
+            <x-atoms.button variant="primary" type="submit">Setujui Produk</x-atoms.button>
+        </x-slot>
+    </form>
+</x-organisms.modal>
+
+<x-organisms.modal id="rejectProdukModal" title="Tolak Produk" description="Masukkan alasan mengapa produk ini ditolak dari pengajuan.">
+    <form action="{{ route('admin-dashboard.request-samples.reject-product') }}" method="POST" id="formRejectProduct">
+        @csrf
+        <input type="hidden" name="detail_id" id="reject-detail-id">
+        <div class="form-group" style="margin-bottom: 16px;">
+            <x-atoms.label value="Alasan Penolakan" for="inp-reject-product-reason" />
+            <textarea name="reject_reason" id="inp-reject-product-reason" class="form-control" rows="3" required style="border-radius: 8px; border: 1px solid var(--glass-border); padding: 10px; font-size: 13px;"></textarea>
+        </div>
+        <div>
+            <span style="font-size: 12px; color: var(--text-secondary); display: block; margin-bottom: 8px;">Gunakan template cepat:</span>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button type="button" onclick="document.getElementById('inp-reject-product-reason').value='Produk tidak ada stok'" style="background: #fffbeb; color: #b45309; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.2s;">Stok Habis</button>
+                <button type="button" onclick="document.getElementById('inp-reject-product-reason').value='Performa tidak sesuai untuk produk ini'" style="background: #fffbeb; color: #b45309; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.2s;">Performa tidak sesuai</button>
+            </div>
+        </div>
+        <x-slot name="footer">
+            <x-atoms.button variant="secondary" type="button" onclick="closeModal('rejectProdukModal')">Batal</x-atoms.button>
+            <x-atoms.button variant="primary" type="submit" style="background-color: var(--rose); border-color: var(--rose);">Tolak Produk</x-atoms.button>
+        </x-slot>
+    </form>
+</x-organisms.modal>
 
 <x-organisms.offcanvas id="rejectRequestsampleOffcanvas" title="Tolak Pengajuan">
     <form action="{{ route('admin-dashboard.request-samples.reject') }}" method="POST">
@@ -151,7 +192,7 @@
 
         <div style="padding-bottom: 24px;">
             <x-atoms.typography variant="card-title" as="h4" style="margin-bottom: 4px; font-size: 14px;">Form Penolakan Pengajuan</x-atoms.typography>
-            <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 16px;">Anda akan menolak pengajuan ini. Berikan alasan penolakan agar affiliator mengetahui penyebabnya.</p>
+            <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 16px;">Anda akan menolak pengajuan ini secara keseluruhan.</p>
             
             <div style="margin-bottom: 16px;">
                 <x-atoms.label value="Alasan Penolakan (Wajib Diisi)" style="font-size: 12px; margin-bottom: 4px; display: block;" />
@@ -206,6 +247,18 @@
         document.body.style.overflow = 'auto';
     }
 
+    // Modal helpers
+    function openApproveProductModal(detailId) {
+        document.getElementById('approve-detail-id').value = detailId;
+        openModal('approveProdukModal');
+    }
+
+    function openRejectProductModal(detailId) {
+        document.getElementById('reject-detail-id').value = detailId;
+        document.getElementById('inp-reject-product-reason').value = '';
+        openModal('rejectProdukModal');
+    }
+
     function copyResi() {
         const resi = document.getElementById('lbl-tracking-no').innerText;
         navigator.clipboard.writeText(resi).then(() => {
@@ -228,18 +281,10 @@
         return new Intl.NumberFormat('id-ID').format(number);
     }
     const courierNames = {
-        'jne': 'JNE',
-        'jnt': 'J&T Express',
-        'ninja': 'Ninja Xpress',
-        'tiki': 'TIKI',
-        'pos': 'POS Indonesia',
-        'anteraja': 'AnterAja',
-        'sicepat': 'SiCepat',
-        'sap': 'SAP Express',
-        'lion': 'Lion Parcel',
-        'wahana': 'Wahana',
-        'first': 'First Logistics',
-        'ide': 'ID Express'
+        'jne': 'JNE', 'jnt': 'J&T Express', 'ninja': 'Ninja Xpress', 'tiki': 'TIKI',
+        'pos': 'POS Indonesia', 'anteraja': 'AnterAja', 'sicepat': 'SiCepat',
+        'sap': 'SAP Express', 'lion': 'Lion Parcel', 'wahana': 'Wahana',
+        'first': 'First Logistics', 'ide': 'ID Express'
     };
 
     function setRejectReason(text) {
@@ -295,15 +340,39 @@
                 d.details.forEach(item => {
                     const quantity = item.quantity || 0;
                     const productName = item.product?.name || 'Produk Dihapus/Tidak Valid';
-                    const videoCount = item.product?.mandatory_video_count || 0;
+                    const videoCount = item.mandatory_video_count || 0;
+                    const detailStatus = item.status || 'PENDING';
                     totalProducts += quantity;
+                    
+                    let actionHtml = '';
+                    
+                    // Render status atau tombol aksi berdasarkan status item detail
+                    if (detailStatus === 'PENDING') {
+                        if (d.status === 'PENDING') {
+                            actionHtml = `
+                                <div style="display: flex; gap: 8px; margin-top: 8px;">
+                                    <button type="button" class="btn btn-outline btn-sm" style="font-size: 11px; padding: 4px 8px; border-color: #10b981; color: #10b981;" onclick="openApproveProductModal(${item.id})">Setujui</button>
+                                    <button type="button" class="btn btn-outline btn-sm" style="font-size: 11px; padding: 4px 8px; border-color: #ef4444; color: #ef4444;" onclick="openRejectProductModal(${item.id})">Tolak</button>
+                                </div>
+                            `;
+                        } else {
+                            actionHtml = `<div style="font-size: 11px; color: var(--text-secondary); margin-top: 4px;">Menunggu Tinjauan</div>`;
+                        }
+                    } else if (detailStatus === 'APPROVED') {
+                        actionHtml = `<div style="font-size: 11px; color: #10b981; font-weight: 600; margin-top: 4px;">Disetujui (${videoCount} Video)</div>`;
+                    } else if (detailStatus === 'REJECTED') {
+                        actionHtml = `<div style="font-size: 11px; color: #ef4444; font-weight: 600; margin-top: 4px;">Ditolak: ${item.reject_reason || ''}</div>`;
+                    }
+
                     productListHtml += `
-                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; border: 1px solid rgba(0,0,0,0.05); border-radius: 4px; margin-bottom: 8px;">
-                            <div>
-                                <div style="font-size: 14px; font-weight: 500; color: var(--text-primary);">${productName}</div>
-                                <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">Kewajiban: ${videoCount} Video</div>
+                        <div style="padding: 12px; border: 1px solid rgba(0,0,0,0.05); border-radius: 4px; margin-bottom: 8px;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                <div>
+                                    <div style="font-size: 14px; font-weight: 500; color: var(--text-primary);">${productName}</div>
+                                    ${actionHtml}
+                                </div>
+                                <div style="font-size: 14px; font-weight: 700; color: var(--text-primary);">${quantity}x</div>
                             </div>
-                            <div style="font-size: 14px; font-weight: 700; color: var(--text-primary);">${quantity}x</div>
                         </div>
                     `;
                 });

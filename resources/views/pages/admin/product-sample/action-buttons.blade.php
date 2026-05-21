@@ -4,8 +4,6 @@
         'seller_sku' => $row->seller_sku ?? '',
         'name' => $row->name ?? '',
         'category' => $row->category ?? '',
-        'mandatory_video_count' => $row->mandatory_video_count ?? 0,
-        'stock' => $row->stock ?? 0,
         'product_detail' => $row->product_detail ?? '',
         'is_visible' => $row->is_visible ? 1 : 0,
         'image_url' => $row->image_path ? (\Illuminate\Support\Str::startsWith($row->image_path, ['http://', 'https://']) ? $row->image_path : asset('storage/' . $row->image_path)) : ''

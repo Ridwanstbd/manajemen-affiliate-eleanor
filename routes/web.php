@@ -80,8 +80,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/product/data',[ProductController::class, 'data'])->name('product-data');
         Route::post('/import-product-update', [ProductController::class, 'importData'])->name('import-product-update');
         Route::put('/products/{id}', [ProductController::class, 'update'])->name('product-update');
-        Route::post('/products/mass-update', [ProductController::class, 'massUpdate'])->name('product-mass-update');
-        
 
         Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics');
         Route::get('/analytics/detail-roi-data', [AnalyticsController::class, 'detailRoiData'])->name('analytics.detail-roi-data');
@@ -114,7 +112,10 @@ Route::middleware(['auth'])->group(function () {
         Route::prefix('request-samples')->name('request-samples.')->group(function() {
             Route::get('/', [RequestSampleController::class,'index'])->name('index');
             Route::get('/data',[RequestSampleController::class,'data'])->name('data');
-            Route::post('/update-resi', [RequestSampleController::class, 'updateResi'])->name('update-resi');
+            Route::post('/approve', [RequestSampleController::class, 'approve'])->name('approve');
+            Route::post('/ship', [RequestSampleController::class, 'ship'])->name('ship');
+            Route::post('/approve-product', [RequestSampleController::class, 'approveProduct'])->name('approve-product');
+            Route::post('/reject-product', [RequestSampleController::class, 'rejectProduct'])->name('reject-product');
             Route::post('/sync-status', [RequestSampleController::class, 'syncStatus'])->name('sync-status');
             Route::get('/track/{id}', [RequestSampleController::class, 'track'])->name('track');
             Route::post('/reject', [RequestSampleController::class, 'reject'])->name('reject');

@@ -3,6 +3,7 @@
 namespace App\Services\Admin;
 
 use App\Models\SampleRequest;
+use App\Models\SampleRequestDetail;
 use App\Models\Setting;
 use App\Models\TaskReport;
 use Illuminate\Support\Facades\DB;
@@ -10,18 +11,60 @@ use Illuminate\Support\Facades\Http;
 
 class RequestSampleService
 {
-    public function updateResi(int $id, array $data)
+    public function approve(int $id)
     {
-        $sampleRequest = SampleRequest::findOrFail($id);
+        $sampleRequest = SampleRequest::with('details')->findOrFail($id);
         
+        $hasPending = $sampleRequest->details->contains('status', 'PENDING');
+        if ($hasPending) {
+            throw new \Exception('Gagal menyetujui. Pastikan semua produk dalam pengajuan ini telah disetujui atau ditolak terlebih dahulu.');
+        }
+
+        $hasApproved = $sampleRequest->details->contains('status', 'APPROVED');
+        if (!$hasApproved) {
+            throw new \Exception('Semua produk ditolak. Silakan gunakan tombol tolak pengajuan (Reject Request) secara keseluruhan.');
+        }
+
         $sampleRequest->update([
             'status' => 'APPROVED', 
+        ]);
+
+        return $sampleRequest;
+    }
+
+    public function ship(int $id, array $data)
+    {
+        $sampleRequest = SampleRequest::findOrFail($id);
+        $sampleRequest->update([
+            'status' => 'SHIPPED', 
             'courier' => $data['courier'],
             'tracking_number' => $data['tracking_number'],
             'shipping_cost' => $data['shipping_cost'] ?? 0,
         ]);
 
         return $sampleRequest;
+    }
+
+    public function approveProduct(int $detailId, int $mandatoryVideoCount)
+    {
+        $detail = SampleRequestDetail::findOrFail($detailId);
+        $detail->update([
+            'status' => 'APPROVED',
+            'mandatory_video_count' => $mandatoryVideoCount
+        ]);
+
+        return $detail;
+    }
+
+    public function rejectProduct(int $detailId, string $rejectReason)
+    {
+        $detail = SampleRequestDetail::findOrFail($detailId);
+        $detail->update([
+            'status' => 'REJECTED',
+            'reject_reason' => $rejectReason
+        ]);
+
+        return $detail;
     }
 
     public function checkAndUpdateDeliveryStatus(SampleRequest $sampleRequest)
@@ -48,8 +91,8 @@ class RequestSampleService
             }
 
             if ($isDelivered) {
-                if ($sampleRequest->status !== 'SHIPPED') {
-                    $sampleRequest->update(['status' => 'SHIPPED']);
+                if ($sampleRequest->status !== 'DELIVERED') {
+                    $sampleRequest->update(['status' => 'DELIVERED']);
                 }
                 
                 $this->generateTaskForSample($sampleRequest);
@@ -133,8 +176,8 @@ class RequestSampleService
         foreach ($sampleRequest->details as $detail) {
             $product = $detail->product;
             
-            if ($product) {
-                $mandatoryCount = $product->mandatory_video_count > 0 ? $product->mandatory_video_count : 1;
+            if ($product && $detail->status === 'APPROVED') {
+                $mandatoryCount = $detail->mandatory_video_count > 0 ? $detail->mandatory_video_count : 1;
 
                 for ($i = 0; $i < $mandatoryCount; $i++) {
                     $taskReport = TaskReport::create([
@@ -144,7 +187,6 @@ class RequestSampleService
                     ]);
 
                     $taskReport->sampleRequests()->attach($sampleRequest->id);
-
                     $taskReport->products()->attach($product->id);
                 }
             }

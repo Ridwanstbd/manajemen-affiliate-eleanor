@@ -35,13 +35,16 @@ class AgreementController extends Controller
                     'status' => $row->is_active ? 'paid' : 'unpaid'
                 ])->render();
             })
+            ->editColumn('content', function($row) {
+                return nl2br(e($row->content));
+            })
             ->editColumn('updated_at', function($row) {
                     return \Carbon\Carbon::parse($row->start_date)->format('d M Y');
                 })
             ->addColumn('action', function($row) {
                 return view('pages.admin.agreements.action-buttons', compact('row'))->render();
             })
-            ->rawColumns(['status', 'action'])
+            ->rawColumns(['status', 'action','content'])
             ->make(true);
     }
 

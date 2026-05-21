@@ -67,7 +67,27 @@ class RequestSampleController extends Controller
     }
 
 
-    public function updateResi(Request $request)
+    public function approve(Request $request)
+    {
+        $request->validate([
+            'sample_request_id' => 'required|exists:sample_requests,id',
+        ]);
+
+        try {
+            $this->requestSampleService->approve($request->sample_request_id);
+            
+            $sampleRequest = SampleRequest::with('user')->find($request->sample_request_id);
+            if ($sampleRequest && $sampleRequest->user) {
+                $sampleRequest->user->notify(new SampleStatusNotification($sampleRequest, 'APPROVED'));
+            }
+
+            return redirect()->back()->with('success', 'Pengajuan keseluruhan berhasil disetujui');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+
+    public function ship(Request $request)
     {
         $request->validate([
             'sample_request_id' => 'required|exists:sample_requests,id',
@@ -75,8 +95,7 @@ class RequestSampleController extends Controller
             'tracking_number' => 'required|string',
             'shipping_cost' => 'nullable|numeric'
         ]);
-
-        $this->requestSampleService->updateResi(
+        $this->requestSampleService->ship(
             $request->sample_request_id, 
             $request->only(['courier', 'tracking_number', 'shipping_cost'])
         );
@@ -85,12 +104,42 @@ class RequestSampleController extends Controller
             $sampleRequest->user->notify(new SampleStatusNotification($sampleRequest, 'SHIPPED'));
         }
 
-        return redirect()->back()->with('success', 'Produk berhasil dikirim dan status diubah menjadi APPROVED.');
+        return redirect()->back()->with('success', 'Produk berhasil dikirim.');
+    }
+
+    public function approveProduct(Request $request)
+    {
+        $request->validate([
+            'detail_id' => 'required|exists:sample_request_details,id',
+            'mandatory_video_count' => 'required|integer|min:1',
+        ]);
+
+        $this->requestSampleService->approveProduct(
+            $request->detail_id,
+            $request->mandatory_video_count
+        );
+
+        return redirect()->back()->with('success', 'Produk berhasil disetujui dengan penugasan video.');
+    }
+
+    public function rejectProduct(Request $request)
+    {
+        $request->validate([
+            'detail_id' => 'required|exists:sample_request_details,id',
+            'reject_reason' => 'required|string|max:500',
+        ]);
+
+        $this->requestSampleService->rejectProduct(
+            $request->detail_id,
+            $request->reject_reason
+        );
+
+        return redirect()->back()->with('success', 'Pengajuan produk berhasil ditolak.');
     }
 
     public function syncStatus()
     {
-        $sampleRequests = SampleRequest::whereIn('status', ['APPROVED', 'SHIPPED'])
+        $sampleRequests = SampleRequest::whereIn('status', ['SHIPPED'])
             ->whereNotNull('tracking_number')
             ->whereNotNull('courier')
             ->get();

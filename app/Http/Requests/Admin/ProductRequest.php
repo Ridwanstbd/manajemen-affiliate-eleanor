@@ -13,13 +13,6 @@ class ProductRequest extends FormRequest
 
     public function rules()
     {
-        if ($this->routeIs('*product-mass-update')) {
-            return [
-                'stock'                 => 'nullable|integer',
-                'mandatory_video_count' => 'nullable|integer',
-            ];
-        }
-
         return [
             'seller_sku' => 'required|string|max:255',
             'name'       => 'required|string|max:255',
@@ -39,8 +32,6 @@ class ProductRequest extends FormRequest
             'image.image'           => 'File harus berupa gambar.',
             'image.mimes'           => 'Format gambar harus jpeg, png, atau jpg.',
             'image.max'             => 'Ukuran gambar maksimal 2MB (2048 KB).',
-            'stock.integer'         => 'Stok harus berupa angka bilangan bulat.',
-            'mandatory_video_count.integer' => 'Jumlah video wajib harus berupa angka bilangan bulat.',
         ];
     }
 }
