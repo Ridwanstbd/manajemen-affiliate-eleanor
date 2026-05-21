@@ -2,7 +2,7 @@
 @section('title', 'Katalog Produk')
 
 @section('content')
-<x-molecules.card title="Katalog Produk" description="Pilih produk sampel gratis yang ingin Anda ajukan untuk direview.">
+<x-organisms.mobile-page-wrapper title="Katalog Produk" description="Pilih produk sampel gratis yang ingin Anda ajukan untuk direview.">
     <div style="margin-bottom: 24px; display: flex; gap: 16px; max-width: 480px;">
         <form action="{{ route('affiliator.catalog.index') }}" method="GET" style="display: flex; gap: 12px; width: 100%;">
             <x-atoms.input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama produk..." style="flex: 1;" />
@@ -17,5 +17,6 @@
     <div style="margin-top: 32px; display: flex; justify-content: center;">
         {{ $products->links() }}
     </div>
-</x-molecules.card>
+</x-organisms.mobile-page-wrapper>
+
 @endsection

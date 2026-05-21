@@ -18,9 +18,12 @@ class CartController extends Controller
     public function index()
     {
         $cartItems = $this->cartService->getCart();
-        $agreements = Agreement::where('is_active', true)->get();
         
-        return view('pages.affiliator.cart.index', compact('cartItems', 'agreements'));
+        $agreement = Agreement::where('is_active', true)
+            ->where('is_kol', auth()->user()->is_kol)
+            ->first();
+        
+        return view('pages.affiliator.cart.index', compact('cartItems', 'agreement'));
     }
 
     public function store(Request $request, Product $product)

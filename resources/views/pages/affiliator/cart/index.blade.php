@@ -52,16 +52,23 @@
                         <textarea name="address" id="address" required placeholder="Tuliskan alamat lengkap pengiriman paket beserta nomor HP alternatif jika ada..." style="width: 100%; border-radius: 8px; border: 1px solid var(--glass-border); padding: 12px; font-size: 13px; background: white; min-height: 100px; box-sizing: border-box; color: var(--text-primary); font-family: inherit; resize: vertical;"></textarea>
                     </div>
 
-                    <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; padding: 16px; background: #fffbeb; border-radius: 8px; border: 1px solid #fef3c7;">
-                        <x-atoms.typography variant="body" style="font-weight: 700; color: #b45309; margin: 0;">Syarat & Ketentuan Pengajuan:</x-atoms.typography>
-                        <ul style="margin: 0; padding-left: 20px; font-size: 13px; color: #78350f; line-height: 1.5;">
-                            <li>Setiap produk sampel yang Anda minta akan ditinjau secara mandiri oleh admin toko.</li>
-                            <li>Admin berhak menentukan jumlah target video wajib yang harus Anda buat atau menolak pengajuan produk tertentu.</li>
-                            <li>Tugas video wajib akan otomatis diterbitkan di sistem setelah paket logistik sampai di lokasi Anda.</li>
-                        </ul>
+                    @if($agreement)
+                        <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; padding: 16px; background: #fffbeb; border-radius: 8px; border: 1px solid #fef3c7;">
+                            <x-atoms.typography variant="body" style="font-weight: 700; color: #b45309; margin: 0;">Syarat & Ketentuan Pengajuan:</x-atoms.typography>
+                            <div style="font-size: 13px; color: #78350f; line-height: 1.5;">
+                                {!! nl2br(e($agreement->content)) !!}
+                            </div>
+                        </div>
+                    @endif
+
+                    <div style="display: flex; align-items: flex-start; gap: 10px; margin-bottom: 24px;">
+                        <input type="checkbox" id="agree_terms" onchange="document.getElementById('btnSubmitCheckout').disabled = !this.checked;" style="width: 18px; height: 18px; margin-top: 2px; cursor: pointer;">
+                        <label for="agree_terms" style="font-size: 13px; color: var(--text-secondary); cursor: pointer; user-select: none; line-height: 1.4;">
+                            Saya menyatakan telah membaca, memahami, dan menyetujui seluruh syarat & ketentuan pengajuan sampel yang berlaku di atas.
+                        </label>
                     </div>
 
-                    <x-atoms.button type="submit" variant="primary" style="padding: 12px 32px; font-size: 14px; font-weight: 600;">
+                    <x-atoms.button type="submit" id="btnSubmitCheckout" disabled variant="primary" style="padding: 12px 32px; font-size: 14px; font-weight: 600;">
                         Kirim Pengajuan Sampel Gratis
                     </x-atoms.button>
                 </form>
