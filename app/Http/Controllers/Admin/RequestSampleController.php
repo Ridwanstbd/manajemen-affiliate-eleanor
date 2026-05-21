@@ -7,6 +7,7 @@ use App\Models\SampleRequest;
 use App\Services\Admin\RequestSampleService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
+use Carbon\Carbon;
 
 class RequestSampleController extends Controller
 {
@@ -44,6 +45,9 @@ class RequestSampleController extends Controller
                 
             return DataTables::of($query)
                 ->addIndexColumn()
+                ->editColumn('created_at', function ($row) {
+                    return Carbon::parse($row->created_at)->translatedFormat('d M Y, H:i');
+                })
                 ->addColumn('username', function ($row) {
                     if ($row->user && $row->user->username) {
                         return '@' . $row->user->username; 

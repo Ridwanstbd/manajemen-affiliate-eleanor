@@ -67,7 +67,7 @@
         </div>
 
         <div style="margin-bottom: 32px;">
-            <x-atoms.typography variant="card-title" as="h4" style="font-size: 13px; color: var(--text-secondary); margin-bottom: 12px;">Data Penugasan Berdasarkan Paket</x-atoms.typography>
+            <x-atoms.typography variant="card-title" as="h4" style="font-size: 13px; color: var(--text-secondary); margin-bottom: 12px;">Data Penugasan</x-atoms.typography>
             <div id="tm-detail-tugas"></div>
         </div>
 
