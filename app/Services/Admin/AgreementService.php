@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\DB;
 
 class AgreementService
 {
-
     public function createAgreement(array $data)
     {
         return DB::transaction(function () use ($data) {
@@ -18,8 +17,8 @@ class AgreementService
     public function updateAgreement(Agreement $agreement, array $data)
     {
         return DB::transaction(function () use ($agreement, $data) {
-            
-            return $agreement->update($data);
+            $agreement->update($data);
+            return $agreement;
         });
     }
 
