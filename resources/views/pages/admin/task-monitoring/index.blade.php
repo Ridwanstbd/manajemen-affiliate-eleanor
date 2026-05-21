@@ -136,7 +136,7 @@
 
             if (d.sample_requests) {
                 d.sample_requests.forEach(req => {
-                    if (['SHIPPED', 'DELIVERED', 'COMPLETED', 'APPROVED'].includes(req.status)) {
+                    if (['SHIPPED', 'DELIVERED', 'COMPLETED', 'APPROVED', 'PENDING', 'REJECTED'].includes(req.status)) {
                         let pkg = {
                             id: req.id,
                             courier: req.courier || 'Kurir',
@@ -193,10 +193,15 @@
                 }
             });
 
+            packages.forEach(pkg => {
+                pkg.products = pkg.products.filter(prod => prod.tasks.length > 0);
+            });
+            packages = packages.filter(pkg => pkg.products.length > 0);
+
             let resultHtml = '';
 
             if (packages.length === 0 && manualTasks.length === 0) {
-                resultHtml = `<div style="padding: 16px; border: 1px dashed #cbd5e1; border-radius: 8px; text-align: center; font-size: 12px; color: var(--text-tertiary);">Belum ada data paket atau penugasan video untuk kreator ini.</div>`;
+                resultHtml = `<div style="padding: 16px; border: 1px dashed #cbd5e1; border-radius: 8px; text-align: center; font-size: 12px; color: var(--text-tertiary);">Belum ada penugasan video yang digenerate sistem untuk kreator ini.</div>`;
             }
 
             packages.forEach(pkg => {
@@ -223,59 +228,56 @@
                             </div>
                     `;
                     
-                    if (prod.tasks.length === 0) {
-                        resultHtml += `<div style="padding: 12px; border: 1px dashed #cbd5e1; border-radius: 6px; font-size: 11px; color: var(--text-tertiary); text-align: center; background: #f8fafc;">Tugas belum digenerate oleh sistem.</div>`;
-                    } else {
-                        prod.tasks.forEach((task) => {
-                            const taskTitle = `TUGAS-${task.id}`;
-                            let statusBadge = '';
-                            if (task.task_status === 'COMPLETED') {
-                                statusBadge = `<span style="padding: 3px 6px; background: #dcfce7; color: #16a34a; border-radius: 4px; font-size: 10px; font-weight: 700;">SELESAI</span>`;
-                            } else if (task.task_status === 'OVERDUE') {
-                                statusBadge = `<span style="padding: 3px 6px; background: #fee2e2; color: #dc2626; border-radius: 4px; font-size: 10px; font-weight: 700;">TERLAMBAT</span>`;
-                            } else {
-                                statusBadge = `<span style="padding: 3px 6px; background: #f1f5f9; color: #64748b; border-radius: 4px; font-size: 10px; font-weight: 700;">PENDING</span>`;
-                            }
-                            
-                            const dueDateRaw = task.due_date ? new Date(task.due_date) : null;
-                            const dueDate = dueDateRaw ? dueDateRaw.toLocaleDateString('id-ID', {day: 'numeric', month: 'short', year: 'numeric'}) : '-';
+                    prod.tasks.forEach((task) => {
+                        const taskTitle = `TUGAS-${task.id}`;
+                        let statusBadge = '';
+                        if (task.task_status === 'COMPLETED') {
+                            statusBadge = `<span style="padding: 3px 6px; background: #dcfce7; color: #16a34a; border-radius: 4px; font-size: 10px; font-weight: 700;">SELESAI</span>`;
+                        } else if (task.task_status === 'OVERDUE') {
+                            statusBadge = `<span style="padding: 3px 6px; background: #fee2e2; color: #dc2626; border-radius: 4px; font-size: 10px; font-weight: 700;">TERLAMBAT</span>`;
+                        } else {
+                            statusBadge = `<span style="padding: 3px 6px; background: #f1f5f9; color: #64748b; border-radius: 4px; font-size: 10px; font-weight: 700;">PENDING</span>`;
+                        }
+                        
+                        const dueDateRaw = task.due_date ? new Date(task.due_date) : null;
+                        const dueDate = dueDateRaw ? dueDateRaw.toLocaleDateString('id-ID', {day: 'numeric', month: 'short', year: 'numeric'}) : '-';
 
-                            if (task.task_status === 'COMPLETED' && task.tiktok_video_link) {
-                                const reportDateRaw = new Date(task.updated_at);
-                                const reportDate = reportDateRaw.toLocaleDateString('id-ID', {day: 'numeric', month: 'short', year: 'numeric'});
+                        if (task.task_status === 'COMPLETED' && task.tiktok_video_link) {
+                            const reportDateRaw = new Date(task.updated_at);
+                            const reportDate = reportDateRaw.toLocaleDateString('id-ID', {day: 'numeric', month: 'short', year: 'numeric'});
 
-                                resultHtml += `
-                                    <div style="display: flex; justify-content: space-between; align-items: flex-start; padding: 12px; border: 1px solid rgba(0,0,0,0.06); border-radius: 6px; margin-bottom: 8px; background: #fff; flex-wrap: wrap; gap: 12px; border-left: 3px solid #10b981;">
-                                        <div style="flex: 1; min-width: 200px;">
-                                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-                                                <div style="font-size: 12px; font-weight: 700; color: var(--text-primary);">${taskTitle}</div>
-                                                ${statusBadge}
-                                            </div>
-                                            <div style="font-size: 11px; color: var(--text-secondary); margin-bottom: 4px;">Dilaporkan: ${reportDate}</div>
-                                            <div style="font-size: 11px; color: var(--primary-blue); text-overflow: ellipsis; overflow: hidden; white-space: nowrap; max-width: 100%;" title="${task.tiktok_video_link}">${task.tiktok_video_link}</div>
+                            resultHtml += `
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start; padding: 12px; border: 1px solid rgba(0,0,0,0.06); border-radius: 6px; margin-bottom: 8px; background: #fff; flex-wrap: wrap; gap: 12px; border-left: 8px solid #10b981;">
+                                    <div style="flex: 1; min-width: 200px;">
+                                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                            <div style="font-size: 12px; font-weight: 700; color: var(--text-primary);">${taskTitle}</div>
+                                            ${statusBadge}
                                         </div>
-                                        <div>
-                                            <a href="${task.tiktok_video_link}" target="_blank" style="padding: 6px 12px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11px; font-weight: 600; color: var(--text-primary); text-decoration: none; display: inline-block; background: #f8fafc; transition: all 0.2s;">
-                                                Buka Link
-                                            </a>
-                                        </div>
+                                        <div style="font-size: 11px; color: var(--text-secondary); margin-bottom: 4px;">Dilaporkan: ${reportDate}</div>
+                                        <div style="font-size: 11px; color: var(--primary-blue); text-overflow: ellipsis; overflow: hidden; white-space: nowrap; max-width: 100%;" title="${task.tiktok_video_link}">${task.tiktok_video_link}</div>
                                     </div>
-                                `;
-                            } else {
-                                resultHtml += `
-                                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; border: 1px solid rgba(0,0,0,0.06); border-radius: 6px; margin-bottom: 8px; background: #fff; border-left: 3px solid ${task.task_status === 'OVERDUE' ? '#ef4444' : '#e2e8f0'};">
-                                        <div>
-                                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-                                                <div style="font-size: 12px; font-weight: 700; color: var(--text-primary);">${taskTitle}</div>
-                                                ${statusBadge}
-                                            </div>
-                                            <div style="font-size: 11px; color: var(--text-secondary);">Tenggat: <span style="${task.task_status === 'OVERDUE' ? 'color: #dc2626; font-weight: 600;' : 'font-weight: 500;'}">${dueDate}</span></div>
-                                        </div>
+                                    <div>
+                                        <a href="${task.tiktok_video_link}" target="_blank" style="padding: 6px 12px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11px; font-weight: 600; color: var(--text-primary); text-decoration: none; display: inline-block; background: #f8fafc; transition: all 0.2s;">
+                                            Buka Link
+                                        </a>
                                     </div>
-                                `;
-                            }
-                        });
-                    }
+                                </div>
+                            `;
+                        } else {
+                            resultHtml += `
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; border: 1px solid rgba(0,0,0,0.06); border-radius: 6px; margin-bottom: 8px; background: #fff; border-left: 8px solid ${task.task_status === 'OVERDUE' ? '#ef4444' : '#e2e8f0'};">
+                                    <div>
+                                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                                            <div style="font-size: 12px; font-weight: 700; color: var(--text-primary);">${taskTitle}</div>
+                                            ${statusBadge}
+                                        </div>
+                                        <div style="font-size: 11px; color: var(--text-secondary);">Tenggat: <span style="${task.task_status === 'OVERDUE' ? 'color: #dc2626; font-weight: 600;' : 'font-weight: 500;'}">${dueDate}</span></div>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    });
+                    
                     resultHtml += `</div>`;
                 });
                 resultHtml += `
@@ -314,7 +316,7 @@
                     const dueDate = dueDateRaw ? dueDateRaw.toLocaleDateString('id-ID', {day: 'numeric', month: 'short', year: 'numeric'}) : '-';
 
                     resultHtml += `
-                        <div style="margin-bottom: 8px; padding: 12px; border: 1px solid rgba(0,0,0,0.06); border-radius: 6px; background: #fff; border-left: 3px solid ${task.task_status === 'COMPLETED' ? '#10b981' : (task.task_status === 'OVERDUE' ? '#ef4444' : '#e2e8f0')};">
+                        <div style="margin-bottom: 8px; padding: 12px; border: 1px solid rgba(0,0,0,0.06); border-radius: 6px; background: #fff; border-left: 8px solid ${task.task_status === 'COMPLETED' ? '#10b981' : (task.task_status === 'OVERDUE' ? '#ef4444' : '#e2e8f0')};">
                             <div style="font-size: 13px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; line-height: 1.3;">${productNames}</div>
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                                 <div style="display: flex; align-items: center; gap: 8px;">
