@@ -1,8 +1,21 @@
 @foreach($products as $product)
+@php
+        $fallbackImage = 'https://placehold.co/400x400?text=No+Image';
+        $imageUrl = $fallbackImage;
+        if (!empty($product->image_path)) {
+            $imageUrl = filter_var($product->image_path, FILTER_VALIDATE_URL) 
+                        ? $product->image_path 
+                        : asset('storage/' . $product->image_path);
+        }
+    @endphp
+
     <div class="product-card" style="background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 12px; box-shadow: var(--glass-shadow);">
-        <div style="position: relative; width: 100%; height: 160px; border-radius: 8px; overflow: hidden; background: #f1f5f9;">
-            <img src="{{ $product->image_path ? (Str::startsWith($product->image_path, ['http://', 'https://']) ? $product->image_path : asset('storage/' . $product->image_path)) : '' }}" alt="{{ $product->name }}" style="width: 100%; height: 100%; object-fit: cover;">
-        </div>
+        <div class="card-img-container">
+                <img src="{{ $imageUrl }}" 
+                     alt="{{ $product->name }}" 
+                     loading="lazy"
+                     onerror="this.onerror=null; this.src='{{ $fallbackImage }}';">
+            </div>
         <div style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
             <span style="font-size: 11px; color: var(--text-secondary); text-transform: uppercase; font-weight: 600;">{{ $product->category }}</span>
             <x-atoms.typography variant="body" style="font-weight: 600; color: var(--text-primary); margin: 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 40px; line-height: 1.4;">
