@@ -3,13 +3,6 @@
 
 @section('content')
 <x-molecules.card title="Pemantauan Tugas" description="Pengawasan progres unggahan konten video berdasarkan sampel yang diterima.">
-    <x-molecules.glass-tabs>
-        <x-molecules.glass-tab-item :active="$currentTab === 'pending'" href="?tab=pending">Pending</x-molecules.glass-tab-item>
-        <x-molecules.glass-tab-item :active="$currentTab === 'disetujui'" href="?tab=disetujui">Disetujui</x-molecules.glass-tab-item>
-        <x-molecules.glass-tab-item :active="$currentTab === 'dalam-perjalanan'" href="?tab=dalam-perjalanan">Dalam Perjalanan</x-molecules.glass-tab-item>
-        <x-molecules.glass-tab-item :active="$currentTab === 'ditolak'" href="?tab=ditolak">Ditolak</x-molecules.glass-tab-item>
-        <x-molecules.glass-tab-item :active="$currentTab === 'terkirim'" href="?tab=terkirim">Terkirim</x-molecules.glass-tab-item>
-    </x-molecules.glass-tabs>
     <x-slot name="headerAction">
         <x-atoms.button variant="primary" onclick="openModal('editSettingModal')">
             <x-atoms.icon name="gear" style="width: 18px; height: 18px;" />
@@ -17,7 +10,7 @@
         </x-atoms.button>
     </x-slot>
     <div class="tab-content">
-        <x-organisms.datatables id="taskMonitorTable" url="{{ route('admin-dashboard.task-monitoring.data', request()->query()) }}"
+        <x-organisms.datatables id="taskMonitorTable" url="{{ route('admin-dashboard.monitoring.data') }}"
         :columns="[
             ['data' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'width' => '50px'],
             ['data' => 'username', 'name' => 'username', 'title' => 'AFFILIATOR'],
@@ -143,7 +136,7 @@
 
             if (d.sample_requests) {
                 d.sample_requests.forEach(req => {
-                    if (['SHIPPED', 'DELIVERED', 'COMPLETED', 'APPROVED', 'PENDING', 'REJECTED'].includes(req.status)) {
+                    if (['SHIPPED', 'DELIVERED', 'COMPLETED', 'APPROVED'].includes(req.status)) {
                         let pkg = {
                             id: req.id,
                             courier: req.courier || 'Kurir',
@@ -211,20 +204,9 @@
                 
                 resultHtml += `
                     <div style="background: white; border: 1px solid var(--glass-border); border-radius: 8px; margin-bottom: 16px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
-                        <div style="background: #f8fafc; padding: 12px 16px; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center;">
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color: var(--primary-blue);"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
-                                <span style="font-size: 13px; font-weight: 700; color: var(--text-primary);">Paket ${displayCourier}</span>
-                            </div>
-                            <span style="font-size: 11px; font-weight: 600; color: var(--text-secondary); background: #e2e8f0; padding: 4px 8px; border-radius: 4px; letter-spacing: 0.5px;">RESI: ${pkg.tracking_number}</span>
-                        </div>
-                        <div style="padding: 16px;">
+                    <div style="padding: 16px;">
                 `;
                 
-                if (pkg.products.length === 0) {
-                    resultHtml += `<div style="font-size: 12px; color: var(--text-tertiary);">Tidak ada data produk.</div>`;
-                }
-
                 pkg.products.forEach((prod, pIdx) => {
                     const isLastProduct = pIdx === pkg.products.length - 1;
                     
@@ -245,7 +227,7 @@
                         resultHtml += `<div style="padding: 12px; border: 1px dashed #cbd5e1; border-radius: 6px; font-size: 11px; color: var(--text-tertiary); text-align: center; background: #f8fafc;">Tugas belum digenerate oleh sistem.</div>`;
                     } else {
                         prod.tasks.forEach((task) => {
-                            const taskTitle = `TASK-${task.id}`;
+                            const taskTitle = `TUGAS-${task.id}`;
                             let statusBadge = '';
                             if (task.task_status === 'COMPLETED') {
                                 statusBadge = `<span style="padding: 3px 6px; background: #dcfce7; color: #16a34a; border-radius: 4px; font-size: 10px; font-weight: 700;">SELESAI</span>`;
@@ -315,7 +297,7 @@
                 `;
                 
                 manualTasks.forEach((task) => {
-                    const taskTitle = `TASK-${task.id}`;
+                    const taskTitle = `TUGAS-${task.id}`;
                     const products = task.products || [];
                     const productNames = products.length > 0 ? products.map(p => p.name).join(', ') : 'Produk Tidak Terdaftar';
                     

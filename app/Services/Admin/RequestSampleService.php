@@ -11,6 +11,16 @@ use Illuminate\Support\Facades\Http;
 
 class RequestSampleService
 {
+    public function getDatatablesData()
+    {
+        $statusMap = [
+            'pending' => 'PENDING',
+            'disetujui' => 'APPROVED',
+            'dalam-perjalanan' => 'SHIPPED',
+            'ditolak' => 'REJECTED',
+            'terkirim' => 'DELIVERED',
+        ];
+    }
     public function approve(int $id)
     {
         $sampleRequest = SampleRequest::with('details')->findOrFail($id);

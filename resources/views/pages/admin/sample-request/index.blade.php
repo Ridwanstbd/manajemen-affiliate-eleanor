@@ -3,6 +3,13 @@
 
 @section('content')
 <x-molecules.card title="Permintaan Sampel" description="Kelola permintaan sampel dari affiliator dan perbarui status logistik pengiriman.">
+    <x-molecules.glass-tabs>
+        <x-molecules.glass-tab-item :active="$currentTab === 'pending'" href="?tab=pending">Pending</x-molecules.glass-tab-item>
+        <x-molecules.glass-tab-item :active="$currentTab === 'disetujui'" href="?tab=disetujui">Disetujui</x-molecules.glass-tab-item>
+        <x-molecules.glass-tab-item :active="$currentTab === 'dalam-perjalanan'" href="?tab=dalam-perjalanan">Dalam Perjalanan</x-molecules.glass-tab-item>
+        <x-molecules.glass-tab-item :active="$currentTab === 'ditolak'" href="?tab=ditolak">Ditolak</x-molecules.glass-tab-item>
+        <x-molecules.glass-tab-item :active="$currentTab === 'terkirim'" href="?tab=terkirim">Terkirim</x-molecules.glass-tab-item>
+    </x-molecules.glass-tabs>
     <x-slot:headerAction>
         <form action="{{ route('admin-dashboard.request-samples.sync-status') }}" method="POST">
             @csrf
@@ -13,7 +20,7 @@
     </x-slot:headerAction>
     <div class="tab-content">
         <x-organisms.datatables id="requestSampleTable"
-        url="{{ route('admin-dashboard.request-samples.data') }}"
+        url="{{ route('admin-dashboard.request-samples.data', request()->query()) }}"
         :columns="[
             ['data' => 'DT_RowIndex', 'title' => 'No', 'orderable' => false, 'searchable' => false, 'width' => '50px'],
             ['data' => 'username', 'name' => 'user.username', 'title' => 'Affiliator'],

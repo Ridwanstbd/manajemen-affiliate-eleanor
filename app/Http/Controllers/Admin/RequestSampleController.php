@@ -4,12 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\SampleRequest;
-use App\Models\SampleRequestDetail;
-use App\Notifications\SampleStatusNotification;
 use App\Services\Admin\RequestSampleService;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 use Yajra\DataTables\Facades\DataTables;
 
 class RequestSampleController extends Controller
@@ -21,16 +17,30 @@ class RequestSampleController extends Controller
         $this->requestSampleService = $requestSampleService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        return view('pages.admin.sample-request.index');
+        $currentTab = $request->query('tab', 'pending');
+        
+        return view('pages.admin.sample-request.index', compact('currentTab'));
     }
 
     public function data(Request $request)
     {
         if ($request->ajax()) {
+            $tab = $request->query('tab', 'pending');
+            $statusMap = [
+                'pending' => 'PENDING',
+                'disetujui' => 'APPROVED',
+                'dalam-perjalanan' => 'SHIPPED',
+                'ditolak' => 'REJECTED',
+                'terkirim' => 'DELIVERED',
+            ];
+            
+            $status = $statusMap[$tab] ?? 'PENDING';
+
             $query = SampleRequest::with(['user', 'details.product'])
-                ->withSum('details','quantity');
+                ->where('status', $status)
+                ->withSum('details', 'quantity');
                 
             return DataTables::of($query)
                 ->addIndexColumn()
@@ -45,49 +55,32 @@ class RequestSampleController extends Controller
                         'PENDING'  => 'Menunggu',
                         'APPROVED' => 'Disetujui',
                         'SHIPPED'  => 'Dalam Perjalanan',
+                        'DELIVERED'=> 'Terkirim',
                         'REJECTED' => 'Ditolak',
-                        'DELIVERED' => 'Terkirim',
+                        'COMPLETED'=> 'Selesai'
+                    ];
+                    
+                    $statusBadge = [
+                        'PENDING'  => 'pending',
+                        'APPROVED' => 'paid',
+                        'SHIPPED'  => 'shipped',
+                        'DELIVERED'=> 'shipped',
+                        'REJECTED' => 'cancelled',
+                        'COMPLETED'=> 'paid'
                     ];
 
-                    $displayStatus = $statusIndo[$row->status] ?? $row->status;
+                    $label = $statusIndo[$row->status] ?? $row->status;
+                    $class = $statusBadge[$row->status] ?? 'pending';
+
                     return view('components.atoms.badge', [
-                        'slot' => $displayStatus,
-                        'status' => strtolower($row->status) 
+                        'slot' => $label,
+                        'status' => $class
                     ])->render();
-                })
-                ->editColumn('details_sum_quantity', function ($row) {
-                    return $row->details_sum_quantity . ' Produk' ?? 0; 
-                })
-                ->editColumn('created_at', function($row) {
-                    return Carbon::parse($row->created_at)->format('d M Y');
                 })
                 ->addColumn('action', function($row) {
                     return view('pages.admin.sample-request.action-buttons', compact('row'))->render();
                 })
-                ->filterColumn('status', function($query, $keyword) {
-                    $keyword = strtolower($keyword);
-                    $statusMap = [
-                        'menunggu' => 'PENDING',
-                        'disetujui' => 'APPROVED',
-                        'dalam perjalanan' => 'SHIPPED',
-                        'ditolak' => 'REJECTED',
-                        'terkirim' => 'DELIVERED',
-                    ];
-                    
-                    $matchedStatus = [];
-                    foreach ($statusMap as $id => $en) {
-                        if (str_contains($id, $keyword)) {
-                            $matchedStatus[] = $en;
-                        }
-                    }
-                    
-                    if (count($matchedStatus) > 0) {
-                        $query->whereIn('status', $matchedStatus);
-                    } else {
-                        $query->where('status', 'like', "%{$keyword}%");
-                    }
-                })
-                ->rawColumns(['action','status'])
+                ->rawColumns(['status', 'action'])
                 ->make(true);
         }
     }
@@ -95,18 +88,12 @@ class RequestSampleController extends Controller
     public function approve(Request $request)
     {
         $request->validate([
-            'sample_request_id' => 'required|exists:sample_requests,id',
+            'sample_request_id' => 'required|exists:sample_requests,id'
         ]);
 
         try {
             $this->requestSampleService->approve($request->sample_request_id);
-            
-            $sampleRequest = SampleRequest::with('user')->find($request->sample_request_id);
-            if ($sampleRequest && $sampleRequest->user) {
-                $sampleRequest->user->notify(new SampleStatusNotification($sampleRequest, 'APPROVED'));
-            }
-
-            return redirect()->back()->with('success', 'Pengajuan keseluruhan berhasil disetujui');
+            return redirect()->back()->with('success', 'Pengajuan sampel berhasil disetujui.');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
@@ -120,70 +107,53 @@ class RequestSampleController extends Controller
             'tracking_number' => 'required|string',
             'shipping_cost' => 'nullable|numeric'
         ]);
-        $this->requestSampleService->ship(
-            $request->sample_request_id, 
-            $request->only(['courier', 'tracking_number', 'shipping_cost'])
-        );
-        $sampleRequest = SampleRequest::with('user')->find($request->sample_request_id);
-        if ($sampleRequest && $sampleRequest->user) {
-            $sampleRequest->user->notify(new SampleStatusNotification($sampleRequest, 'SHIPPED'));
-        }
 
-        return redirect()->back()->with('success', 'Produk berhasil dikirim.');
+        try {
+            $this->requestSampleService->ship($request->sample_request_id, $request->all());
+            return redirect()->back()->with('success', 'Status logistik berhasil diperbarui.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     }
 
     public function approveProduct(Request $request)
     {
         $request->validate([
             'detail_id' => 'required|exists:sample_request_details,id',
-            'mandatory_video_count' => 'required|integer|min:1',
+            'mandatory_video_count' => 'required|integer|min:1'
         ]);
 
-        $detail = SampleRequestDetail::findOrFail($request->detail_id);
-
-        $this->requestSampleService->approveProduct(
-            $request->detail_id,
-            $request->mandatory_video_count
-        );
-
-        return redirect()->route('admin-dashboard.request-samples.index', ['open_sample' => $detail->sample_request_id])
-                         ->with('success', 'Produk berhasil disetujui dengan penugasan video.');
+        try {
+            $this->requestSampleService->approveProduct($request->detail_id, $request->mandatory_video_count);
+            return redirect()->back()->with('success', 'Produk berhasil disetujui untuk pengajuan.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     }
 
     public function rejectProduct(Request $request)
     {
         $request->validate([
             'detail_id' => 'required|exists:sample_request_details,id',
-            'reject_reason' => 'required|string|max:500',
+            'reject_reason' => 'required|string|max:500'
         ]);
 
-        $detail = SampleRequestDetail::findOrFail($request->detail_id);
-
-        $this->requestSampleService->rejectProduct(
-            $request->detail_id,
-            $request->reject_reason
-        );
-
-        return redirect()->route('admin-dashboard.request-samples.index', ['open_sample' => $detail->sample_request_id])
-                         ->with('success', 'Pengajuan produk berhasil ditolak.');
+        try {
+            $this->requestSampleService->rejectProduct($request->detail_id, $request->reject_reason);
+            return redirect()->back()->with('success', 'Produk berhasil ditolak dari pengajuan.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     }
-    public function syncStatus()
+
+    public function syncStatus(Request $request)
     {
-        $sampleRequests = SampleRequest::whereIn('status', ['SHIPPED'])
-            ->whereNotNull('tracking_number')
-            ->whereNotNull('courier')
-            ->get();
+        $sampleRequests = SampleRequest::whereIn('status', ['SHIPPED'])->get();
 
         foreach ($sampleRequests as $item) {
-            
-            $model = $item instanceof SampleRequest 
-                ? $item 
-                : SampleRequest::find($item->id);
-            
-            if ($model) {
-                $this->requestSampleService->checkAndUpdateDeliveryStatus($model);
+            if ($item) {
+                $this->requestSampleService->checkAndUpdateDeliveryStatus($item);
             }
-            
         }
 
         return redirect()->back()->with('success', 'Sinkronisasi pelacakan selesai. Status pengiriman telah diperbarui.');
@@ -204,6 +174,7 @@ class RequestSampleController extends Controller
 
         return response()->json($finalResponse);
     }
+
     public function reject(Request $request)
     {
         $request->validate([
@@ -211,11 +182,15 @@ class RequestSampleController extends Controller
             'reject_reason' => 'required|string|max:500' 
         ]);
 
-        $this->requestSampleService->rejectRequest(
-            $request->sample_request_id,
-            $request->reject_reason
-        );
+        try {
+            $this->requestSampleService->rejectRequest(
+                $request->sample_request_id,
+                $request->reject_reason
+            );
 
-        return redirect()->back()->with('success', 'Pengajuan sampel telah ditolak.');
+            return redirect()->back()->with('success', 'Pengajuan sampel telah ditolak.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     }
 }

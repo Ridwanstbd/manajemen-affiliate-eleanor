@@ -55,7 +55,6 @@
     </form>
 </x-organisms.offcanvas>
 
-{{-- Offcanvas Edit --}}
 <x-organisms.offcanvas id="offcanvasEditKOL" title="Edit Kontrak KOL">
     <form id="editKolContractForm" action="{{ route('admin-dashboard.users.kol-contract.update') }}" method="POST" style="padding: 24px; padding-top: 0;">
         @csrf
@@ -83,9 +82,7 @@
             </select>
         </div>
 
-        {{-- Pilihan Produk Checklist --}}
         <div style="margin-bottom: 16px;">
-            <x-atoms.label value="Produk Terkait" />
             <x-atoms.searchable-multi-select 
                 id="edit-product-select"
                 name="product_ids" 
@@ -98,7 +95,7 @@
             />
         </div>
 
-        {{-- Form Edit Agreement Content --}}
+        
         <div style="margin-bottom: 16px;">
             <x-atoms.label value="Isi Perjanjian Kontrak (Agreement)" />
             <textarea name="agreement_content" id="edit-agreement-content" class="form-control" rows="5" placeholder="Tuliskan syarat dan ketentuan perjanjian kontrak..." required style="height: auto; resize: vertical; padding: 12px; width: 100%; border-radius: 8px; border: 1px solid var(--glass-border); background: white; color: var(--text-primary); font-family: inherit; font-size: 13px; box-sizing: border-box; margin-top: 4px;"></textarea>
@@ -110,7 +107,6 @@
     </form>
 </x-organisms.offcanvas>
 
-{{-- Modal Hapus --}}
 <x-organisms.modal id="modalDeleteKOL" title="Hapus Kontrak KOL">
     <form id="deleteKolContractForm" action="{{ route('admin-dashboard.users.kol-contract.destroy') }}" method="POST">
         @csrf
