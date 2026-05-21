@@ -150,7 +150,7 @@ class UserController extends Controller
         try {
             $accessRequest = SystemAccessRequest::find($request->id);
 
-            $this->userService->approveAccess($request);
+            $this->userService->approveAccess($request, $request->has('is_kol'));
             
             if ($accessRequest) {
                 $user = User::where('email', $accessRequest->email)->first();

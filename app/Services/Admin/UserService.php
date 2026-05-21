@@ -304,13 +304,13 @@ class UserService
         });
     }
 
-    public function approveAccess(Request $request)
+    public function approveAccess(Request $request, bool $isKol)
     {
         $accessRequest = SystemAccessRequest::findOrFail($request->id);
 
         $user = User::create([
             'username' => $accessRequest->tiktok_username,
-            'is_kol' => false,
+            'is_kol' => $isKol
         ]);
 
         $accessRequest->update([
