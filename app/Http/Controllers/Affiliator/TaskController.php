@@ -50,16 +50,6 @@ class TaskController extends Controller
                 ->with('error', 'Tugas tidak ditemukan atau Anda tidak memiliki hak akses.');
         }
     }
-    public function submitForm($id)
-    {
-        try {
-            $task = $this->taskService->getTaskDetail(auth()->user(), (int)$id);
-            return view('pages.affiliator.task.report', compact('task'));
-        } catch (\Exception $e) {
-            return redirect()->route('affiliator.task.index')
-                ->with('error', 'Tugas tidak ditemukan.');
-        }
-    }
     
     public function submitTask(SubmitTaskRequest $request, $id)
     {

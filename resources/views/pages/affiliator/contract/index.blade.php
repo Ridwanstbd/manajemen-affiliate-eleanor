@@ -20,7 +20,7 @@
 
             <a href="{{ route('affiliator.contract-kol.show', $contract->id) }}"
                style="text-decoration: none; display: block;">
-                <x-molecules.card style="border: 1px solid var(--glass-border); border-radius: 16px; padding: 20px; background: rgba(255,255,255,0.7); box-shadow: 0 2px 12px rgba(0,0,0,0.04); transition: box-shadow 0.2s, transform 0.2s;"
+                <x-molecules.card style="border: 1px solid var(--glass-border); border-radius: 16px; padding: 20px; background: var(--bg-canvas); box-shadow: 0 2px 12px var(--glass-shadow); transition: box-shadow 0.2s, transform 0.2s;"
                     onmouseover="this.style.boxShadow='0 6px 24px rgba(0,0,0,0.10)'; this.style.transform='translateY(-1px)'"
                     onmouseout="this.style.boxShadow='0 2px 12px rgba(0,0,0,0.04)'; this.style.transform='translateY(0)'">
 
@@ -42,25 +42,25 @@
                     </div>
 
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
-                        <div style="background: rgba(241,245,249,0.6); border-radius: 10px; padding: 10px 12px;">
+                        <div style="background: var(--bg-canvas); border-radius: 10px; padding: 10px 12px;">
                             <span style="font-size: 10px; color: var(--text-tertiary); text-transform: uppercase; font-weight: 600; display: block; margin-bottom: 2px;">Mulai</span>
                             <span style="font-size: 13px; font-weight: 700; color: var(--text-primary);">
                                 {{ $contract->start_date->translatedFormat('d M Y') }}
                             </span>
                         </div>
-                        <div style="background: rgba(241,245,249,0.6); border-radius: 10px; padding: 10px 12px;">
+                        <div style="background: var(--bg-canvas); border-radius: 10px; padding: 10px 12px;">
                             <span style="font-size: 10px; color: var(--text-tertiary); text-transform: uppercase; font-weight: 600; display: block; margin-bottom: 2px;">Berakhir</span>
                             <span style="font-size: 13px; font-weight: 700; color: {{ $isExpired ? '#ef4444' : 'var(--text-primary)' }};">
                                 {{ $contract->end_date->translatedFormat('d M Y') }}
                             </span>
                         </div>
-                        <div style="background: rgba(241,245,249,0.6); border-radius: 10px; padding: 10px 12px;">
+                        <div style="background: var(--bg-canvas); border-radius: 10px; padding: 10px 12px;">
                             <span style="font-size: 10px; color: var(--text-tertiary); text-transform: uppercase; font-weight: 600; display: block; margin-bottom: 2px;">Fee Kontrak</span>
                             <span style="font-size: 13px; font-weight: 700; color: var(--primary-blue);">
                                 Rp {{ number_format($contract->contract_fee, 0, ',', '.') }}
                             </span>
                         </div>
-                        <div style="background: rgba(241,245,249,0.6); border-radius: 10px; padding: 10px 12px;">
+                        <div style="background: var(--bg-canvas); border-radius: 10px; padding: 10px 12px;">
                             <span style="font-size: 10px; color: var(--text-tertiary); text-transform: uppercase; font-weight: 600; display: block; margin-bottom: 2px;">Target Video</span>
                             <span style="font-size: 13px; font-weight: 700; color: var(--text-primary);">
                                 {{ $contract->required_video_count }} video
@@ -84,7 +84,7 @@
                 </x-molecules.card>
             </a>
         @empty
-            <div style="text-align: center; padding: 48px 24px; background: rgba(255,255,255,0.5); border-radius: 20px; border: 1px dashed var(--glass-border);">
+            <div style="text-align: center; padding: 48px 24px; background: var(--glass-bg); border-radius: 20px; border: 1px dashed var(--glass-border);">
                 <x-atoms.icon name="invoices" style="width: 40px; height: 40px; color: var(--text-tertiary); margin-bottom: 16px; opacity: 0.4;" />
                 <x-atoms.typography variant="card-title" as="h3" style="font-size: 15px; color: var(--text-secondary); margin-bottom: 6px;">
                     Belum Ada Kontrak

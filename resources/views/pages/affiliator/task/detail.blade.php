@@ -103,13 +103,47 @@
         @else
             <div class="task-instruction-box" style="background: #f8fafc; border: 1px dashed #cbd5e1; padding: 12px; border-radius: 8px; margin-bottom: 18px;">
                 <x-atoms.typography variant="body" style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.5;">
-                    <strong style="color: var(--text-primary);">Instruksi:</strong> Pastikan video TikTok yang Anda unggah menampilkan produk dengan jelas dan telah menambahkan keranjang kuning (Yellow Karts) produk di atas.
+                    <strong style="color: var(--text-primary);">Instruksi:</strong> Pastikan video TikTok yang Anda unggah menampilkan produk dengan jelas dan telah menambahkan keranjang kuning produk di atas.
                 </x-atoms.typography>
             </div>
-
-            <x-atoms.button href="{{ route('affiliator.task.report', $task->id) }}" variant="primary" style="width: 100%; display: flex; align-items: center; justify-content: center;" >
+            <x-molecules.card style="background-color: var(--bg-canvas); border: 1px solid #e2e8f0; border-radius: 8px; padding: 18px; margin-bottom: 32px; box-shadow: none;">
+                <x-atoms.typography variant="body" style="font-weight: 800; font-size: 15px; color: var(--text-primary); margin-bottom: 12px; display: block;">
+                    Panduan Pelaporan
+                </x-atoms.typography>
+                <ul style="margin: 0; padding-left: 20px; color: var(--text-secondary); font-size: 13.5px; display: flex; flex-direction: column; gap: 8px;">
+                    <li style="padding-left: 4px;">Pastikan video diatur ke mode Publik.</li>
+                    <li style="padding-left: 4px;">Pastikan keranjang kuning telah disematkan.</li>
+                    <li style="padding-left: 4px;">Tautan akan diverifikasi otomatis oleh sistem.</li>
+                </ul>
+            </x-molecules.card>
+            <form action="{{ route('affiliator.task.submit', $task->id) }}" method="POST">
+                @csrf
+                <x-molecules.card style="background-color: var(--bg-canvas); border: 1px solid #e2e8f0; margin-bottom: 24px;">
+                    <x-atoms.label style="font-weight: 800; color: var(--text-primary); font-size: 16px; margin-bottom: 4px; display: block;">
+                        Tautan Video TikTok <span style="color: var(--text-secondary); font-weight: normal;">(Wajib)</span>
+                    </x-atoms.label>
+                    <x-atoms.typography variant="body" style="font-size: 13px; color: var(--text-secondary); margin-bottom: 12px; margin-top: 0; display: block;">
+                        Salin (copy) tautan video yang telah Anda unggah di TikTok.
+                    </x-atoms.typography>
+                    
+                    <x-atoms.input 
+                        type="url" 
+                        name="tiktok_video_link" 
+                        placeholder="Tempelkan (paste) tautan di sini..." 
+                        value="{{ old('tiktok_video_link') }}"
+                        required 
+                        style="background: #f8fafc; width: 100%; box-sizing: border-box; padding: 12px 14px;"
+                    />
+                    @error('tiktok_video_link')
+                        <x-atoms.typography variant="body" style="color: var(--rose); font-size: 12px; margin-top: 6px; display: block;">
+                            {{ $message }}
+                        </x-atoms.typography>
+                    @enderror
+                </x-molecules.card>
+                <x-atoms.button type="submit" variant="primary" style="width: 100%; display: flex; align-items: center; justify-content: center;" >
                     Lapor Tugas 
-            </x-atoms.button>
+                </x-atoms.button>
+            </form>
         @endif
     </x-molecules.card>
 
