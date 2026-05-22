@@ -118,6 +118,7 @@
             </x-molecules.card>
             <form action="{{ route('affiliator.task.submit', $task->id) }}" method="POST">
                 @csrf
+                <input hidden name="product" value="{{ $product->id }}"/>
                 <x-molecules.card style="background-color: var(--bg-canvas); border: 1px solid #e2e8f0; margin-bottom: 24px;">
                     <x-atoms.label style="font-weight: 800; color: var(--text-primary); font-size: 16px; margin-bottom: 4px; display: block;">
                         Tautan Video TikTok <span style="color: var(--text-secondary); font-weight: normal;">(Wajib)</span>
