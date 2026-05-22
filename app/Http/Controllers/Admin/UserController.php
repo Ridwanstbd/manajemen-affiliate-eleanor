@@ -161,7 +161,7 @@ class UserController extends Controller
             }
             
             return redirect()->to(route('admin-dashboard.users.index') . '?tab=active&open_user=' . $newUser->id)
-                ->with('success', 'Akses berhasil disetujui. Akun affiliator otomatis terbuat dengan password bawaan: password123');
+                ->with('success', 'Akses berhasil disetujui. Akun affiliator otomatis terbuat.');
         } catch (Exception $e) {
             return redirect()->back()->with('error', 'Gagal menyetujui akses: ' . $e->getMessage());
         }
