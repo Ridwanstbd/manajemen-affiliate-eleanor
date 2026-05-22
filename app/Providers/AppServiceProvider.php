@@ -51,6 +51,7 @@ class AppServiceProvider extends ServiceProvider
                             'route' => $notif->data['route'] ?? '#',
                         ]);
                     }
+
                     $productUpdateCount = $dbUnreadNotifications->filter(fn($n) => ($n->data['type'] ?? '') === 'product_updated')->count();
 
                     if ($dbUnreadCount > 0) {

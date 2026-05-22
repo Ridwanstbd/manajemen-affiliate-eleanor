@@ -63,8 +63,11 @@ class ImportService
     {
         foreach ($files as $file) {
             $path = $file->store('imports');
-            
-            Excel::queueImport(new ProductUpdateImport, $path);
+
+            Excel::import(new ProductUpdateImport, $path);
         }
+
+        $admins = \App\Models\User::where('role', 'ADMINISTRATOR')->get();
+        \Illuminate\Support\Facades\Notification::send($admins, new \App\Notifications\ImportFinishedNotification());
     }
 }
