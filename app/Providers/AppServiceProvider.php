@@ -133,7 +133,7 @@ class AppServiceProvider extends ServiceProvider
                                 'title' => 'Peringatan Tugas Terlambat ⚠️',
                                 'desc'  => 'Tugas konten video Anda telah melewati batas waktu pada ' . $dueDate->translatedFormat('d M Y') . '. Segera unggah link.',
                                 'time'  => $task->updated_at->diffForHumans(),
-                                'route' => route('affiliator.task.report', $task->id), 
+                                'route' => route('affiliator.task.show', $task->id), 
                             ]);
                             $notificationCount++;
                         } 
@@ -142,7 +142,7 @@ class AppServiceProvider extends ServiceProvider
                                 'title' => 'Tenggat Waktu Tugas Mendekat ⏳',
                                 'desc'  => 'Ingat, Anda harus mengunggah link video TikTok sebelum ' . $dueDate->translatedFormat('d M Y') . '.',
                                 'time'  => $task->updated_at->diffForHumans(),
-                                'route' => route('affiliator.task.report', $task->id),
+                                'route' => route('affiliator.task.show', $task->id),
                             ]);
                             $notificationCount++;
                         }
