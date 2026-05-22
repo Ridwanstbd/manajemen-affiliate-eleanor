@@ -53,12 +53,33 @@
                         <textarea name="address" id="address" required placeholder="Tuliskan alamat lengkap pengiriman paket beserta nomor HP alternatif jika ada..." style="width: 100%; border-radius: 8px; border: 1px solid var(--glass-border); padding: 12px; font-size: 13px; background: white; min-height: 100px; box-sizing: border-box; color: var(--text-primary); font-family: inherit; resize: vertical;"></textarea>
                     </div>
 
-                    @if($agreement)
+                    @if($personalAgreements->count() || $generalAgreements->count())
                         <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; padding: 16px; background: #fffbeb; border-radius: 8px; border: 1px solid #fef3c7;">
                             <x-atoms.typography variant="body" style="font-weight: 700; color: #b45309; margin: 0;">Syarat & Ketentuan Pengajuan:</x-atoms.typography>
-                            <div style="font-size: 13px; color: #78350f; line-height: 1.5;">
-                                {!! nl2br(e($agreement->content)) !!}
-                            </div>
+
+                            @if($personalAgreements->count())
+                                @if($generalAgreements->count())
+                                    <div style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: #92400e; letter-spacing: 0.4px;">Ketentuan Khusus Anda</div>
+                                @endif
+                                @foreach($personalAgreements as $agr)
+                                    <div style="font-size: 13px; color: #78350f; line-height: 1.5; padding-left: 8px;">
+                                        {!! nl2br(e($agr->content)) !!}
+                                    </div>
+                                @endforeach
+                            @endif
+
+                            @if($generalAgreements->count())
+                                @if($personalAgreements->count())
+                                    <div style="border-top: 1px dashed #fde68a; padding-top: 10px; margin-top: 2px;">
+                                        <div style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: #92400e; letter-spacing: 0.4px; margin-bottom: 10px;">Ketentuan Umum</div>
+                                    </div>
+                                @endif
+                                @foreach($generalAgreements as $agr)
+                                    <div style="font-size: 13px; color: #78350f; line-height: 1.5;">
+                                        {!! nl2br(e($agr->content)) !!}
+                                    </div>
+                                @endforeach
+                            @endif
                         </div>
                     @endif
 

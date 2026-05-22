@@ -138,7 +138,7 @@
                 </p>
                 <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px;">
                     @foreach($personal as $index => $agreement)
-                        <div style="display: flex; gap: 14px; padding: 16px; background: linear-gradient(135deg, rgba(59,130,246,0.04), rgba(255,255,255,0.9)); border: 1px solid rgba(59,130,246,0.15); border-radius: 14px; border-left: 3px solid var(--primary-blue);">
+                        <div style="display: flex; gap: 14px; padding: 16px; background: linear-gradient(135deg, rgba(59,130,246,0.04), rgba(255,255,255,0.9)); border: 1px solid rgba(59,130,246,0.15); border-radius: 14px; ">
                             <div style="width: 26px; height: 26px; border-radius: 8px; background: rgba(59,130,246,0.1); display: flex; align-items: center; justify-content: center; font-weight: 800; color: var(--primary-blue); font-size: 12px; flex-shrink: 0; margin-top: 1px;">
                                 {{ $index + 1 }}
                             </div>

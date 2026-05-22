@@ -18,17 +18,28 @@ class CartController extends Controller
     public function index()
     {
         $cartItems = $this->cartService->getCart();
-        
-        $agreement = Agreement::where('is_active', true)
-            ->where('is_kol', auth()->user()->is_kol)
-            ->where(function($query) {
-                $query->where('user_id', auth()->id())
-                      ->orWhereNull('user_id');
+        $user      = auth()->user();
+
+        $allAgreements = Agreement::where('is_active', true)
+            ->where(function ($query) use ($user) {
+                $query->where('user_id', $user->id)
+                      ->orWhere(function ($q) use ($user) {
+                          $q->whereNull('user_id')
+                            ->where('is_kol', $user->is_kol);
+                      });
+                if ($user->is_kol) {
+                    $query->orWhere(function ($q) {
+                        $q->whereNull('user_id')->where('is_kol', false);
+                    });
+                }
             })
             ->orderByRaw('user_id DESC')
-            ->first();
-        
-        return view('pages.affiliator.cart.index', compact('cartItems', 'agreement'));
+            ->get();
+
+        $personalAgreements = $allAgreements->whereNotNull('user_id')->where('user_id', $user->id)->values();
+        $generalAgreements  = $allAgreements->whereNull('user_id')->values();
+
+        return view('pages.affiliator.cart.index', compact('cartItems', 'personalAgreements', 'generalAgreements'));
     }
 
     public function store(Request $request, Product $product)
