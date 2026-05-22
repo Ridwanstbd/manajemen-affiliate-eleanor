@@ -10,7 +10,7 @@
     $isExpired = $contract->end_date->isPast();
     $badgeStatus = $isExpired ? 'overdue' : ($isActive ? 'paid' : 'pending');
     $badgeLabel  = $isExpired ? 'Kedaluwarsa' : ($isActive ? 'Aktif' : ucfirst(strtolower($contract->status)));
-    $daysLeft = (int) now()->diffInDays($contract->end_date, false);
+    $daysLeft    = (int) now()->diffInDays($contract->end_date, false);
     $cartItems   = session('affiliate_cart', []);
     $cartIds     = collect($cartItems)->pluck('id')->toArray();
 @endphp
@@ -79,7 +79,7 @@
         @endif
 
         @if($contract->notes)
-            <div style="margin-top: 14px; padding: 12px 14px; background: rgba(241,245,249,0.7); border-radius: 10px;">
+            <div style="margin-top: 14px; padding: 12px 14px; background: rgba(241,245,249,0.7); border-radius: 10px; border-left: 3px solid var(--primary-blue);">
                 <span style="font-size: 10px; color: var(--text-tertiary); text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 4px;">Catatan</span>
                 <p style="font-size: 13px; color: var(--text-secondary); margin: 0; line-height: 1.5;">{{ $contract->notes }}</p>
             </div>
@@ -138,7 +138,6 @@
                 </div>
             </div>
 
-            {{-- Tombol Minta Sample --}}
             <div style="margin-top: 14px; border-top: 1px solid var(--glass-border); padding-top: 12px;">
                 @if($inCart)
                     <div style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px; background: rgba(34,197,94,0.1); border-radius: 10px; border: 1px solid rgba(34,197,94,0.2);">
@@ -148,6 +147,7 @@
                 @else
                     <form action="{{ route('affiliator.cart.store', $product->id) }}" method="POST">
                         @csrf
+                        <input type="hidden" name="redirect_back" value="{{ url()->current() }}">
                         <x-atoms.button type="submit" variant="primary" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 20px; font-size: 13.5px; font-weight: 600; border-radius: 10px;">
                             <x-atoms.icon name="cart" style="width: 16px; height: 16px;" />
                             Minta Sample

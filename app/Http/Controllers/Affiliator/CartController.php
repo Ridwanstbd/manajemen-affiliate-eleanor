@@ -46,8 +46,10 @@ class CartController extends Controller
     {
         try {
             $this->cartService->addToCart($product);
-            return redirect()->route('affiliator.catalog.index')
-                ->with('success', 'Produk berhasil ditambahkan ke keranjang.');
+            $redirectTo = $request->input('redirect_back');
+            return $redirectTo
+                ? redirect($redirectTo)->with('success', 'Produk berhasil ditambahkan ke keranjang.')
+                : redirect()->route('affiliator.catalog.index')->with('success', 'Produk berhasil ditambahkan ke keranjang.');
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }
