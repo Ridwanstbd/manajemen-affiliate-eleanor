@@ -156,7 +156,7 @@
                 @if($winners->isNotEmpty())
 
                     <x-atoms.typography variant="body" style="font-size: 11px; font-weight: 700; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 12px;">
-                        🏆 Pemenang Tantangan
+                    Pemenang Tantangan
                     </x-atoms.typography>
 
                     <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 32px;">
@@ -215,14 +215,14 @@
 
                     @if($challenge->rewards->isNotEmpty())
                         <x-atoms.typography variant="body" style="font-size: 11px; font-weight: 700; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 12px;">
-                            🎁 Hadiah Tantangan
+                            Hadiah Tantangan
                         </x-atoms.typography>
                         <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 32px;">
                             @foreach($challenge->rewards as $reward)
                                 <x-molecules.card style="padding: 14px 16px; border-radius: 14px; border: 1px solid rgba(245,158,11,0.2); background: rgba(245,158,11,0.04);">
                                     <div style="display: flex; align-items: center; gap: 12px;">
                                         <div style="width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; background: rgba(245,158,11,0.12);">
-                                            🎁
+                                            <x-atoms.icon name="medal-ribbon"/>
                                         </div>
                                         <div style="flex: 1; min-width: 0;">
                                             <x-atoms.typography variant="body" style="font-weight: 800; font-size: 14px; color: var(--text-primary); display: block; margin-bottom: 2px;">
