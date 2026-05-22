@@ -22,7 +22,7 @@
                     link="{{ route('affiliator.challenge.show', $challenge->id) }}"
                     tag="Aktif"
                     title="{{ $challenge->title }}"
-                    description="Selesai: {{ \Carbon\Carbon::parse($challenge->end_date)->format('d M Y') }} • Bonus s/d Rp {{ number_format($challenge->commission_bonus, 0, ',', '.') }}"
+                    description="Selesai: {{ \Carbon\Carbon::parse($challenge->end_date)->format('d M Y') }} "
                     icon="gift"
                     banner="{{ $bannerUrl }}"
                 />

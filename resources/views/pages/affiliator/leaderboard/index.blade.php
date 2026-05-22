@@ -144,9 +144,9 @@
                     @if($challenge->rewards->count() > 0)
                         <div style="display: flex; align-items: center; gap: 8px; padding: 10px 12px; background: rgba(245,158,11,0.08); border-radius: 10px; border: 1px solid rgba(245,158,11,0.2);">
                             <x-atoms.icon name="medal-ribbon" style="width: 16px; height: 16px; color: #d97706; flex-shrink: 0;" />
-                            <x-atoms.typography variant="body" style="font-weight: 700; font-size: 13px; color: #b45309;">
-                                Total Hadiah: {{ $challenge->rewards->first()->reward_description }}
-                            </x-atoms.typography>
+                            <x-atoms.button href="{{ route('affiliator.challenge.show', $challenge->id) }}" variant="body" style="width: 100%;" >
+                                Detail
+                            </x-atoms.button>
                         </div>
                     @endif
                 </x-molecules.card>
