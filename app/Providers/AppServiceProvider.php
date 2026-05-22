@@ -33,30 +33,29 @@ class AppServiceProvider extends ServiceProvider
                     $accessPendingCount = SystemAccessRequest::where('status', 'PENDING')->count();
                     $samplePendingCount = SampleRequest::where('status', 'PENDING')->count();
                     
-                    $dbNotifications = $user->notifications()->latest()->take(5)->get();
-                    $dbUnreadCount = $user->unreadNotifications()->count();
+                    $dbUnreadNotifications = $user->unreadNotifications()->latest()->take(5)->get();
+                    $dbUnreadCount = $dbUnreadNotifications->count();
 
                     $totalNotificationCount = $accessPendingCount + $samplePendingCount + $dbUnreadCount;
-
-                    if ($dbUnreadCount > 0) {
-                        $user->unreadNotifications->markAsRead();
-                    }
 
                     $dashboardService = app(DashboardService::class);
                     $dashboardData = $dashboardService->getDashboardStats();
                     $pendingTasksList = collect($dashboardData['pendingTasksList'] ?? []);
 
                     $systemNotifs = collect();
-                    foreach ($dbNotifications as $notif) {
+                    foreach ($dbUnreadNotifications as $notif) {
                         $systemNotifs->push((object)[
-                            'title' => $notif->data['title'],
-                            'name'  => 'Sistem Otomatis', 
+                            'title' => $notif->data['title'] ?? 'Notifikasi',
+                            'name'  => 'Sistem Otomatis',
                             'time'  => $notif->created_at->diffForHumans(),
                             'route' => $notif->data['route'] ?? '#',
                         ]);
                     }
+                    $productUpdateCount = $dbUnreadNotifications->filter(fn($n) => ($n->data['type'] ?? '') === 'product_updated')->count();
 
-                    $productUpdateCount = $user->unreadNotifications()->where('data->type', 'product_updated')->count(); 
+                    if ($dbUnreadCount > 0) {
+                        $dbUnreadNotifications->each->markAsRead();
+                    }
 
                     $view->with([
                         'notificationCount' => $totalNotificationCount,
