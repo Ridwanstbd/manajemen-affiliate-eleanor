@@ -40,7 +40,7 @@
                 placeholder="Tempelkan (paste) tautan di sini..." 
                 value="{{ old('tiktok_video_link') }}"
                 required 
-                style="width: 100%; box-sizing: border-box; padding: 12px 14px;"
+                style="background: #f8fafc; width: 100%; box-sizing: border-box; padding: 12px 14px;"
             />
             @error('tiktok_video_link')
                 <x-atoms.typography variant="body" style="color: var(--rose); font-size: 12px; margin-top: 6px; display: block;">

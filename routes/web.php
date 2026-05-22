@@ -191,8 +191,9 @@ Route::middleware(['auth'])->group(function () {
         });
 
         Route::prefix('contract-kol')->name('contract-kol.')->group(function () {
-        Route::get('/', [ContractController::class, 'index'])->name('index');
-    });
+            Route::get('/', [ContractController::class, 'index'])->name('index');
+            Route::get('/{id}', [ContractController::class, 'show'])->name('show');
+        });
     });
 
 });
