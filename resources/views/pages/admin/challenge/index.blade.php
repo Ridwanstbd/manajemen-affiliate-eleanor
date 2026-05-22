@@ -233,24 +233,24 @@
         document.body.style.overflow = '';
     }
 
-    function addRewardRow(formType, metric = 'video_count', desc = '') {
+    function addRewardRow(formType, metric = 'Video Terbanyak', desc = '') {
         const container = document.getElementById(`rewards-container-${formType}`);
         const index = container.children.length;
         
         const row = document.createElement('div');
         row.style.cssText = 'display: grid; grid-template-columns: 1fr 1fr 2fr auto; gap: 8px; margin-bottom: 12px; align-items: start;';
         
-        const selectedVideo = metric === 'video_count' ? 'selected' : '';
-        const selectedGmv = metric === 'gmv' ? 'selected' : '';
-        const selectedViews = metric === 'views' ? 'selected' : '';
+        const selectedVideo = metric === 'Video Terbanyak' ? 'selected' : '';
+        const selectedGmv = metric === 'GMV Terbanyak' ? 'selected' : '';
+        const selectedViews = metric === 'Views Terbanyak' ? 'selected' : '';
 
         const safeDesc = desc ? desc.toString().replace(/"/g, '&quot;') : '';
 
         row.innerHTML = `
             <select name="rewards[${index}][target_metric]" class="form-control" required style="font-size: 13px;">
-                <option value="video_count" ${selectedVideo}>Video Terbanyak</option>
-                <option value="gmv" ${selectedGmv}>GMV Terbanyak</option>
-                <option value="views" ${selectedViews}>Views Terbanyak</option>
+                <option value="Video Terbanyak" ${selectedVideo}>Video Terbanyak</option>
+                <option value="GMV Terbanyak" ${selectedGmv}>GMV Terbanyak</option>
+                <option value="Views Terbanyak" ${selectedViews}>Views Terbanyak</option>
             </select>
             <input type="text" name="rewards[${index}][reward_description]" class="form-control" placeholder="Deskripsi Hadiah (Cth: Kaos)" value="${safeDesc}" required style="font-size: 13px;">
             <button type="button" class="btn btn-secondary btn-sm" onclick="this.parentElement.remove()" style="padding: 8px 12px; color: #ef4444; border-color: #fca5a5; background: #fef2f2;">
@@ -327,9 +327,9 @@
             if(rowData.rewards && rowData.rewards.length > 0) {
                 rowData.rewards.forEach((r) => {
                     let labelMetrik = 'Video Terbanyak';
-                        if (r.target_metric === 'gmv') {
+                        if (r.target_metric === 'GMV Terbanyak') {
                             labelMetrik = 'GMV Terbanyak';
-                        } else if (r.target_metric === 'views') {
+                        } else if (r.target_metric === 'Views Terbanyak') {
                             labelMetrik = 'Views Terbanyak';
                         }
                     detailContainer.innerHTML += `
