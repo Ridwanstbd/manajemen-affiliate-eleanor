@@ -10,7 +10,7 @@
     $isExpired = $contract->end_date->isPast();
     $badgeStatus = $isExpired ? 'overdue' : ($isActive ? 'paid' : 'pending');
     $badgeLabel  = $isExpired ? 'Kedaluwarsa' : ($isActive ? 'Aktif' : ucfirst(strtolower($contract->status)));
-    $daysLeft    = now()->diffInDays($contract->end_date, false);
+    $daysLeft = (int) now()->diffInDays($contract->end_date, false);
     $cartItems   = session('affiliate_cart', []);
     $cartIds     = collect($cartItems)->pluck('id')->toArray();
 @endphp
@@ -79,7 +79,7 @@
         @endif
 
         @if($contract->notes)
-            <div style="margin-top: 14px; padding: 12px 14px; background: rgba(241,245,249,0.7); border-radius: 10px; border-left: 3px solid var(--primary-blue);">
+            <div style="margin-top: 14px; padding: 12px 14px; background: rgba(241,245,249,0.7); border-radius: 10px;">
                 <span style="font-size: 10px; color: var(--text-tertiary); text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 4px;">Catatan</span>
                 <p style="font-size: 13px; color: var(--text-secondary); margin: 0; line-height: 1.5;">{{ $contract->notes }}</p>
             </div>

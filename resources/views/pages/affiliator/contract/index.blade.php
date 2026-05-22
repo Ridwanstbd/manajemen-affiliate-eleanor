@@ -7,8 +7,6 @@
 @section('content')
 <x-organisms.mobile-page-wrapper title="Kontrak KOL Saya" subtitle="Daftar seluruh kontrak Key Opinion Leader yang terhubung dengan akun Anda.">
 
-    <x-molecules.alert />
-
     <div style="margin-top: 24px; display: flex; flex-direction: column; gap: 16px; margin-bottom: 40px;">
 
         @forelse($contracts as $contract)
