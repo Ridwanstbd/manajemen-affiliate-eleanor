@@ -67,7 +67,7 @@
             </x-molecules.dropdown>
             @endif
             
-            @if (request()->routeIs('affiliator.catalog.*')) 
+            @if (request()->routeIs('affiliator.catalog.*') || request()->routeIs('affiliator.contract-kol.show')) 
                 @php $cartCount = count(session('affiliate_cart', [])); @endphp
                 <a href="{{ route('affiliator.cart.index') }}" class="header-btn" aria-label="Keranjang">
                     <x-atoms.icon name="cart" style="width: 28px; height: 28px;"/>

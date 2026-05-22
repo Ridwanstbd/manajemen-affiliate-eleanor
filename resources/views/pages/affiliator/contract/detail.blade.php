@@ -79,7 +79,7 @@
         @endif
 
         @if($contract->notes)
-            <div style="margin-top: 14px; padding: 12px 14px; background: rgba(241,245,249,0.7); border-radius: 10px; border-left: 3px solid var(--primary-blue);">
+            <div style="margin-top: 14px; padding: 12px 14px; background: rgba(241,245,249,0.7); border-radius: 10px;">
                 <span style="font-size: 10px; color: var(--text-tertiary); text-transform: uppercase; font-weight: 700; display: block; margin-bottom: 4px;">Catatan</span>
                 <p style="font-size: 13px; color: var(--text-secondary); margin: 0; line-height: 1.5;">{{ $contract->notes }}</p>
             </div>
@@ -168,25 +168,5 @@
             </p>
         </div>
     @endforelse
-
-    @php $cartCount = count(session('affiliate_cart', [])); @endphp
-    @if($cartCount > 0)
-        <div style="position: fixed; bottom: 88px; left: 50%; transform: translateX(-50%); z-index: 100; width: calc(100% - 48px); max-width: 420px;">
-            <a href="{{ route('affiliator.cart.index') }}"
-               style="display: flex; align-items: center; justify-content: space-between; background: var(--primary-blue); color: #fff; text-decoration: none; padding: 14px 20px; border-radius: 16px; box-shadow: 0 8px 24px rgba(59,130,246,0.35); font-weight: 700; font-size: 14px;">
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <x-atoms.icon name="cart" style="width: 20px; height: 20px;" />
-                    Lihat Keranjang
-                </div>
-                <span style="background: rgba(255,255,255,0.25); border-radius: 20px; padding: 2px 10px; font-size: 13px; font-weight: 800;">
-                    {{ $cartCount }} item
-                </span>
-            </a>
-        </div>
-        <div style="height: 72px;"></div>
-    @endif
-
-    <div style="height: 24px;"></div>
-
 </x-organisms.mobile-page-wrapper>
 @endsection
