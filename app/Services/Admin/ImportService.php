@@ -9,6 +9,7 @@ use App\Imports\CreatorListImport;
 use App\Imports\LiveListImport;
 use App\Imports\ProductListImport;
 use App\Imports\VideoListImport;
+use App\Models\ProductImportQueue;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
@@ -64,10 +65,11 @@ class ImportService
         foreach ($files as $file) {
             $path = $file->store('imports');
 
-            Excel::import(new ProductUpdateImport, $path);
+            ProductImportQueue::create([
+                'admin_id'  => auth()->id(),
+                'file_path' => $path,
+                'status'    => 'PENDING',
+            ]);
         }
-
-        $admins = \App\Models\User::where('role', 'ADMINISTRATOR')->get();
-        \Illuminate\Support\Facades\Notification::send($admins, new \App\Notifications\ImportFinishedNotification());
     }
 }
