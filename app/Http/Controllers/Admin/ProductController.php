@@ -62,16 +62,36 @@ class ProductController extends Controller
 
     public function importData(ImportProductRequest $request)
     {
-        set_time_limit(300);
+        $storedPaths = [];
+        foreach ($request->file('files') as $file) {
+            $storedPaths[] = $file->store('imports/product-update', 'local');
+        }
+
+        $response = redirect()->back()->with('success', 'File Excel sedang diproses di background. Notifikasi akan dikirim setelah selesai.');
+
+        if (function_exists('fastcgi_finish_request')) {
+            ob_start();
+            $response->send();
+            ob_end_flush();
+            fastcgi_finish_request();
+        }
+
         ignore_user_abort(true);
+        set_time_limit(300);
 
         try {
-            $this->importService->executeProductUpdateImport($request->file('files'));
-            
-            return redirect()->back()->with('success', 'Import produk berhasil! Data produk telah diperbarui dan notifikasi telah dikirim.');
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat import: ' . $e->getMessage());
+            $this->importService->executeProductUpdateImport($storedPaths);
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Import produk gagal: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+            ]);
         }
+
+        foreach ($storedPaths as $path) {
+            Storage::disk('local')->delete($path);
+        }
+
+        return $response;
     }
     
     public function update(ProductRequest $request, $id)

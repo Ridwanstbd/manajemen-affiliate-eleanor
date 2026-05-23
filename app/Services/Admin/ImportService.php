@@ -62,10 +62,11 @@ class ImportService
         });
     }
 
-    public function executeProductUpdateImport($files)
+    public function executeProductUpdateImport(array $storedPaths)
     {
-        foreach ($files as $file) {
-            Excel::import(new ProductUpdateImport, $file);
+        foreach ($storedPaths as $path) {
+            $fullPath = \Illuminate\Support\Facades\Storage::disk('local')->path($path);
+            Excel::import(new ProductUpdateImport, $fullPath);
         }
 
         $admins = User::where('role', 'ADMINISTRATOR')->get();
