@@ -59,8 +59,9 @@ class AppServiceProvider extends ServiceProvider
                     }
 
                     $view->with([
-                        'notificationCount' => $totalNotificationCount,
-                        'pendingTasksList' => $systemNotifs->merge($pendingTasksList), 
+                        'notificationCount'  => $totalNotificationCount,
+                        'systemNotifs'       => $systemNotifs,
+                        'pendingTasksList'   => $pendingTasksList,
                         'accessPendingCount' => $accessPendingCount,
                         'samplePendingCount' => $samplePendingCount,
                         'productUpdateCount' => $productUpdateCount,

@@ -84,7 +84,32 @@
 
 <x-organisms.offcanvas id="notificationOffcanvas" title="Notifikasi">
     @if(auth()->check() && auth()->user()->role === 'ADMINISTRATOR')
-        <x-atoms.typography variant="card-title" as="h4" style="margin-bottom: 16px; font-size: 14px; color: var(--text-secondary);">
+
+        @if(($systemNotifs ?? collect())->isNotEmpty())
+            <x-atoms.typography variant="card-title" as="h4" style="margin-bottom: 10px; font-size: 14px; color: var(--text-secondary);">
+                Notifikasi Sistem
+            </x-atoms.typography>
+
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
+                @foreach($systemNotifs as $notif)
+                    <a href="{{ $notif->route }}" style="display: block; padding: 14px 16px; background: rgba(34,197,94,0.06); border: 1px solid rgba(34,197,94,0.25); border-radius: 8px; text-decoration: none; transition: 0.2s;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px;">
+                            <span style="font-size: 14px; font-weight: 600; color: var(--text-primary);">{{ $notif->title }}</span>
+                            <span style="font-size: 11px; color: #16a34a; background: rgba(34,197,94,0.12); padding: 2px 8px; border-radius: 4px; white-space: nowrap;">Sistem</span>
+                        </div>
+                        <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 6px;">
+                            {{ $notif->name }}
+                        </div>
+                        <div style="font-size: 11px; color: var(--text-tertiary);">
+                            <x-atoms.icon name="clock" style="width: 12px; height: 12px; vertical-align: middle; margin-right: 4px;" />
+                            {{ $notif->time }}
+                        </div>
+                    </a>
+                @endforeach
+            </div>
+        @endif
+
+        <x-atoms.typography variant="card-title" as="h4" style="margin-bottom: 10px; font-size: 14px; color: var(--text-secondary);">
             Tugas yang Menunggu Persetujuan
         </x-atoms.typography>
 
@@ -104,10 +129,12 @@
                     </div>
                 </a>
             @empty
-                <div style="text-align: center; padding: 40px 0;">
-                    <x-atoms.icon name="bell" style="width: 28px; height: 28px; color: var(--text-tertiary); margin-bottom: 16px; opacity: 0.5;" />
-                    <p style="font-size: 14px; color: var(--text-secondary);">Semua sudah selesai! Tidak ada tugas tertunda.</p>
-                </div>
+                @if(($systemNotifs ?? collect())->isEmpty())
+                    <div style="text-align: center; padding: 40px 0;">
+                        <x-atoms.icon name="bell" style="width: 28px; height: 28px; color: var(--text-tertiary); margin-bottom: 16px; opacity: 0.5;" />
+                        <p style="font-size: 14px; color: var(--text-secondary);">Semua sudah selesai! Tidak ada tugas tertunda.</p>
+                    </div>
+                @endif
             @endforelse
         </div>
     @elseif(auth()->check() && auth()->user()->role === 'AFFILIATOR')
