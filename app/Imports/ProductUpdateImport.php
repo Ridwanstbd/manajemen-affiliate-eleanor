@@ -6,9 +6,8 @@ use App\Models\Product;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
-use Maatwebsite\Excel\Concerns\WithChunkReading;
 
-class ProductUpdateImport implements ToCollection, WithHeadingRow, WithChunkReading
+class ProductUpdateImport implements ToCollection, WithHeadingRow
 {
     public function headingRow(): int
     {
@@ -38,8 +37,5 @@ class ProductUpdateImport implements ToCollection, WithHeadingRow, WithChunkRead
             );
         }
     }
-    public function chunkSize(): int
-    {
-        return 500;
-    }
+
 }

@@ -67,31 +67,16 @@ class ProductController extends Controller
             $storedPaths[] = $file->store('imports/product-update', 'local');
         }
 
-        $response = redirect()->back()->with('success', 'File Excel sedang diproses di background. Notifikasi akan dikirim setelah selesai.');
+        $pathsArg  = implode(',', $storedPaths);
+        $adminId   = auth()->id();
+        $artisan   = base_path('artisan');
+        $phpBin    = PHP_BINARY ?: 'php';
+        $logFile   = storage_path('logs/import-product.log');
 
-        if (function_exists('fastcgi_finish_request')) {
-            ob_start();
-            $response->send();
-            ob_end_flush();
-            fastcgi_finish_request();
-        }
+        $command = `{$phpBin} {$artisan} product:run-import "{$pathsArg}" {$adminId} >> {$logFile} 2>&1 &`;
+        exec($command);
 
-        ignore_user_abort(true);
-        set_time_limit(300);
-
-        try {
-            $this->importService->executeProductUpdateImport($storedPaths);
-        } catch (\Throwable $e) {
-            \Illuminate\Support\Facades\Log::error('Import produk gagal: ' . $e->getMessage(), [
-                'trace' => $e->getTraceAsString(),
-            ]);
-        }
-
-        foreach ($storedPaths as $path) {
-            Storage::disk('local')->delete($path);
-        }
-
-        return $response;
+        return redirect()->back()->with('success', 'File Excel sedang diproses di background. Notifikasi akan dikirim setelah selesai.');
     }
     
     public function update(ProductRequest $request, $id)
