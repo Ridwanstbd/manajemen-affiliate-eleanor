@@ -62,12 +62,15 @@ class ProductController extends Controller
 
     public function importData(ImportProductRequest $request)
     {
+        set_time_limit(300);
+        ignore_user_abort(true);
+
         try {
             $this->importService->executeProductUpdateImport($request->file('files'));
             
-            return redirect()->back()->with('success', 'File Excel berhasil diunggah dan masuk antrean. Notifikasi akan dikirim setelah proses selesai (maks. 1 menit).');
+            return redirect()->back()->with('success', 'Import produk berhasil! Data produk telah diperbarui dan notifikasi telah dikirim.');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error','Terjadi kesalahan saat import: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat import: ' . $e->getMessage());
         }
     }
     
