@@ -82,6 +82,11 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/import-product-update', [ProductController::class, 'importData'])->name('import-product-update');
         Route::put('/products/{id}', [ProductController::class, 'update'])->name('product-update');
 
+        Route::post('/notifications/mark-read', function () {
+            auth()->user()->unreadNotifications->markAsRead();
+            return response()->json(['success' => true]);
+        })->name('notifications.mark-read');
+
         Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics');
         Route::get('/analytics/detail-roi-data', [AnalyticsController::class, 'detailRoiData'])->name('analytics.detail-roi-data');
         Route::get('/leaderboard',[LeaderboardController::class,'index'])->name('leaderboard');

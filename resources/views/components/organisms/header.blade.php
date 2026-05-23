@@ -38,7 +38,7 @@
         </div>
 
         <div class="header-actions">
-            <button class="header-btn" onclick="openOffcanvas('notificationOffcanvas')">
+            <button class="header-btn" onclick="openOffcanvas('notificationOffcanvas'); markNotificationsRead();">
                 <x-atoms.icon name="bell" style="width: 28px; height: 28px;" />
                 @if($notificationCount > 0)
                     <span class="badge">
@@ -170,6 +170,22 @@
 </x-organisms.offcanvas>
 
 <script>
+    @auth
+    @if(auth()->user()->role === 'ADMINISTRATOR')
+    function markNotificationsRead() {
+        fetch('{{ route('admin-dashboard.notifications.mark-read') }}', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]') 
+                    ? document.querySelector('meta[name=csrf-token]').content 
+                    : '{{ csrf_token() }}',
+                'Content-Type': 'application/json',
+            }
+        }).catch(() => {});
+    }
+    @endif
+    @endauth
+
     if (typeof window.openOffcanvas !== 'function') {
         window.openOffcanvas = function(offcanvasId) {
             const offcanvas = document.getElementById(offcanvasId);

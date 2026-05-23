@@ -34,18 +34,20 @@ class AppServiceProvider extends ServiceProvider
                     $samplePendingCount = SampleRequest::where('status', 'PENDING')->count();
                     
                     $dbUnreadNotifications = $user->unreadNotifications()->latest()->take(5)->get();
-                    $dbUnreadCount = $dbUnreadNotifications->count();
+                    $dbUnreadCount         = $dbUnreadNotifications->count();
 
                     $totalNotificationCount = $accessPendingCount + $samplePendingCount + $dbUnreadCount;
 
                     $dashboardService = app(DashboardService::class);
-                    $dashboardData = $dashboardService->getDashboardStats();
+                    $dashboardData    = $dashboardService->getDashboardStats();
                     $pendingTasksList = collect($dashboardData['pendingTasksList'] ?? []);
 
                     $systemNotifs = collect();
                     foreach ($dbUnreadNotifications as $notif) {
                         $systemNotifs->push((object)[
+                            'id'    => $notif->id,
                             'title' => $notif->data['title'] ?? 'Notifikasi',
+                            'desc'  => $notif->data['desc'] ?? '',
                             'name'  => 'Sistem Otomatis',
                             'time'  => $notif->created_at->diffForHumans(),
                             'route' => $notif->data['route'] ?? '#',
@@ -53,10 +55,6 @@ class AppServiceProvider extends ServiceProvider
                     }
 
                     $productUpdateCount = $dbUnreadNotifications->filter(fn($n) => ($n->data['type'] ?? '') === 'product_updated')->count();
-
-                    if ($dbUnreadCount > 0) {
-                        $dbUnreadNotifications->each->markAsRead();
-                    }
 
                     $view->with([
                         'notificationCount'  => $totalNotificationCount,
