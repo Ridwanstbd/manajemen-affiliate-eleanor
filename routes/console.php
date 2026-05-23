@@ -4,4 +4,3 @@ use Illuminate\Support\Facades\Schedule;
 
 Schedule::command('creator:auto-blacklist')->hourly();
 Schedule::command('app:sync-delivery-status')->everySixHours();
-Schedule::command('product:process-import-queue')->everyMinute()->withoutOverlapping();
