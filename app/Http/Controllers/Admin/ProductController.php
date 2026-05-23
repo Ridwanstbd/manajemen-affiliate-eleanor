@@ -67,17 +67,18 @@ class ProductController extends Controller
             $storedPaths[] = $file->store('imports/product-update', 'local');
         }
 
-        $pathsArg  = implode(',', $storedPaths);
-        $adminId   = auth()->id();
-        $artisan   = base_path('artisan');
-        $phpBin    = PHP_BINARY ?: 'php';
-        $logFile   = storage_path('logs/import-product.log');
+        $queueFile = storage_path('app/private/import-queue.json');
+        $queue     = file_exists($queueFile) ? json_decode(file_get_contents($queueFile), true) : [];
+        $queue[]   = [
+            'admin_id'  => auth()->id(),
+            'paths'     => $storedPaths,
+            'queued_at' => now()->toISOString(),
+        ];
+        file_put_contents($queueFile, json_encode($queue, JSON_PRETTY_PRINT));
 
-        $command = `{$phpBin} {$artisan} product:run-import "{$pathsArg}" {$adminId} >> {$logFile} 2>&1 &`;
-        exec($command);
-
-        return redirect()->back()->with('success', 'File Excel sedang diproses di background. Notifikasi akan dikirim setelah selesai.');
+        return redirect()->back()->with('success', 'File Excel masuk antrean. Notifikasi akan dikirim setelah diproses (maks. 1 menit).');
     }
+
     
     public function update(ProductRequest $request, $id)
     {
