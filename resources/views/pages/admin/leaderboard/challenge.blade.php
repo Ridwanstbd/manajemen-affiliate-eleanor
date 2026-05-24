@@ -134,52 +134,6 @@
             @endif
 
         @endif
-
-        <x-atoms.typography variant="body" style="font-size: 11px; font-weight: 700; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 12px;">
-            Papan Peringkat Peserta
-        </x-atoms.typography>
-
-        <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 32px;">
-            @forelse($topLeaders as $leader)
-                @php
-                    $isTop3   = $leader->rank <= 3;
-                    $rankBg   = match($leader->rank) {
-                        1 => 'linear-gradient(135deg,#fbbf24,#f59e0b)',
-                        2 => 'linear-gradient(135deg,#94a3b8,#64748b)',
-                        3 => 'linear-gradient(135deg,#d97706,#b45309)',
-                        default => '#f1f5f9',
-                    };
-                    $rankColor = $isTop3 ? '#fff' : 'var(--text-secondary)';
-                @endphp
-                <x-molecules.card style="padding: 14px 16px; border-radius: 14px; border: 1px solid var(--glass-border); background: #ffffff;">
-                    <div style="display: flex; align-items: center; justify-content: space-between;">
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <div style="width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 15px; flex-shrink: 0; background: {{ $rankBg }}; color: {{ $rankColor }};">
-                                {{ $leader->rank }}
-                            </div>
-                            <div>
-                                <x-atoms.typography variant="body" style="font-weight: 800; font-size: 14.5px; color: var(--text-primary); display: block; margin-bottom: 2px;">
-                                    {{ '@' . $leader->user->username }}
-                                </x-atoms.typography>
-                                <x-atoms.typography variant="body" style="font-size: 12px; color: var(--text-secondary); display: block;">
-                                    Barang Terjual: {{ number_format($leader->total_items_sold, 0, ',', '.') }} Item
-                                </x-atoms.typography>
-                            </div>
-                        </div>
-                        <x-atoms.typography variant="h4" style="font-weight: 800; font-size: 14.5px; color: var(--text-primary);">
-                            {{ $leader->formatted_gmv }}
-                        </x-atoms.typography>
-                    </div>
-                </x-molecules.card>
-            @empty
-                <div style="text-align: center; padding: 32px 20px; background: rgba(255,255,255,0.5); border-radius: 16px; border: 1px dashed var(--glass-border);">
-                    <x-atoms.typography variant="body" style="font-size: 14px; color: var(--text-secondary); display: block;">
-                        Tidak ada data untuk tantangan ini.
-                    </x-atoms.typography>
-                </div>
-            @endforelse
-        </div>
-
     @else
         <div style="text-align: center; padding: 48px 20px; background: rgba(255,255,255,0.5); border-radius: 20px; border: 1px dashed var(--glass-border);">
             <x-atoms.icon name="medal" style="width: 40px; height: 40px; color: var(--text-tertiary); margin-bottom: 12px; opacity: 0.4;" />
