@@ -18,8 +18,7 @@
     <x-organisms.donut-chart-card title="Status Laporan Tugas" :data="$statusTugas" />
 </x-organisms.grid-layout>
 
-<x-molecules.card class="glass-metric-card" title="Papan Peringkat Affiliator (Top 5)" linkText="Lihat Semua >" linkHref="{{ route('admin-dashboard.leaderboard') }}">
-    
+<x-molecules.card class="glass-metric-card">
     @php
         $headers = [
             ['label' => 'PERINGKAT'], 

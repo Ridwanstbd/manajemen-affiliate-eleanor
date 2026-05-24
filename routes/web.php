@@ -89,7 +89,6 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics');
         Route::get('/analytics/detail-roi-data', [AnalyticsController::class, 'detailRoiData'])->name('analytics.detail-roi-data');
-        Route::get('/leaderboard',[LeaderboardController::class,'index'])->name('leaderboard');
 
         Route::prefix('users')->name('users.')->group(function(){
             Route::get('/', [UserController::class, 'index'])->name('index');
