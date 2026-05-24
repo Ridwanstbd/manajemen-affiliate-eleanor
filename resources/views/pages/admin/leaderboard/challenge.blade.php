@@ -49,11 +49,6 @@
                     </x-atoms.typography>
                 </div>
             @endif
-            <div style="margin-top: 12px;">
-                <x-atoms.button href="{{ route('admin.challenge.show', $challenge->id) }}" variant="body" style="width: 100%;">
-                    Lihat Detail Tantangan
-                </x-atoms.button>
-            </div>
         </x-molecules.card>
 
         @php $winners = $challenge->winners()->with('user')->get(); @endphp
