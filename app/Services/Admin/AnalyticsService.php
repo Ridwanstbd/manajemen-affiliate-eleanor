@@ -151,6 +151,8 @@ class AnalyticsService
         $tugasSelesai = TaskReport::where('task_status', 'COMPLETED')->count();
         $tugasProses = TaskReport::where('task_status', 'PENDING')->count();
 
+        $trenHarian = $this->getTrenHarian($currentMonth, $isKol);
+
         return [
             'metrics' => [
                 'gmv' => ['val' => $currCore->gmv, 'trend' => $this->calcTrend($currCore->gmv, $prevCore->gmv)],
@@ -163,7 +165,50 @@ class AnalyticsService
                 ['label' => 'Selesai', 'value' => $tugasSelesai, 'color' => '#10b981'],
                 ['label' => 'Diproses', 'value' => $tugasProses, 'color' => '#f59e0b'],
             ],
-            'trenHarian' => ['labels' => ['Belum ada data'], 'gmv' => [0], 'items' => [0]] 
+            'trenHarian' => $trenHarian,
+        ];
+    }
+
+    private function getTrenHarian($currentMonth, $isKol)
+    {
+        $histories = ImportHistory::whereMonth('start_date', $currentMonth->month)
+            ->whereYear('start_date', $currentMonth->year)
+            ->orderBy('start_date')
+            ->get();
+
+        if ($histories->isEmpty()) {
+            return ['labels' => ['Belum ada data'], 'gmv' => [0], 'items' => [0]];
+        }
+
+        $labels = [];
+        $gmvData = [];
+        $itemsData = [];
+
+        foreach ($histories as $history) {
+            $startLabel = Carbon::parse($history->start_date)->translatedFormat('d M');
+            $endLabel   = $history->end_date
+                ? Carbon::parse($history->end_date)->translatedFormat('d M')
+                : $startLabel;
+
+            $labels[] = $startLabel === $endLabel
+                ? $startLabel
+                : "{$startLabel} – {$endLabel}";
+
+            $metrics = CreatorMetric::where('import_history_id', $history->id)
+                ->whereHas('user', function($q) use ($isKol) {
+                    $q->where('is_kol', $isKol);
+                })
+                ->selectRaw('SUM(affiliate_gmv) as total_gmv, SUM(items_sold) as total_items')
+                ->first();
+
+            $gmvData[]   = round((float) ($metrics->total_gmv ?? 0), 2);
+            $itemsData[] = (int) ($metrics->total_items ?? 0);
+        }
+
+        return [
+            'labels' => $labels,
+            'gmv'    => $gmvData,
+            'items'  => $itemsData,
         ];
     }
 
