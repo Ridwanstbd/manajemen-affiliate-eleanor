@@ -5,7 +5,6 @@ use App\Http\Controllers\Admin\AnalyticsController;
 use App\Http\Controllers\Admin\ChallengeController;
 use App\Http\Controllers\Admin\ChallengeWinnerController;
 use App\Http\Controllers\Admin\ImportController;
-use App\Http\Controllers\Admin\LeaderboardController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\RequestSampleController;
 use App\Http\Controllers\Admin\SettingController;
@@ -151,7 +150,7 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['role:affiliator'])->prefix('affiliator')->name('affiliator.')->group(function () {
         Route::get('/', [MainAffiliateController::class,'index'])->name('index');
         
-        Route::prefix('catalog')->name('catalog.')->group(function (){
+        Route::prefix('catalog')->name('catalog.')->middleware('banned')->group(function (){
             Route::get('/', [CatalogController::class, 'index'])->name('index');
             Route::get('/{product}', [CatalogController::class, 'show'])->name('show');
         });
