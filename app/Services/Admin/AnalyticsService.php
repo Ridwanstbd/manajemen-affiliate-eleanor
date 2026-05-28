@@ -302,7 +302,8 @@ class AnalyticsService
 
             $sentQuantity = SampleRequestDetail::where('product_id', $product->id)
                 ->whereHas('sampleRequest', function($q) use ($month, $year, $isKol) {
-                    $q->whereMonth('created_at', $month)
+                    $q->whereIn('status', ['APPROVED', 'SHIPPED', 'DELIVERED'])
+                      ->whereMonth('created_at', $month)
                       ->whereYear('created_at', $year)
                       ->whereHas('user', function($u) use ($isKol) {
                           $u->where('is_kol', $isKol);
@@ -311,13 +312,23 @@ class AnalyticsService
 
             $productCost = ($product->price ?? 0) * $sentQuantity;
 
-            $shippingCost = SampleRequest::whereMonth('created_at', $month)
+            $shippingCost = 0;
+            $relatedRequests = SampleRequest::whereIn('status', ['APPROVED', 'SHIPPED', 'DELIVERED'])
+                ->whereMonth('created_at', $month)
                 ->whereYear('created_at', $year)
                 ->whereHas('details', function($q) use ($product) {
                     $q->where('product_id', $product->id);
                 })->whereHas('user', function($q) use ($isKol) {
                     $q->where('is_kol', $isKol);
-                })->sum('shipping_cost') ?? 0;
+                })->with(['details'])->get();
+
+            foreach ($relatedRequests as $sr) {
+                $totalQtyInRequest = $sr->details->sum('quantity');
+                $qtyThisProduct    = $sr->details->where('product_id', $product->id)->sum('quantity');
+                if ($totalQtyInRequest > 0) {
+                    $shippingCost += ($qtyThisProduct / $totalQtyInRequest) * (float) $sr->shipping_cost;
+                }
+            }
 
             $costContract = 0;
             if ($isKol) {
