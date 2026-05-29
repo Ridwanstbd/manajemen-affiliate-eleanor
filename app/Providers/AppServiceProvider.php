@@ -136,7 +136,7 @@ class AppServiceProvider extends ServiceProvider
                             ]);
                             $notificationCount++;
                         } 
-                        elseif ($dueDate->diffInDays($now) <= 3) {
+                        elseif ($now->diffInDays($dueDate) <= 3) {
                             $affiliatorNotifications->push((object)[
                                 'title' => 'Tenggat Waktu Tugas Mendekat ⏳',
                                 'desc'  => 'Ingat, Anda harus mengunggah link video TikTok sebelum ' . $dueDate->translatedFormat('d M Y') . '.',
