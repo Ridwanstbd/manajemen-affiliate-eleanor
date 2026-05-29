@@ -1,5 +1,17 @@
 <header class="header">
-    @if(View::hasSection('is_subpage'))
+    @php
+        $isSubpage = View::hasSection('is_subpage') || request()->routeIs(
+            'affiliator.catalog.*',
+            'affiliator.contract-kol.*',
+            'affiliator.challenge.*',
+            'affiliator.task.*',
+            'affiliator.cart.*',
+            'affiliator.sample-request.*',
+            'affiliator.agreement',
+            'affiliator.profile.*'
+        );
+    @endphp
+    @if($isSubpage)
         <div style="display: flex; z-index: 2;">
             <a href="@yield('back_url', url()->previous())" class="header-btn" aria-label="Kembali">
                 <x-atoms.icon name="chevron-left" style="width: 28px; height: 28px;"/>
@@ -11,7 +23,7 @@
         </h2>
         
         <div style="display: flex; justify-content: flex-end; z-index: 2;">
-            @if (request()->routeIs('affiliator.catalog.*')) 
+            @if (request()->routeIs('affiliator.catalog.*') || request()->routeIs('affiliator.contract-kol.show')) 
                 @php $cartCount = count(session('affiliate_cart', [])); @endphp
                 <a href="{{ route('affiliator.cart.index') }}" class="header-btn" aria-label="Keranjang">
                     <x-atoms.icon name="cart" style="width: 28px; height: 28px;"/>
