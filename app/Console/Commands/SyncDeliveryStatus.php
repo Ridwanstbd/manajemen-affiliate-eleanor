@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use App\Models\SampleRequest;
 use App\Services\Admin\RequestSampleService;
+use Illuminate\Support\Facades\DB;
 
 class SyncDeliveryStatus extends Command
 {
@@ -13,25 +14,30 @@ class SyncDeliveryStatus extends Command
 
     public function handle(RequestSampleService $service)
     {
-        $sampleRequests  = SampleRequest::where('status', 'APPROVED')
+        $shippedRequests = SampleRequest::where('status', 'SHIPPED')
             ->whereNotNull('tracking_number')
             ->whereNotNull('courier')
             ->get();
 
         $updatedCount = 0;
 
-        foreach ($sampleRequests as $item) {
-            
-            $model = $item instanceof SampleRequest 
-                ? $item 
-                : SampleRequest::find($item->id);
-            
-            if ($model) {
-                $service->checkAndUpdateDeliveryStatus($model);
-            }
-            
+        foreach ($shippedRequests as $item) {
+            $service->checkAndUpdateDeliveryStatus($item);
+            $updatedCount++;
         }
 
-        $this->info("Pengecekan selesai. {$updatedCount} pesanan otomatis diubah menjadi SHIPPED.");
+        $deliveredWithoutTasks = SampleRequest::where('status', 'DELIVERED')
+            ->whereNotExists(function ($query) {
+                $query->select(DB::raw(1))
+                    ->from('sample_task_reports')
+                    ->whereColumn('sample_task_reports.sample_request_id', 'sample_requests.id');
+            })
+            ->get();
+
+        foreach ($deliveredWithoutTasks as $item) {
+            $service->generateTaskForDelivered($item);
+        }
+
+        $this->info("Pengecekan selesai. {$updatedCount} pesanan diproses. " . $deliveredWithoutTasks->count() . " task tertunda dibuat.");
     }
 }

@@ -102,7 +102,10 @@ class RequestSampleService
 
             if ($isDelivered) {
                 if ($sampleRequest->status !== 'DELIVERED') {
-                    $sampleRequest->update(['status' => 'DELIVERED']);
+                    $sampleRequest->update([
+                        'status' => 'DELIVERED',
+                        'delivered_at' => now(),
+                    ]);
                 }
                 
                 $this->generateTaskForSample($sampleRequest);
@@ -165,6 +168,11 @@ class RequestSampleService
             'rajaongkir' => $rajaOngkirData,
             'timeline'   => $timeline
         ];
+    }
+
+    public function generateTaskForDelivered(SampleRequest $sampleRequest): void
+    {
+        $this->generateTaskForSample($sampleRequest);
     }
 
     protected function generateTaskForSample(SampleRequest $sampleRequest)

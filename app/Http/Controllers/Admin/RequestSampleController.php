@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\SampleRequest;
 use App\Services\Admin\RequestSampleService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 use Carbon\Carbon;
 
@@ -152,12 +153,21 @@ class RequestSampleController extends Controller
 
     public function syncStatus(Request $request)
     {
-        $sampleRequests = SampleRequest::whereIn('status', ['SHIPPED'])->get();
+        $shippedRequests = SampleRequest::where('status', 'SHIPPED')->get();
+        foreach ($shippedRequests as $item) {
+            $this->requestSampleService->checkAndUpdateDeliveryStatus($item);
+        }
 
-        foreach ($sampleRequests as $item) {
-            if ($item) {
-                $this->requestSampleService->checkAndUpdateDeliveryStatus($item);
-            }
+        $deliveredWithoutTasks = SampleRequest::where('status', 'DELIVERED')
+            ->whereNotExists(function ($query) {
+                $query->select(DB::raw(1))
+                    ->from('sample_task_reports')
+                    ->whereColumn('sample_task_reports.sample_request_id', 'sample_requests.id');
+            })
+            ->get();
+
+        foreach ($deliveredWithoutTasks as $item) {
+            $this->requestSampleService->generateTaskForDelivered($item);
         }
 
         return redirect()->back()->with('success', 'Sinkronisasi pelacakan selesai. Status pengiriman telah diperbarui.');
