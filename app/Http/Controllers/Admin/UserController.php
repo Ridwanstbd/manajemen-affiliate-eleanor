@@ -151,7 +151,7 @@ class UserController extends Controller
         try {
             $accessRequest = SystemAccessRequest::find($request->id);
 
-            $newUser = $this->userService->approveAccess($request, $request->has('is_kol'));
+            $newUser = $this->userService->approveAccess($request, false);
             
             if ($newUser) {
                 $user = User::where('email', $accessRequest->email)->first();

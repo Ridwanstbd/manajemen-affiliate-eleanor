@@ -77,17 +77,7 @@
         </div>
     </div>
 
-    <form action="{{ route('admin-dashboard.users.approve-access') }}" method="POST" id="formApproveRequest">
-        @csrf
-        <input type="hidden" name="id" id="approve-id">
-        <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px; background: rgba(0,0,0,0.02); border: 1px solid rgba(0,0,0,0.06); border-radius: 6px; margin-bottom: 16px;">
-            <div>
-                <x-atoms.typography variant="body" style="font-weight: 600; color: var(--text-primary); margin: 0; font-size: 14px;">Terima sebagai Kontak KOL</x-atoms.typography>
-                <div style="color: var(--text-secondary); font-size: 12px; margin-top: 2px;">Akun otomatis memiliki status is_kol = true saat disetujui.</div>
-            </div>
-            <x-molecules.toggle id="requestIsKol" name="is_kol" />
-        </div>
-    </form>
+    
 
     <div style="background: rgba(0,0,0,0.02); border: 1px solid rgba(0,0,0,0.06); padding: 16px; border-radius: 6px; font-size: 13px; color: var(--text-secondary);">
         Jika disetujui, akun baru akan dibuatkan secara otomatis.
@@ -105,9 +95,13 @@
             </form>
 
             <div style="flex: 1;">
-                <button type="submit" form="formApproveRequest" style="width: 100%; padding: 10px; background: #64748b; border: 1px solid #64748b; border-radius: 6px; color: white; font-weight: 600; cursor: pointer;">
-                    Setujui & Buat Akun
-                </button>
+                <form action="{{ route('admin-dashboard.users.approve-access') }}" method="POST" id="formApproveRequest">
+                    @csrf
+                    <input type="hidden" name="id" id="approve-id">
+                    <button type="submit" form="formApproveRequest" style="width: 100%; padding: 10px; background: #64748b; border: 1px solid #64748b; border-radius: 6px; color: white; font-weight: 600; cursor: pointer;">
+                        Setujui & Buat Akun
+                    </button>
+                </form>
             </div>
 
         </div>
@@ -164,11 +158,6 @@
 
             document.getElementById('reject-id').value = id;
             document.getElementById('approve-id').value = id;
-            
-            const toggleKol = document.getElementById('requestIsKol');
-            if(toggleKol) {
-                toggleKol.checked = false;
-            }
 
             openModal('detailRequestModal');
         });
