@@ -3355,3 +3355,52 @@ body.role-affiliator .cart-bottom-bar {
     align-items: center;
     margin-bottom: 8px;
 }
+
+@media print {
+    .app {
+        display: flex !important;
+        flex-direction: column !important;
+    }
+
+    .sidebar {
+        position: relative !important;
+        left: auto !important;
+        top: auto !important;
+        bottom: auto !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        border-radius: var(--radius-2xl) !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        box-shadow: none !important;
+        margin-bottom: 20px !important;
+        overflow: visible !important;
+        display: flex !important;
+    }
+
+    .sidebar-overlay {
+        display: none !important;
+    }
+
+    .main {
+        margin-left: 0 !important;
+        padding: 16px !important;
+        width: 100% !important;
+    }
+
+    .bottom-nav {
+        position: relative !important;
+        bottom: auto !important;
+        left: auto !important;
+        right: auto !important;
+        margin: 20px auto !important;
+        max-width: 560px !important;
+        display: flex !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        background: var(--glass-bg) !important;
+        border: 1px solid var(--glass-border) !important;
+        border-radius: var(--radius-2xl) !important;
+        box-shadow: none !important;
+    }
+}
