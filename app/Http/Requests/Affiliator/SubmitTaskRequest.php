@@ -14,7 +14,7 @@ class SubmitTaskRequest extends FormRequest
     public function rules()
     {
         return [
-            'tiktok_video_link' => 'required|url|max:1000',
+            'tiktok_video_link' => 'required|url|max:5000',
             'product'          => 'required',
         ];
     }
@@ -24,7 +24,7 @@ class SubmitTaskRequest extends FormRequest
         return [
             'tiktok_video_link.required' => 'Link video wajib diisi!',
             'tiktok_video_link.url'      => 'Format link tidak valid.',
-            'tiktok_video_link.max'      => 'Link video terlalu panjang (maksimal 1000 karakter).',
+            'tiktok_video_link.max'      => 'Link video terlalu panjang (maksimal 2500 karakter).',
             'product.required'          => 'Pilih minimal satu produk yang ditautkan pada video Anda.',
         ];
     }
