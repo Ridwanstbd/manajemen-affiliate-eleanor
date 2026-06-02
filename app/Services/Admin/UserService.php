@@ -44,30 +44,35 @@ class UserService
                 $uncompressed = @gzuncompress($stream);
                 
                 if ($uncompressed !== false) {
-                    if (preg_match_all('/\[(.*?)\]\s*TJ/is', $uncompressed, $tjMatches)) {
-                        foreach ($tjMatches[1] as $tjMatch) {
-                            if (preg_match_all('/\((.*?)\)/', $tjMatch, $strMatches)) {
-                                $text .= implode('', $strMatches[1]);
+                    $blocks = preg_split('/(ET|T\*|Td|TD|Tm)/', $uncompressed);
+                    
+                    foreach ($blocks as $block) {
+                        $blockText = '';
+                        if (preg_match_all('/\[(.*?)\]\s*TJ/is', $block, $tjMatches)) {
+                            foreach ($tjMatches[1] as $tjMatch) {
+                                if (preg_match_all('/\((.*?)\)/', $tjMatch, $strMatches)) {
+                                    $blockText .= implode('', $strMatches[1]);
+                                }
                             }
+                        } elseif (preg_match_all('/\((.*?)\)\s*Tj/is', $block, $tjMatches)) {
+                            $blockText .= implode(' ', $tjMatches[1]);
                         }
-                    } elseif (preg_match_all('/\((.*?)\)\s*Tj/is', $uncompressed, $tjMatches)) {
-                        $text .= implode(' ', $tjMatches[1]) . ' ';
+                        
+                        $blockText = preg_replace('/\\\\([nrt()\\\\])/', '$1', $blockText);
+                        
+                        if (trim($blockText) !== '') {
+                            $text .= trim($blockText) . "\n";
+                        }
                     }
                 }
             }
         }
 
         $text = preg_replace('/\\\\([nrt()\\\\])/', '$1', $text);
+        $text = preg_replace('/\\\\[0-9]{3}/', '', $text);
+        $text = preg_replace('/\n{3,}/', "\n\n", $text);
         
-        if (empty(trim($text))) {
-            if (class_exists('\Smalot\PdfParser\Parser')) {
-                $parser = new \Smalot\PdfParser\Parser();
-                $pdf = $parser->parseFile($file->getRealPath());
-                return $pdf->getText();
-            }
-        }
-
-        return trim(preg_replace('/\s+/', ' ', $text));
+        return trim($text);
     }
 
     private function extractTextFromDocx(UploadedFile $file): string
@@ -173,6 +178,7 @@ class UserService
 
         return $result;
     }
+
     private function extractTextFromDocxFallback(string $strippedXml): string
     {
         $strippedXml = preg_replace('/<\/w:p>/', "\n", $strippedXml);
@@ -186,7 +192,6 @@ class UserService
 
         return trim($text);
     }
-
 
     public function getTabData($tab, Request $request)
     {
@@ -212,6 +217,7 @@ class UserService
 
         return $data;
     }
+
     private function getActiveData(Request $request)
     {
         $latestImport = ImportHistory::latest('start_date')->first();
@@ -276,6 +282,7 @@ class UserService
             'users' => $users,
         ];
     }
+
     private function getBlacklistData(Request $request)
     {
         $availableMonths = Blacklist::selectRaw('DISTINCT DATE_FORMAT(blacklist_date, "%Y-%m") as month_val')
@@ -335,6 +342,7 @@ class UserService
             'selectedMonthLabel' => $selectedLabel,
         ];
     }
+
     public function addToBlacklist(array $data)
     {
         return DB::transaction(function () use ($data) {
@@ -358,6 +366,7 @@ class UserService
 
         return $user;
     }
+
     private function getRequestData(Request $request)
     {
         $availableMonths = SystemAccessRequest::selectRaw('DISTINCT DATE_FORMAT(created_at, "%Y-%m") as month_val')
@@ -393,6 +402,7 @@ class UserService
             'selectedLabel' => $selectedLabel,
         ];
     }
+
     private function getKOLContractData(Request $request)
     {
         $availableMonths = KOLContract::selectRaw('DISTINCT DATE_FORMAT(created_at, "%Y-%m") as month_val')
@@ -537,6 +547,7 @@ class UserService
             return $contract;
         });
     }
+
     public function updateKOLContract(array $data)
     {
         return DB::transaction(function () use ($data) {
