@@ -117,7 +117,7 @@ class UserController extends Controller
             'notes' => 'nullable|string',
             'product_ids' => 'nullable|array',
             'product_ids.*' => 'exists:products,id',
-            'agreement_content' => 'required|string', 
+            'agreement_file' => 'nullable|file|mimes:docx|max:5120',
         ]);
 
         try {

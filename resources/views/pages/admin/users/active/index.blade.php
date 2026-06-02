@@ -100,7 +100,7 @@
 </x-organisms.offcanvas>
 
 <x-organisms.offcanvas id="createKOLContractOffcanvas" title="Buat Kontrak KOL Baru">
-    <form action="{{ route('admin-dashboard.users.store-kol-contract') }}" method="POST" style="padding: 24px; padding-top: 0;">
+    <form action="{{ route('admin-dashboard.users.store-kol-contract') }}" method="POST" enctype="multipart/form-data" style="padding: 24px; padding-top: 0;">
         @csrf
         <input type="hidden" name="user_id" id="create-contract-user-id">
 
@@ -138,8 +138,13 @@
         </div>
 
         <div style="margin-bottom: 24px;">
-            <x-atoms.label value="Isi Perjanjian Kontrak (Agreement)" />
-            <textarea name="agreement_content" class="form-control" rows="5" placeholder="Tuliskan syarat dan ketentuan perjanjian kontrak..." required style="height: auto; resize: vertical; padding: 12px; width: 100%; border-radius: 8px; border: 1px solid var(--glass-border); background: white; color: var(--text-primary); font-family: inherit; font-size: 13px; box-sizing: border-box; margin-top: 4px;"></textarea>
+            <x-atoms.label value="Upload Dokumen Perjanjian Kontrak (.docx)" />
+            <label id="agreement-file-label" for="agreement_file" style="display: flex; align-items: center; gap: 10px; margin-top: 4px; padding: 12px 14px; border-radius: 8px; border: 1.5px dashed var(--glass-border); background: #f9fafb; cursor: pointer; transition: border-color 0.2s;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" style="color:#2563eb; flex-shrink:0;"><path stroke-linecap="round" stroke-linejoin="round" d="M12 16v-8m0 0-3 3m3-3 3 3M4 16v1a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-1"/></svg>
+                <span id="agreement-file-name" style="font-size:13px; color: var(--text-secondary);">Pilih file .docx perjanjian kontrak...</span>
+            </label>
+            <input type="file" id="agreement_file" name="agreement_file" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" required style="display:none;" onchange="updateAgreementFileName(this)">
+            <p style="font-size: 11px; color: var(--text-secondary); margin-top: 6px;">Hanya file .docx yang diterima. Maksimal 5 MB.</p>
         </div>
 
         <x-atoms.button type="submit" variant="primary" style="width: 100%; background: var(--primary-blue);">
@@ -196,8 +201,31 @@
         
         setTimeout(() => {
             document.getElementById('create-contract-user-id').value = userId;
+            document.getElementById('agreement_file').value = '';
+            document.getElementById('agreement-file-name').textContent = 'Pilih file .docx perjanjian kontrak...';
             openOffcanvas('createKOLContractOffcanvas');
         }, 350);
+    }
+
+    function updateAgreementFileName(input) {
+        const label = document.getElementById('agreement-file-name');
+        const labelWrap = document.getElementById('agreement-file-label');
+        if (input.files && input.files[0]) {
+            const file = input.files[0];
+            const maxSize = 5 * 1024 * 1024; // 5 MB
+            if (file.size > maxSize) {
+                alert('Ukuran file terlalu besar. Maksimal 5 MB.');
+                input.value = '';
+                label.textContent = 'Pilih file .docx perjanjian kontrak...';
+                labelWrap.style.borderColor = '';
+                return;
+            }
+            label.textContent = file.name;
+            labelWrap.style.borderColor = '#2563eb';
+        } else {
+            label.textContent = 'Pilih file .docx perjanjian kontrak...';
+            labelWrap.style.borderColor = '';
+        }
     }
 
     function formatCurrencyShort(val) {

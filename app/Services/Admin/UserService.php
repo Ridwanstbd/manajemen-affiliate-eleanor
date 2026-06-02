@@ -15,11 +15,131 @@ use App\Models\Agreement;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use ZipArchive;
 
 class UserService
 {
+    private function extractTextFromDocx(UploadedFile $file): string
+    {
+        $zip = new ZipArchive();
+        if ($zip->open($file->getRealPath()) !== true) {
+            throw new Exception('Gagal membuka file .docx. Pastikan file tidak rusak.');
+        }
+
+        $xml = $zip->getFromName('word/document.xml');
+        $zip->close();
+
+        if ($xml === false) {
+            throw new Exception('Isi dokumen tidak ditemukan di dalam file .docx.');
+        }
+
+        $xml = preg_replace('/xmlns[^=]*="[^"]*"/i', '', $xml);
+        $xml = str_replace(['w:', 'r:', 'mc:', 'wp:', 'a:', 'v:', 'o:'], '', $xml);
+
+        libxml_use_internal_errors(true);
+        $doc = simplexml_load_string($xml);
+        libxml_clear_errors();
+
+        if ($doc === false) {
+            return $this->extractTextFromDocxFallback($xml);
+        }
+
+        $lines   = [];
+        $body    = $doc->body ?? $doc;
+
+        foreach ($body->children() as $block) {
+            $lines[] = $this->processBlock($block);
+        }
+
+        $text = implode("\n", $lines);
+
+        $text = preg_replace('/\n{3,}/', "\n\n", $text);
+
+        return trim($text);
+    }
+
+    private function processBlock(\SimpleXMLElement $block): string
+    {
+        $tag = $block->getName();
+
+        if ($tag === 'tbl') {
+            $rows = [];
+            foreach ($block->children() as $tr) {
+                if ($tr->getName() !== 'tr') continue;
+                $cells = [];
+                foreach ($tr->children() as $tc) {
+                    if ($tc->getName() !== 'tc') continue;
+                    $cellText = [];
+                    foreach ($tc->children() as $cellBlock) {
+                        $cellText[] = $this->processBlock($cellBlock);
+                    }
+                    $cells[] = implode("\n", $cellText);
+                }
+                $rows[] = implode("\t", $cells);
+            }
+            return implode("\n", $rows);
+        }
+
+        if ($tag === 'p') {
+            return $this->processParagraph($block);
+        }
+
+        return '';
+    }
+
+    private function processParagraph(\SimpleXMLElement $para): string
+    {
+        $result = '';
+
+        foreach ($para->children() as $child) {
+            $tag = $child->getName();
+
+            if ($tag === 'r') {
+                foreach ($child->children() as $rChild) {
+                    $rTag = $rChild->getName();
+                    if ($rTag === 't') {
+                        $result .= (string) $rChild;
+                    } elseif ($rTag === 'br') {
+                        $result .= "\n";
+                    } elseif ($rTag === 'tab') {
+                        $result .= "\t";
+                    }
+                }
+            }
+
+            if ($tag === 'hyperlink') {
+                foreach ($child->children() as $hlChild) {
+                    if ($hlChild->getName() === 'r') {
+                        foreach ($hlChild->children() as $rChild) {
+                            if ($rChild->getName() === 't') {
+                                $result .= (string) $rChild;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return $result;
+    }
+    private function extractTextFromDocxFallback(string $strippedXml): string
+    {
+        $strippedXml = preg_replace('/<\/w:p>/', "\n", $strippedXml);
+        $strippedXml = preg_replace('/<w:br[^\/]*\/>/', "\n", $strippedXml);
+        $strippedXml = preg_replace('/<w:tab[^\/]*\/>/', "\t", $strippedXml);
+
+        $text = strip_tags($strippedXml);
+        $text = html_entity_decode($text, ENT_QUOTES | ENT_XML1, 'UTF-8');
+        $text = preg_replace('/[ \t]+/', ' ', $text);
+        $text = preg_replace('/\n{3,}/', "\n\n", $text);
+
+        return trim($text);
+    }
+
+
     public function getTabData($tab, Request $request)
     {
         $data = [];
@@ -342,11 +462,13 @@ class UserService
             $user = User::findOrFail($data['user_id']);
             $user->update(['is_kol' => true]);
 
+            $agreementContent = $this->extractTextFromDocx($data['agreement_file']);
+
             $agreement = Agreement::create([
-                'user_id' => $user->id,
-                'content' => $data['agreement_content'],
+                'user_id'   => $user->id,
+                'content'   => $agreementContent,
                 'is_active' => true,
-                'is_kol' => true,
+                'is_kol'    => true,
             ]);
 
             $contract = KOLContract::create([
@@ -386,13 +508,19 @@ class UserService
             }
 
             if ($contract->agreement) {
-                $contract->agreement->update(['content' => $data['agreement_content']]);
+                if (!empty($data['agreement_file'])) {
+                    $newContent = $this->extractTextFromDocx($data['agreement_file']);
+                    $contract->agreement->update(['content' => $newContent]);
+                }
             } else {
+                $content = !empty($data['agreement_file'])
+                    ? $this->extractTextFromDocx($data['agreement_file'])
+                    : ($data['agreement_content'] ?? '');
                 $agreement = Agreement::create([
-                    'user_id' => $contract->user_id,
-                    'content' => $data['agreement_content'],
+                    'user_id'   => $contract->user_id,
+                    'content'   => $content,
                     'is_active' => true,
-                    'is_kol' => true,
+                    'is_kol'    => true,
                 ]);
                 $contract->update(['agreement_id' => $agreement->id]);
             }
