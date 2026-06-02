@@ -22,6 +22,54 @@ use ZipArchive;
 
 class UserService
 {
+    private function extractTextFromFile(UploadedFile $file): string
+    {
+        $extension = strtolower($file->getClientOriginalExtension());
+        
+        if ($extension === 'pdf') {
+            return $this->extractTextFromPdf($file);
+        }
+        
+        return $this->extractTextFromDocx($file);
+    }
+
+    private function extractTextFromPdf(UploadedFile $file): string
+    {
+        $content = file_get_contents($file->getRealPath());
+        $text = '';
+
+        if (preg_match_all('/stream(.*?)endstream/is', $content, $matches)) {
+            foreach ($matches[1] as $match) {
+                $stream = trim($match);
+                $uncompressed = @gzuncompress($stream);
+                
+                if ($uncompressed !== false) {
+                    if (preg_match_all('/\[(.*?)\]\s*TJ/is', $uncompressed, $tjMatches)) {
+                        foreach ($tjMatches[1] as $tjMatch) {
+                            if (preg_match_all('/\((.*?)\)/', $tjMatch, $strMatches)) {
+                                $text .= implode('', $strMatches[1]);
+                            }
+                        }
+                    } elseif (preg_match_all('/\((.*?)\)\s*Tj/is', $uncompressed, $tjMatches)) {
+                        $text .= implode(' ', $tjMatches[1]) . ' ';
+                    }
+                }
+            }
+        }
+
+        $text = preg_replace('/\\\\([nrt()\\\\])/', '$1', $text);
+        
+        if (empty(trim($text))) {
+            if (class_exists('\Smalot\PdfParser\Parser')) {
+                $parser = new \Smalot\PdfParser\Parser();
+                $pdf = $parser->parseFile($file->getRealPath());
+                return $pdf->getText();
+            }
+        }
+
+        return trim(preg_replace('/\s+/', ' ', $text));
+    }
+
     private function extractTextFromDocx(UploadedFile $file): string
     {
         $zip = new ZipArchive();
@@ -462,7 +510,7 @@ class UserService
             $user = User::findOrFail($data['user_id']);
             $user->update(['is_kol' => true]);
 
-            $agreementContent = $this->extractTextFromDocx($data['agreement_file']);
+            $agreementContent = $this->extractTextFromFile($data['agreement_file']);
 
             $agreement = Agreement::create([
                 'user_id'   => $user->id,
@@ -509,12 +557,12 @@ class UserService
 
             if ($contract->agreement) {
                 if (!empty($data['agreement_file'])) {
-                    $newContent = $this->extractTextFromDocx($data['agreement_file']);
+                    $newContent = $this->extractTextFromFile($data['agreement_file']);
                     $contract->agreement->update(['content' => $newContent]);
                 }
             } else {
                 $content = !empty($data['agreement_file'])
-                    ? $this->extractTextFromDocx($data['agreement_file'])
+                    ? $this->extractTextFromFile($data['agreement_file'])
                     : ($data['agreement_content'] ?? '');
                 $agreement = Agreement::create([
                     'user_id'   => $contract->user_id,

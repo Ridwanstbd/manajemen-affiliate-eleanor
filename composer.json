@@ -14,6 +14,7 @@
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
         "maatwebsite/excel": "^3.1",
+        "smalot/pdfparser": "*",
         "yajra/laravel-datatables-oracle": "^12.7"
     },
     "require-dev": {

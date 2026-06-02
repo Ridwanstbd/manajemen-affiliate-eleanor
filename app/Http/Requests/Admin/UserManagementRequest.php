@@ -24,7 +24,7 @@ class UserManagementRequest extends FormRequest
                 'required_video_count' => 'required|integer',
                 'product_ids'          => 'required|array',
                 'product_ids.*'        => 'exists:products,id',
-                'agreement_file'       => 'required|file|mimes:docx|max:5120',
+                'agreement_file'       => 'required|file|mimes:docx,pdf|max:5120',
             ];
         }
 
@@ -85,7 +85,7 @@ class UserManagementRequest extends FormRequest
             'violation_reason.max'          => 'Alasan maksimal 1000 karakter.',
             'agreement_file.required'       => 'File dokumen perjanjian kontrak wajib diupload.',
             'agreement_file.file'           => 'Upload harus berupa file yang valid.',
-            'agreement_file.mimes'          => 'File perjanjian harus berformat .docx.',
+            'agreement_file.mimes'          => 'File perjanjian harus berformat .docx atau .pdf.',
             'agreement_file.max'            => 'Ukuran file maksimal 5 MB.',
         ];
     }
