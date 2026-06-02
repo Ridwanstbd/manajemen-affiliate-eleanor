@@ -138,13 +138,13 @@
         </div>
 
         <div style="margin-bottom: 24px;">
-            <x-atoms.label value="Upload Dokumen Perjanjian Kontrak (.docx)" />
+            <x-atoms.label value="Upload Dokumen Perjanjian Kontrak (.docx / .pdf)" />
             <label id="agreement-file-label" for="agreement_file" style="display: flex; align-items: center; gap: 10px; margin-top: 4px; padding: 12px 14px; border-radius: 8px; border: 1.5px dashed var(--glass-border); background: #f9fafb; cursor: pointer; transition: border-color 0.2s;">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" style="color:#2563eb; flex-shrink:0;"><path stroke-linecap="round" stroke-linejoin="round" d="M12 16v-8m0 0-3 3m3-3 3 3M4 16v1a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-1"/></svg>
-                <span id="agreement-file-name" style="font-size:13px; color: var(--text-secondary);">Pilih file .docx perjanjian kontrak...</span>
+                <span id="agreement-file-name" style="font-size:13px; color: var(--text-secondary);">Pilih file .docx / .pdf perjanjian kontrak...</span>
             </label>
-            <input type="file" id="agreement_file" name="agreement_file" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" required style="display:none;" onchange="updateAgreementFileName(this)">
-            <p style="font-size: 11px; color: var(--text-secondary); margin-top: 6px;">Hanya file .docx yang diterima. Maksimal 5 MB.</p>
+            <input type="file" id="agreement_file" name="agreement_file" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf,.pdf" required style="display:none;" onchange="updateAgreementFileName(this)">
+            <p style="font-size: 11px; color: var(--text-secondary); margin-top: 6px;">Hanya file .docx dan .pdf yang diterima. Maksimal 5 MB.</p>
         </div>
 
         <x-atoms.button type="submit" variant="primary" style="width: 100%; background: var(--primary-blue);">
@@ -202,7 +202,7 @@
         setTimeout(() => {
             document.getElementById('create-contract-user-id').value = userId;
             document.getElementById('agreement_file').value = '';
-            document.getElementById('agreement-file-name').textContent = 'Pilih file .docx perjanjian kontrak...';
+            document.getElementById('agreement-file-name').textContent = 'Pilih file .docx / .pdf perjanjian kontrak...';
             openOffcanvas('createKOLContractOffcanvas');
         }, 350);
     }
@@ -216,14 +216,14 @@
             if (file.size > maxSize) {
                 alert('Ukuran file terlalu besar. Maksimal 5 MB.');
                 input.value = '';
-                label.textContent = 'Pilih file .docx perjanjian kontrak...';
+                label.textContent = 'Pilih file .docx / .pdf perjanjian kontrak...';
                 labelWrap.style.borderColor = '';
                 return;
             }
             label.textContent = file.name;
             labelWrap.style.borderColor = '#2563eb';
         } else {
-            label.textContent = 'Pilih file .docx perjanjian kontrak...';
+            label.textContent = 'Pilih file .docx / .pdf perjanjian kontrak...';
             labelWrap.style.borderColor = '';
         }
     }
