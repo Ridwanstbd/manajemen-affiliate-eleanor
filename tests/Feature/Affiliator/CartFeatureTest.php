@@ -19,9 +19,21 @@ class CartFeatureTest extends TestCase
         $this->affiliator = User::factory()->create(['role' => 'AFFILIATOR']);
     }
 
+    private function makeProduct(array $attributes = []): Product
+    {
+        return Product::create(array_merge([
+            'id'         => (string) rand(1000000, 9999999),
+            'name'       => 'Produk Test',
+            'category'   => 'Kecantikan',
+            'seller_sku' => 'SKU-' . uniqid(),
+            'price'      => 75000,
+            'is_visible' => true,
+        ], $attributes));
+    }
+
     public function test_affiliator_can_add_product_to_cart()
     {
-        $product = Product::factory()->create(['stock' => 10, 'is_visible' => true]);
+        $product = $this->makeProduct(['is_visible' => true]);
 
         $response = $this->actingAs($this->affiliator)
                          ->post(route('affiliator.cart.store', $product->id));
@@ -33,13 +45,13 @@ class CartFeatureTest extends TestCase
 
     public function test_affiliator_can_checkout_cart()
     {
-        $product = Product::factory()->create(['stock' => 10]);
-        
+        $product = $this->makeProduct();
+
         $cart = [
             $product->id => [
-                'id' => $product->id,
-                'name' => $product->name,
-                'price' => $product->price,
+                'id'       => $product->id,
+                'name'     => $product->name,
+                'price'    => $product->price,
                 'quantity' => 1,
             ]
         ];
@@ -53,12 +65,13 @@ class CartFeatureTest extends TestCase
         $response->assertStatus(302);
         $response->assertSessionHas('success');
         $response->assertSessionMissing('affiliate_cart');
+
         $this->assertDatabaseHas('sample_requests', [
             'user_id' => $this->affiliator->id,
             'status'  => 'PENDING',
             'address' => 'Jl. Affiliator Sukses No. 123, Madiun',
         ]);
-        
+
         $this->assertDatabaseHas('sample_request_details', [
             'product_id' => $product->id,
         ]);

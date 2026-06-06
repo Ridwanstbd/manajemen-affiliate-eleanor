@@ -31,20 +31,20 @@ class RequestSampleFeatureTest extends TestCase
 
         $response->assertStatus(302);
         $response->assertSessionHas('success');
-        
+
         $this->assertDatabaseHas('sample_requests', [
-            'id' => $sample->id,
-            'status' => 'REJECTED',
+            'id'            => $sample->id,
+            'status'        => 'REJECTED',
             'reject_reason' => 'Stok habis',
         ]);
     }
 
-    public function test_admin_can_update_resi_and_approve_sample()
+    public function test_admin_can_ship_sample_with_tracking_number()
     {
-        $sample = SampleRequest::factory()->create(['status' => 'PENDING']);
+        $sample = SampleRequest::factory()->create(['status' => 'APPROVED']);
 
         $response = $this->actingAs($this->admin)
-                         ->post(route('admin-dashboard.request-samples.update-resi'), [
+                         ->post(route('admin-dashboard.request-samples.ship'), [
                              'sample_request_id' => $sample->id,
                              'courier'           => 'JNE',
                              'tracking_number'   => 'RESI123456789',
@@ -54,9 +54,9 @@ class RequestSampleFeatureTest extends TestCase
         $response->assertSessionHas('success');
 
         $this->assertDatabaseHas('sample_requests', [
-            'id' => $sample->id,
-            'status' => 'APPROVED',
-            'courier' => 'JNE',
+            'id'              => $sample->id,
+            'status'          => 'SHIPPED',
+            'courier'         => 'JNE',
             'tracking_number' => 'RESI123456789',
         ]);
     }
