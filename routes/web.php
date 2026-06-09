@@ -28,6 +28,15 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 
 Route::get('/', function () {
+    if (auth()->check()) {
+        $role = strtoupper(auth()->user()->role ?? '');
+        if ($role === 'ADMINISTRATOR' || $role === 'ADMIN') {
+            return redirect()->route('admin-dashboard.dashboard');
+        }
+        if ($role === 'AFFILIATOR') {
+            return redirect()->route('affiliator.index');
+        }
+    }
     return redirect()->route('login');
 });
 
@@ -60,7 +69,11 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
         $request->fulfill();
-        return redirect('/dashboard');
+        $role = strtoupper(auth()->user()->role ?? '');
+        if ($role === 'ADMINISTRATOR' || $role === 'ADMIN') {
+            return redirect()->route('admin-dashboard.dashboard');
+        }
+        return redirect()->route('affiliator.index');
     })->middleware(['signed'])->name('verification.verify');
 
     Route::post('/email/verification-notification', function (Request $request) {
