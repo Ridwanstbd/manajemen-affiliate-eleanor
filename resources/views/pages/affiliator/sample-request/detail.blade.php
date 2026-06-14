@@ -67,6 +67,8 @@
              onmouseout="this.style.opacity='1'" />
     </x-molecules.card>
     @endif
+
+    <x-molecules.card style="padding: 20px 16px; margin-top: 16px; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: none; background: #ffffff;">
         <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 18px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px;">
             <x-atoms.icon name="clock" style="width: 18px; height: 18px; color: var(--text-primary);" />
             <x-atoms.typography variant="body" style="font-weight: 800; font-size: 15px; color: var(--text-primary);">
