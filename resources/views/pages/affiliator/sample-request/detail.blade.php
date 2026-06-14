@@ -46,7 +46,7 @@
     @if($sampleRequest->status === 'PENDING' && $sampleRequest->affiliate_center_screenshot)
     <x-molecules.card style="padding: 16px; margin-top: 16px; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: none; background: #ffffff;">
         <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 10px;">
-            <x-atoms.icon name="chart-bar" style="width: 16px; height: 16px; color: var(--text-secondary);" />
+            <x-atoms.icon name="image" style="width: 16px; height: 16px; color: var(--text-secondary);" />
             <x-atoms.typography variant="body" style="font-weight: 700; font-size: 13.5px; color: var(--text-primary);">
                 Screenshot Affiliate Center 7 Hari Terakhir
             </x-atoms.typography>
