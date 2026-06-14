@@ -64,7 +64,7 @@
 
                         <label for="affiliate_center_screenshot" id="screenshotDropZone" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; width: 100%; min-height: 120px; border: 2px dashed var(--glass-border); border-radius: 10px; background: #f8fafc; cursor: pointer; box-sizing: border-box; transition: border-color 0.2s, background 0.2s; padding: 20px;">
                             <div id="screenshotPlaceholder" style="display: flex; flex-direction: column; align-items: center; gap: 6px; pointer-events: none;">
-                                <x-atoms.icon name="upload" style="width: 32px; height: 32px; color: var(--text-secondary); opacity: 0.6;" />
+                                <x-atoms.icon name="plus" style="width: 32px; height: 32px; color: var(--text-secondary); opacity: 0.6;" />
                                 <span style="font-size: 13px; color: var(--text-secondary);">Klik atau seret gambar ke sini</span>
                                 <span style="font-size: 11px; color: var(--text-tertiary);">JPG · PNG · WebP · GIF — maks. 5 MB</span>
                             </div>
