@@ -51,20 +51,20 @@
                 Screenshot Affiliate Center 7 Hari Terakhir
             </x-atoms.typography>
         </div>
-        <p style="font-size: 12px; color: var(--text-secondary); margin: 0 0 10px 0; padding-left: 22px; line-height: 1.5;">
-            Klik gambar untuk memperbesar.
-        </p>
         @php
             $screenshotUrl = filter_var($sampleRequest->affiliate_center_screenshot, FILTER_VALIDATE_URL)
                 ? $sampleRequest->affiliate_center_screenshot
                 : asset('storage/' . $sampleRequest->affiliate_center_screenshot);
         @endphp
-        <img src="{{ $screenshotUrl }}"
-             alt="Screenshot Affiliate Center"
-             onclick="openLightbox(this.src)"
-             style="display: block; width: 100%; border-radius: 8px; border: 1px solid #e2e8f0; cursor: zoom-in; transition: opacity 0.2s;"
-             onmouseover="this.style.opacity='0.85'"
-             onmouseout="this.style.opacity='1'" />
+        <div style="padding-left: 22px;">
+            <img src="{{ $screenshotUrl }}"
+                 alt="Screenshot Affiliate Center"
+                 onclick="openLightbox(this.src)"
+                 style="width: 72px; height: 72px; object-fit: cover; border-radius: 8px; border: 1px solid #e2e8f0; cursor: zoom-in; transition: opacity 0.2s;"
+                 onmouseover="this.style.opacity='0.75'"
+                 onmouseout="this.style.opacity='1'" />
+            <p style="font-size: 11px; color: var(--text-secondary); margin: 6px 0 0 0;">Klik untuk memperbesar</p>
+        </div>
     </x-molecules.card>
     @endif
 
