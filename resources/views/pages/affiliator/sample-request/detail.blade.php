@@ -43,7 +43,30 @@
         </div>
     </x-molecules.card>
 
-    <x-molecules.card style="padding: 20px 16px; margin-top: 16px; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: none; background: #ffffff;">
+    @if($sampleRequest->status === 'PENDING' && $sampleRequest->affiliate_center_screenshot)
+    <x-molecules.card style="padding: 16px; margin-top: 16px; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: none; background: #ffffff;">
+        <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 10px;">
+            <x-atoms.icon name="chart-bar" style="width: 16px; height: 16px; color: var(--text-secondary);" />
+            <x-atoms.typography variant="body" style="font-weight: 700; font-size: 13.5px; color: var(--text-primary);">
+                Screenshot Affiliate Center 7 Hari Terakhir
+            </x-atoms.typography>
+        </div>
+        <p style="font-size: 12px; color: var(--text-secondary); margin: 0 0 10px 0; padding-left: 22px; line-height: 1.5;">
+            Klik gambar untuk memperbesar.
+        </p>
+        @php
+            $screenshotUrl = filter_var($sampleRequest->affiliate_center_screenshot, FILTER_VALIDATE_URL)
+                ? $sampleRequest->affiliate_center_screenshot
+                : asset('storage/' . $sampleRequest->affiliate_center_screenshot);
+        @endphp
+        <img src="{{ $screenshotUrl }}"
+             alt="Screenshot Affiliate Center"
+             onclick="openLightbox(this.src)"
+             style="display: block; width: 100%; border-radius: 8px; border: 1px solid #e2e8f0; cursor: zoom-in; transition: opacity 0.2s;"
+             onmouseover="this.style.opacity='0.85'"
+             onmouseout="this.style.opacity='1'" />
+    </x-molecules.card>
+    @endif
         <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 18px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px;">
             <x-atoms.icon name="clock" style="width: 18px; height: 18px; color: var(--text-primary);" />
             <x-atoms.typography variant="body" style="font-weight: 800; font-size: 15px; color: var(--text-primary);">
