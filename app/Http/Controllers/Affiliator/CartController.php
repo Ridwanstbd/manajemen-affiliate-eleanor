@@ -64,7 +64,11 @@ class CartController extends Controller
     public function checkout(CheckoutRequest $request)
     {
         try {
-            $this->cartService->checkout(auth()->user(), $request->address);
+            $this->cartService->checkout(
+                auth()->user(),
+                $request->address,
+                $request->file('affiliate_center_screenshot')
+            );
             
             return redirect()->route('affiliator.catalog.index')
                 ->with('success', 'Pengajuan sampel berhasil dibuat! Menunggu persetujuan admin.');

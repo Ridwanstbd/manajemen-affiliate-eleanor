@@ -46,11 +46,42 @@
 
             <div style="border-top: 1px solid var(--glass-border); padding-top: 24px; max-width: 600px;">
                 <x-atoms.typography variant="h3" style="font-weight: 700; color: var(--text-primary); margin-bottom: 16px;">Konfirmasi Pengiriman</x-atoms.typography>
-                <form action="{{ route('affiliator.cart.checkout') }}" method="POST">
+                <form action="{{ route('affiliator.cart.checkout') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div style="margin-bottom: 20px;">
                         <x-atoms.label value="Alamat Lengkap Pengiriman Sampel" for="address" style="margin-bottom: 8px; display: block;" />
-                        <textarea name="address" id="address" required placeholder="Tuliskan alamat lengkap pengiriman paket beserta nomor HP alternatif jika ada..." style="width: 100%; border-radius: 8px; border: 1px solid var(--glass-border); padding: 12px; font-size: 13px; background: white; min-height: 100px; box-sizing: border-box; color: var(--text-primary); font-family: inherit; resize: vertical;"></textarea>
+                        <textarea name="address" id="address" required placeholder="Tuliskan alamat lengkap pengiriman paket beserta nomor HP alternatif jika ada..." style="width: 100%; border-radius: 8px; border: 1px solid var(--glass-border); padding: 12px; font-size: 13px; background: white; min-height: 100px; box-sizing: border-box; color: var(--text-primary); font-family: inherit; resize: vertical;">{{ old('address') }}</textarea>
+                        @error('address')
+                            <div style="color: var(--rose, #f43f5e); font-size: 12px; margin-top: 4px;">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <x-atoms.label value="Screenshot Affiliate Center 7 Hari Terakhir" for="affiliate_center_screenshot" style="margin-bottom: 8px; display: block;" />
+                        <p style="font-size: 12px; color: var(--text-secondary); margin: 0 0 10px 0; line-height: 1.5;">
+                            Unggah tangkapan layar dari dashboard <strong>Affiliate Center</strong> yang menampilkan performa 7 hari terakhir Anda (grafik, statistik, atau ringkasan komisi). Format: JPG, PNG, atau WebP. Maks. 5MB.
+                        </p>
+
+                        <label for="affiliate_center_screenshot" id="screenshotDropZone" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; width: 100%; min-height: 120px; border: 2px dashed var(--glass-border); border-radius: 10px; background: #f8fafc; cursor: pointer; box-sizing: border-box; transition: border-color 0.2s, background 0.2s; padding: 20px;">
+                            <div id="screenshotPlaceholder" style="display: flex; flex-direction: column; align-items: center; gap: 6px; pointer-events: none;">
+                                <x-atoms.icon name="upload" style="width: 32px; height: 32px; color: var(--text-secondary); opacity: 0.6;" />
+                                <span style="font-size: 13px; color: var(--text-secondary);">Klik atau seret gambar ke sini</span>
+                                <span style="font-size: 11px; color: var(--text-tertiary);">JPG · PNG · WebP · GIF — maks. 5 MB</span>
+                            </div>
+                            <img id="screenshotPreview" src="#" alt="Preview screenshot" style="display: none; max-width: 100%; max-height: 220px; border-radius: 8px; object-fit: contain;" />
+                        </label>
+
+                        <input type="file"
+                               name="affiliate_center_screenshot"
+                               id="affiliate_center_screenshot"
+                               accept="image/jpeg,image/png,image/webp,image/gif"
+                               required
+                               style="display: none;"
+                               onchange="previewScreenshot(this)">
+
+                        @error('affiliate_center_screenshot')
+                            <div style="color: var(--rose, #f43f5e); font-size: 12px; margin-top: 6px;">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     @if($personalAgreements->count() || $generalAgreements->count())
@@ -98,3 +129,62 @@
         @endif
     </x-organisms.mobile-page-wrapper>
 @endsection
+
+@push('scripts')
+<script>
+function previewScreenshot(input) {
+    const preview    = document.getElementById('screenshotPreview');
+    const placeholder = document.getElementById('screenshotPlaceholder');
+    const dropZone   = document.getElementById('screenshotDropZone');
+
+    if (input.files && input.files[0]) {
+        const file   = input.files[0];
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+            placeholder.style.display = 'none';
+            dropZone.style.borderColor = 'var(--primary-blue, #3b82f6)';
+            dropZone.style.background  = '#eff6ff';
+        };
+
+        reader.readAsDataURL(file);
+    } else {
+        preview.style.display    = 'none';
+        placeholder.style.display = 'flex';
+        dropZone.style.borderColor = 'var(--glass-border)';
+        dropZone.style.background  = '#f8fafc';
+    }
+}
+
+// Drag-and-drop support
+(function () {
+    const dropZone = document.getElementById('screenshotDropZone');
+    const fileInput = document.getElementById('affiliate_center_screenshot');
+
+    if (!dropZone || !fileInput) return;
+
+    dropZone.addEventListener('dragover', function (e) {
+        e.preventDefault();
+        dropZone.style.borderColor = 'var(--primary-blue, #3b82f6)';
+        dropZone.style.background  = '#eff6ff';
+    });
+
+    dropZone.addEventListener('dragleave', function () {
+        if (!fileInput.files || !fileInput.files[0]) {
+            dropZone.style.borderColor = 'var(--glass-border)';
+            dropZone.style.background  = '#f8fafc';
+        }
+    });
+
+    dropZone.addEventListener('drop', function (e) {
+        e.preventDefault();
+        if (e.dataTransfer.files.length > 0) {
+            fileInput.files = e.dataTransfer.files;
+            previewScreenshot(fileInput);
+        }
+    });
+})();
+</script>
+@endpush

@@ -10,7 +10,8 @@ class SampleRequest extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id', 'status', 'address', 'tracking_number', 'courier', 'shipping_cost', 'reject_reason'
+        'user_id', 'status', 'address', 'affiliate_center_screenshot',
+        'tracking_number', 'courier', 'shipping_cost', 'reject_reason',
     ];
 
     protected function casts(): array

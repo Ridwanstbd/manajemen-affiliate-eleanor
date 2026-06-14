@@ -32,6 +32,8 @@
     </div>
 </x-molecules.card>
 
+<x-atoms.lightbox />
+
 <x-organisms.offcanvas id="detailRequestsampleOffcanvas" title="Detail Pengajuan Sampel Gratis">
     <form id="mainOffcanvasForm" method="POST">
         @csrf
@@ -42,6 +44,23 @@
             <div id="off-username" style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px;"></div>
             <div id="off-contact" style="font-size: 13px; color: var(--text-secondary); margin-bottom: 4px;"></div>
             <div id="off-address" style="font-size: 13px; color: var(--text-secondary);"></div>
+        </div>
+
+        <div id="section-screenshot" style="display: none; border-bottom: 1px dashed var(--glass-border, #cbd5e1); padding-bottom: 24px; margin-bottom: 24px;">
+            <x-atoms.typography variant="card-title" as="h4" style="margin-bottom: 4px; font-size: 14px; color: var(--text-secondary);">Screenshot Affiliate Center 7 Hari Terakhir</x-atoms.typography>
+            <p style="font-size: 12px; color: var(--text-secondary); margin: 0 0 12px 0;">Klik gambar untuk memperbesar.</p>
+            <div id="off-screenshot-wrapper">
+                <img id="off-screenshot-img"
+                     src=""
+                     alt="Screenshot Affiliate Center"
+                     onclick="openLightbox(this.src)"
+                     style="display: block; width: 100%; max-height: 180px; object-fit: cover; border-radius: 8px; border: 1px solid var(--glass-border); cursor: zoom-in; transition: opacity 0.2s;"
+                     onmouseover="this.style.opacity='0.85'"
+                     onmouseout="this.style.opacity='1'" />
+            </div>
+            <div id="off-screenshot-missing" style="display: none; font-size: 13px; color: var(--text-secondary); font-style: italic;">
+                Tidak ada screenshot yang dilampirkan.
+            </div>
         </div>
 
         <div style="border-bottom: 1px dashed var(--glass-border, #cbd5e1); padding-bottom: 24px; margin-bottom: 24px;">
@@ -421,6 +440,22 @@
 
             $('#section-approved-info, #section-shipped-info, #section-rejected-info').hide();
             $('#footer-actions-pending, #footer-actions-approved, #footer-actions-shipped').hide();
+
+            // Tampilkan screenshot affiliate center hanya saat status PENDING
+            if (d.status === 'PENDING' && d.affiliate_center_screenshot) {
+                const screenshotUrl = d.affiliate_center_screenshot.startsWith('http')
+                    ? d.affiliate_center_screenshot
+                    : '/storage/' + d.affiliate_center_screenshot;
+                $('#off-screenshot-img').attr('src', screenshotUrl).show();
+                $('#off-screenshot-missing').hide();
+                $('#section-screenshot').show();
+            } else if (d.status === 'PENDING') {
+                $('#off-screenshot-img').attr('src', '').hide();
+                $('#off-screenshot-missing').show();
+                $('#section-screenshot').show();
+            } else {
+                $('#section-screenshot').hide();
+            }
 
             const mainForm = document.getElementById('mainOffcanvasForm');
             $('#off-courier, #off-tracking').prop('required', false);
