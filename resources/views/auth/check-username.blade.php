@@ -10,7 +10,7 @@
             @csrf
             <div class="form-group" id="input-username-tiktok">
                 <x-atoms.label value="Username Tiktok" />
-                <x-atoms.input type="text" name="username" placeholder="mazzprifarm" required />
+                <x-atoms.input type="text" name="username" placeholder="@mazzprifarm" required pattern="^@.*" title="Username harus diawali dengan tanda @" />
             </div>
             
             <x-atoms.button variant="primary" type="submit" class="btn-block">
@@ -40,7 +40,7 @@
         tour.addStep({
             id: 'step-username',
             title: 'Informasi Username',
-            text: 'Buka profil TikTok Anda. Username Anda diawali tanda <strong>"@"</strong>.<br><br>💡 <strong>Tips Cepat:</strong> Cukup <strong>ketuk (tap)</strong> username tersebut di profil TikTok Anda, maka akan otomatis tercopy. Setelah itu, paste (tempel) di kolom ini tanpa menyertakan tanda "@".',
+            text: 'Buka profil TikTok Anda. Username Anda diawali tanda <strong>"@"</strong>.<br><br>💡 <strong>Tips Cepat:</strong> Cukup <strong>ketuk (tap)</strong> username tersebut di profil TikTok Anda, maka akan otomatis tercopy. Setelah itu, paste (tempel) di kolom ini beserta tanda "@".',
             attachTo: {
                 element: '#input-username-tiktok', 
                 on: 'bottom' 

@@ -48,19 +48,23 @@ class AuthController extends Controller
     public function verifyUsername(UsernameRequest $request)
     {
         $validatedData = $request->validated();
-        $result = $this->authService->checkUsernameStatus($validatedData['username']);
+        
+        // Hilangkan @ di depan sebelum pengecekan
+        $cleanUsername = ltrim($validatedData['username'], '@');
+        
+        $result = $this->authService->checkUsernameStatus($cleanUsername);
 
         switch ($result['action']) {
             case 'redirect_to_request_access':
-                session(['login_username' => $validatedData['username']]);
+                session(['login_username' => $cleanUsername]);
                 return redirect()->route('access.request')->with('info', $result['message']);
                 
             case 'redirect_to_claim_form':
-                session(['claim_username' => $validatedData['username']]);
+                session(['claim_username' => $cleanUsername]);
                 return redirect()->route('account.claim')->with('info', $result['message']);
                 
             case 'redirect_to_password_input':
-                session(['login_username' => $validatedData['username']]);
+                session(['login_username' => $cleanUsername]);
                 return redirect()->route('login.password')->with('info', $result['message']);
         }
     }

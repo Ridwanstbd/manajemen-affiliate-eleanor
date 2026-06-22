@@ -21,7 +21,7 @@ class UsernameRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'username' => 'required|string|max:100'
+            'username' => ['required', 'string', 'max:100', 'starts_with:@']
         ];
     }
     public function messages(): array
@@ -30,6 +30,7 @@ class UsernameRequest extends FormRequest
             'username.required' => 'Username wajib diisi untuk melanjutkan.',
             'username.string'   => 'Format username tidak valid.',
             'username.max'      => 'Username tidak boleh lebih dari 100 karakter.',
+            'username.starts_with' => 'Username TikTok harus diawali dengan tanda @.',
         ];
     }
 }
