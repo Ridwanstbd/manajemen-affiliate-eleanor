@@ -52,10 +52,14 @@ class ProductController extends Controller
                 ->addColumn('price_formated', function($row) {
                     return 'Rp ' . number_format($row['price'], 0, ',', '.');
                 })
+                ->addColumn('is_visible', function($row) {
+                    $checked = $row->is_visible ? 'checked' : '';
+                    return '<div class="toggle-wrapper" style="transform: scale(0.85); transform-origin: left center; margin: 0;"><label class="toggle-switch"><input type="checkbox" class="toggle-input toggle-visibility-inline" data-id="'.$row->id.'" '.$checked.'><span class="toggle-slider"></span></label></div>';
+                })
                 ->addColumn('action', function($row) {
                     return view('pages.admin.product-sample.action-buttons', compact('row'))->render();
                 })
-                ->rawColumns(['image','action'])
+                ->rawColumns(['image', 'is_visible', 'action'])
                 ->make(true);
         }
     }
@@ -99,5 +103,18 @@ class ProductController extends Controller
         $product->update($data);
 
         return redirect()->back()->with('success', 'Produk berhasil diperbarui.');
+    }
+
+    public function toggleVisibility(Request $request, $id)
+    {
+        $product = Product::findOrFail($id);
+        $product->is_visible = $request->boolean('is_visible');
+        $product->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Status visibilitas berhasil diubah',
+            'is_visible' => $product->is_visible
+        ]);
     }
 }

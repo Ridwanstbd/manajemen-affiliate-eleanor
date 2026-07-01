@@ -93,6 +93,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/product/data',[ProductController::class, 'data'])->name('product-data');
         Route::post('/import-product-update', [ProductController::class, 'importData'])->name('import-product-update');
         Route::put('/products/{id}', [ProductController::class, 'update'])->name('product-update');
+        Route::patch('/products/{id}/toggle-visibility', [ProductController::class, 'toggleVisibility'])->name('product-toggle-visibility');
 
         Route::post('/notifications/mark-read', function () {
             auth()->user()->unreadNotifications->markAsRead();
