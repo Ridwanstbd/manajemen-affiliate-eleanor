@@ -165,8 +165,6 @@
 
         openModal('editProductModal');
     }
-
-    document.addEventListener('DOMContentLoaded', function() {
 </script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
