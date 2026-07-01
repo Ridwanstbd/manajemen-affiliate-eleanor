@@ -68,7 +68,7 @@
         @method('PUT')
         <input type="hidden" id="edit_id" name="id">
         
-        <input type="hidden" id="edit_sku" name="seller_sku">
+        
 
         <div class="form-group mb-3">
             <x-atoms.label value="Foto Produk" for="edit_image" />
@@ -77,12 +77,12 @@
 
         <div class="form-group mb-3">
             <x-atoms.label value="SKU Produk" for="edit_sku" />
-            <x-atoms.input type="text" id="edit_sku" name="seller_sku" placeholder="Contoh: PRD-001" required />
+            <x-atoms.input type="text" id="edit_sku" name="seller_sku" placeholder="Contoh: PRD-001" />
         </div>
 
         <div class="form-group mb-3">
             <x-atoms.label for="editProductName" value="Nama Produk" />
-            <x-atoms.input type="text" id="editProductName" name="name" required />
+            <x-atoms.input type="text" id="editProductName" name="name" />
         </div>
 
         <div class="form-group mb-3">
@@ -167,27 +167,6 @@
     }
 
     document.addEventListener('DOMContentLoaded', function() {
-        $('#productTable').on('click', '.btn-edit', function(e) {
-            e.preventDefault();
-            
-            const productId = $(this).attr('data-id')?.trim();
-            const productName = $(this).attr('data-name');
-            const productPrice = $(this).attr('data-price');
-            
-            const form = document.getElementById('formEditProduct');
-            if (form && productId) {
-                form.action = `/dashboard/products/${productId}`;
-            }
-             
-            const nameInput = document.getElementById('editProductName');
-            if (nameInput) nameInput.value = productName || '';
-
-            const priceInput = document.getElementById('editProductPrice');
-            if (priceInput) priceInput.value = productPrice || 0;
-            
-            openModal('editProductModal');
-        });
-    });
 </script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {

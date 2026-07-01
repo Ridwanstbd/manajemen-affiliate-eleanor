@@ -14,8 +14,8 @@ class ProductRequest extends FormRequest
     public function rules()
     {
         return [
-            'seller_sku' => 'required|string|max:255',
-            'name'       => 'required|string|max:255',
+            'seller_sku' => 'nullable|string|max:255',
+            'name'       => 'nullable|string|max:255',
             'image'      => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ];
     }
