@@ -59,7 +59,7 @@ class AnalyticsService
             ->whereHas('user', function ($q) use ($isKol) {
                 $q->where('is_kol', $isKol);
             })
-            ->count();
+            ->count() + ($currCore->samples ?? 0);
 
         $disetujui = SampleRequest::whereIn('status', ['APPROVED', 'SHIPPED'])
             ->whereMonth('created_at', $currentMonth->month)
