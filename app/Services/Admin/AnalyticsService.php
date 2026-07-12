@@ -56,23 +56,37 @@ class AnalyticsService
 
         $totalPermintaan = SampleRequest::whereMonth('created_at', $currentMonth->month)
             ->whereYear('created_at', $currentMonth->year)
-            ->whereHas('user', function($q) use ($isKol) { $q->where('is_kol', $isKol); })
+            ->whereHas('user', function ($q) use ($isKol) {
+                $q->where('is_kol', $isKol);
+            })
             ->count();
-        
+
         $disetujui = SampleRequest::whereIn('status', ['APPROVED', 'SHIPPED'])
             ->whereMonth('created_at', $currentMonth->month)
             ->whereYear('created_at', $currentMonth->year)
-            ->whereHas('user', function($q) use ($isKol) { $q->where('is_kol', $isKol); })
+            ->whereHas('user', function ($q) use ($isKol) {
+                $q->where('is_kol', $isKol);
+            })
             ->count() + ($currCore->samples ?? 0);
-        
+
         $kontenDibuat = TaskReport::where('task_status', 'COMPLETED')
             ->whereMonth('created_at', $currentMonth->month)
             ->whereYear('created_at', $currentMonth->year)
-            ->whereHas('sampleRequests.user', function($q) use ($isKol) { $q->where('is_kol', $isKol); })
+            ->whereHas('sampleRequests.user', function ($q) use ($isKol) {
+                $q->where('is_kol', $isKol);
+            })
             ->count();
-            
-        $konversi = VideoProductMetric::whereHas('video.user', function($q) use ($isKol) { $q->where('is_kol', $isKol); })->sum('orders') + 
-                    LiveProductMetric::whereHas('liveStream.user', function($q) use ($isKol) { $q->where('is_kol', $isKol); })->sum('orders');
+
+        $konversi = VideoProductMetric::whereHas('importHistory', function ($q) use ($currentMonth) {
+            $q->whereMonth('start_date', $currentMonth->month)->whereYear('start_date', $currentMonth->year);
+        })->whereHas('video.user', function ($q) use ($isKol) {
+            $q->where('is_kol', $isKol);
+        })->sum('orders') +
+            LiveProductMetric::whereHas('importHistory', function ($q) use ($currentMonth) {
+                $q->whereMonth('start_date', $currentMonth->month)->whereYear('start_date', $currentMonth->year);
+            })->whereHas('liveStream.user', function ($q) use ($isKol) {
+                $q->where('is_kol', $isKol);
+            })->sum('orders');
 
         $funnel = [
             'total' => $totalPermintaan,
@@ -97,8 +111,8 @@ class AnalyticsService
         $core2 = $this->getCoreMetrics($date2->month, $date2->year, $isKol);
 
         $komparasiData = [
-            ['kategori' => 'Tk. Pengembalian', 'bulan_1' => (float)$core1->refunds, 'bulan_2' => (float)$core2->refunds],
-            ['kategori' => 'Brg Terjual', 'bulan_1' => (int)$core1->items, 'bulan_2' => (int)$core2->items],
+            ['kategori' => 'Tk. Pengembalian', 'bulan_1' => (float) $core1->refunds, 'bulan_2' => (float) $core2->refunds],
+            ['kategori' => 'Brg Terjual', 'bulan_1' => (int) $core1->items, 'bulan_2' => (int) $core2->items],
         ];
 
         return [
@@ -123,24 +137,28 @@ class AnalyticsService
 
         $currCore = $this->getCoreMetrics($currentMonth->month, $currentMonth->year, $isKol);
         $prevCore = $this->getCoreMetrics($prevMonth->month, $prevMonth->year, $isKol);
-        
+
         $currSampel = SampleRequest::whereMonth('created_at', $currentMonth->month)
             ->whereYear('created_at', $currentMonth->year)
-            ->whereHas('user', function($q) use ($isKol) { $q->where('is_kol', $isKol); })
+            ->whereHas('user', function ($q) use ($isKol) {
+                $q->where('is_kol', $isKol);
+            })
             ->count() + $currCore->samples;
-                                   
+
         $prevSampel = SampleRequest::whereMonth('created_at', $prevMonth->month)
             ->whereYear('created_at', $prevMonth->year)
-            ->whereHas('user', function($q) use ($isKol) { $q->where('is_kol', $isKol); })
+            ->whereHas('user', function ($q) use ($isKol) {
+                $q->where('is_kol', $isKol);
+            })
             ->count() + $prevCore->samples;
 
         $top5 = CreatorMetric::with('user')
-            ->whereHas('user', function($q) use ($isKol) {
+            ->whereHas('user', function ($q) use ($isKol) {
                 $q->where('is_kol', $isKol);
             })
-            ->whereHas('importHistory', function($q) use($currentMonth) {
+            ->whereHas('importHistory', function ($q) use ($currentMonth) {
                 $q->whereMonth('start_date', $currentMonth->month)
-                  ->whereYear('start_date', $currentMonth->year);
+                    ->whereYear('start_date', $currentMonth->year);
             })
             ->selectRaw('user_id, SUM(affiliate_gmv) as gmv, SUM(items_sold) as items')
             ->groupBy('user_id')
@@ -186,7 +204,7 @@ class AnalyticsService
 
         foreach ($histories as $history) {
             $startLabel = Carbon::parse($history->start_date)->translatedFormat('d M');
-            $endLabel   = $history->end_date
+            $endLabel = $history->end_date
                 ? Carbon::parse($history->end_date)->translatedFormat('d M')
                 : $startLabel;
 
@@ -195,20 +213,20 @@ class AnalyticsService
                 : "{$startLabel} – {$endLabel}";
 
             $metrics = CreatorMetric::where('import_history_id', $history->id)
-                ->whereHas('user', function($q) use ($isKol) {
+                ->whereHas('user', function ($q) use ($isKol) {
                     $q->where('is_kol', $isKol);
                 })
                 ->selectRaw('SUM(affiliate_gmv) as total_gmv, SUM(items_sold) as total_items')
                 ->first();
 
-            $gmvData[]   = round((float) ($metrics->total_gmv ?? 0), 2);
+            $gmvData[] = round((float) ($metrics->total_gmv ?? 0), 2);
             $itemsData[] = (int) ($metrics->total_items ?? 0);
         }
 
         return [
             'labels' => $labels,
-            'gmv'    => $gmvData,
-            'items'  => $itemsData,
+            'gmv' => $gmvData,
+            'items' => $itemsData,
         ];
     }
 
@@ -217,9 +235,13 @@ class AnalyticsService
         $currentMonth = $this->getTargetDate($request);
         $isKol = $request->boolean('is_kol', false);
 
-        $videoGmv = VideoProductMetric::whereHas('video.user', function($q) use ($isKol) { $q->where('is_kol', $isKol); })->sum('video_gmv');
-        $liveGmv = LiveProductMetric::whereHas('liveStream.user', function($q) use ($isKol) { $q->where('is_kol', $isKol); })->sum('live_gmv');
-        
+        $videoGmv = VideoProductMetric::whereHas('video.user', function ($q) use ($isKol) {
+            $q->where('is_kol', $isKol);
+        })->sum('video_gmv');
+        $liveGmv = LiveProductMetric::whereHas('liveStream.user', function ($q) use ($isKol) {
+            $q->where('is_kol', $isKol);
+        })->sum('live_gmv');
+
         $products = $this->getProductPerformance($currentMonth->month, $currentMonth->year, $isKol);
 
         return [
@@ -234,9 +256,9 @@ class AnalyticsService
 
     private function getCoreMetrics($month, $year, $isKol)
     {
-        $query = CreatorMetric::whereHas('importHistory', function($q) use($month, $year) {
+        $query = CreatorMetric::whereHas('importHistory', function ($q) use ($month, $year) {
             $q->whereMonth('start_date', $month)->whereYear('start_date', $year);
-        })->whereHas('user', function($q) use ($isKol) {
+        })->whereHas('user', function ($q) use ($isKol) {
             $q->where('is_kol', $isKol);
         });
 
@@ -251,19 +273,19 @@ class AnalyticsService
 
     private function getTotalCost($month, $year, $isKol)
     {
-        $productCost = SampleRequestDetail::whereHas('sampleRequest', function($q) use ($month, $year, $isKol) {
+        $productCost = SampleRequestDetail::whereHas('sampleRequest', function ($q) use ($month, $year, $isKol) {
             $q->whereMonth('created_at', $month)
-              ->whereYear('created_at', $year)
-              ->whereHas('user', function($u) use ($isKol) {
-                  $u->where('is_kol', $isKol);
-              });
-        })->with('product')->get()->sum(function($detail) {
+                ->whereYear('created_at', $year)
+                ->whereHas('user', function ($u) use ($isKol) {
+                    $u->where('is_kol', $isKol);
+                });
+        })->with('product')->get()->sum(function ($detail) {
             return $detail->quantity * ($detail->product->price ?? 0);
         });
 
         $shippingCost = SampleRequest::whereMonth('created_at', $month)
             ->whereYear('created_at', $year)
-            ->whereHas('user', function($q) use ($isKol) {
+            ->whereHas('user', function ($q) use ($isKol) {
                 $q->where('is_kol', $isKol);
             })->sum('shipping_cost') ?? 0;
 
@@ -279,21 +301,21 @@ class AnalyticsService
 
     private function getProductPerformance($month, $year, $isKol)
     {
-        $videoMetrics = VideoProductMetric::whereHas('importHistory', function($q) use ($month, $year) {
+        $videoMetrics = VideoProductMetric::whereHas('importHistory', function ($q) use ($month, $year) {
             $q->whereMonth('start_date', $month)->whereYear('start_date', $year);
-        })->whereHas('video.user', function($q) use ($isKol) {
+        })->whereHas('video.user', function ($q) use ($isKol) {
             $q->where('is_kol', $isKol);
         })->get();
 
-        $liveMetrics = LiveProductMetric::whereHas('importHistory', function($q) use ($month, $year) {
+        $liveMetrics = LiveProductMetric::whereHas('importHistory', function ($q) use ($month, $year) {
             $q->whereMonth('start_date', $month)->whereYear('start_date', $year);
-        })->whereHas('liveStream.user', function($q) use ($isKol) {
+        })->whereHas('liveStream.user', function ($q) use ($isKol) {
             $q->where('is_kol', $isKol);
         })->get();
 
         $productIds = $videoMetrics->pluck('product_id')->merge($liveMetrics->pluck('product_id'))->unique();
-        
-        return Product::whereIn('id', $productIds)->get()->map(function($product) use ($videoMetrics, $liveMetrics, $month, $year, $isKol) {
+
+        return Product::whereIn('id', $productIds)->get()->map(function ($product) use ($videoMetrics, $liveMetrics, $month, $year, $isKol) {
             $pVideo = $videoMetrics->where('product_id', $product->id);
             $pLive = $liveMetrics->where('product_id', $product->id);
 
@@ -301,13 +323,13 @@ class AnalyticsService
             $orders = $pVideo->sum('orders') + $pLive->sum('orders');
 
             $sentQuantity = SampleRequestDetail::where('product_id', $product->id)
-                ->whereHas('sampleRequest', function($q) use ($month, $year, $isKol) {
+                ->whereHas('sampleRequest', function ($q) use ($month, $year, $isKol) {
                     $q->whereIn('status', ['APPROVED', 'SHIPPED', 'DELIVERED'])
-                      ->whereMonth('created_at', $month)
-                      ->whereYear('created_at', $year)
-                      ->whereHas('user', function($u) use ($isKol) {
-                          $u->where('is_kol', $isKol);
-                      });
+                        ->whereMonth('created_at', $month)
+                        ->whereYear('created_at', $year)
+                        ->whereHas('user', function ($u) use ($isKol) {
+                            $u->where('is_kol', $isKol);
+                        });
                 })->sum('quantity') ?? 0;
 
             $productCost = ($product->price ?? 0) * $sentQuantity;
@@ -316,15 +338,15 @@ class AnalyticsService
             $relatedRequests = SampleRequest::whereIn('status', ['APPROVED', 'SHIPPED', 'DELIVERED'])
                 ->whereMonth('created_at', $month)
                 ->whereYear('created_at', $year)
-                ->whereHas('details', function($q) use ($product) {
+                ->whereHas('details', function ($q) use ($product) {
                     $q->where('product_id', $product->id);
-                })->whereHas('user', function($q) use ($isKol) {
+                })->whereHas('user', function ($q) use ($isKol) {
                     $q->where('is_kol', $isKol);
                 })->with(['details'])->get();
 
             foreach ($relatedRequests as $sr) {
                 $totalQtyInRequest = $sr->details->sum('quantity');
-                $qtyThisProduct    = $sr->details->where('product_id', $product->id)->sum('quantity');
+                $qtyThisProduct = $sr->details->where('product_id', $product->id)->sum('quantity');
                 if ($totalQtyInRequest > 0) {
                     $shippingCost += ($qtyThisProduct / $totalQtyInRequest) * (float) $sr->shipping_cost;
                 }
@@ -334,20 +356,20 @@ class AnalyticsService
             if ($isKol) {
                 $costContract = KOLContract::whereMonth('start_date', $month)
                     ->whereYear('start_date', $year)
-                    ->whereHas('products', function($q) use ($product) {
+                    ->whereHas('products', function ($q) use ($product) {
                         $q->where('products.id', $product->id);
                     })->sum('contract_fee') ?? 0;
             }
 
             $totalCost = $productCost + $shippingCost + $costContract;
-            
+
             $roiDisplay = '0x';
             if ($totalCost > 0) {
                 $roiDisplay = number_format($gmv / $totalCost, 1) . 'x';
             } elseif ($totalCost == 0 && $gmv > 0) {
-                $roiDisplay = '∞'; 
+                $roiDisplay = '∞';
             }
-            
+
             return [
                 'image_path' => $product->image_path,
                 'name' => $product->name ?? 'Unknown',
@@ -363,7 +385,8 @@ class AnalyticsService
 
     private function calcTrend($current, $previous)
     {
-        if ($previous == 0) return $current > 0 ? 100 : 0;
+        if ($previous == 0)
+            return $current > 0 ? 100 : 0;
         return (($current - $previous) / abs($previous)) * 100;
     }
 }
